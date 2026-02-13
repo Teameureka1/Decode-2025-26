@@ -12,8 +12,8 @@ public class FlywheelTuning extends OpMode {
 
     public DcMotorEx launcher;
 
-    double highVelocity = 1600;
-    double lowVelocity = 1350;
+    double highVelocity = 1700;
+    double lowVelocity = 1000;
 
     double curTargetVelocity = highVelocity;
 
@@ -29,7 +29,7 @@ public class FlywheelTuning extends OpMode {
     public void init() {
         launcher = hardwareMap.get(DcMotorEx.class, "launcher");
         launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        launcher.setDirection(DcMotorSimple.Direction.FORWARD);
+        launcher.setDirection(DcMotorSimple.Direction.REVERSE);
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, 0, 0, F);
         launcher.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
         telemetry.addLine("Init Complete");
@@ -41,10 +41,12 @@ public class FlywheelTuning extends OpMode {
         if (gamepad1.yWasPressed()) {
             if (curTargetVelocity == highVelocity) {
                 curTargetVelocity = lowVelocity;
-            } else { curTargetVelocity = highVelocity; }
+            } else {
+                curTargetVelocity = highVelocity;
+            }
         }
 
-        if (gamepad1.bWasPressed()){
+        if (gamepad1.bWasPressed()) {
             stepIndex = (stepIndex + 1) % stepSizes.length;
         }
         if (gamepad1.dpadLeftWasPressed()) {
@@ -67,5 +69,11 @@ public class FlywheelTuning extends OpMode {
         double error = curTargetVelocity - curVelocity;
 
         telemetry.addData("Target Velocity", curTargetVelocity);
+        telemetry.addData("Current Velocity", "%.2f", curVelocity);
+        telemetry.addData("Error", "%.2f", error);
+        telemetry.addLine("------------------------------------------------");
+        telemetry.addData("Tuning P", "%.4f D-pad U/D", P);
+        telemetry.addData("Tuning F", "%.4f D-pad L/R", F);
+        telemetry.addData("Step Size", "%.4f (B Button)", stepSizes[stepIndex]);
     }
 }
