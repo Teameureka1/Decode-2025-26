@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,13 +7,10 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import java.text.BreakIterator;
-
-@TeleOp(name = "BestTeleEver")
-public class BestTeleEver extends LinearOpMode {
+@TeleOp(name = "SoloTeleClose")
+public class SoloTeleClose extends LinearOpMode {
 
     private DcMotorEx fl;
     private DcMotorEx br;
@@ -72,19 +68,19 @@ public class BestTeleEver extends LinearOpMode {
             double axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral = gamepad1.left_stick_x;
             double yaw = gamepad1.right_stick_x;
-            double throttle = Range.clip(gamepad1.right_trigger + .2, 0, 1);
-            double intakeWheelInput = -gamepad2.left_stick_y;
-            double intakeStringInput = -gamepad2.right_stick_y;
-            double launcherInputFar = gamepad2.right_trigger;
-            double launcherInputClose = gamepad2.left_trigger;
+            double throttle = Range.clip(gamepad1.right_trigger + .55, 0, 14.5);
+            boolean intakeWheelInput = gamepad1.left_bumper;
+            boolean intakeStringInput = gamepad1.right_bumper;
+            double launcherInputClose = gamepad1.left_trigger;
+            double launcherInputFar = gamepad2.left_trigger;
 
 
 
-            boolean kickerInput = gamepad2.y;
-            boolean wallHoldInput = gamepad2.x;
-            boolean wallReleaseInput = gamepad2.b;
-            boolean angleFarInput = gamepad2.left_bumper;
-            boolean angleCloseInput = gamepad2.right_bumper;
+            boolean kickerInput = gamepad1.y;
+            boolean wallHoldInput = gamepad1.x;
+            boolean wallReleaseInput = gamepad1.b;
+            boolean angleFarInput = gamepad1.dpad_up;
+            boolean angleCloseInput = gamepad1.dpad_down;
 
             double frontLeftPower = axial + lateral + yaw;
             double frontRightPower = axial - lateral - yaw;
@@ -109,15 +105,15 @@ public class BestTeleEver extends LinearOpMode {
             br
                     .setPower(backRightPower * throttle);
             //-----------------------------Intake Wheels-------------------------------------
-            if (intakeWheelInput > .1) {
+            if (intakeWheelInput) {
                 intakeWheels.setPower(1);
-            } else if (intakeWheelInput < -.1) {
+            } else if (intakeWheelInput) {
                 intakeWheels.setPower(-1);
             } else {
                 intakeWheels.setPower(0);
             }
             // -------------------------Intake String-------------------------------------------
-            if (intakeStringInput > .1) {
+            if (intakeStringInput) {
                 intakeString.setPower(1);
             }
             else {
@@ -128,8 +124,9 @@ public class BestTeleEver extends LinearOpMode {
             if (launcherInputFar > .5) {
                 launcher.setVelocity(1760);
             }
+            //--------------Close----------------
             else if (launcherInputClose > .5) {
-                launcher.setVelocity(1480);
+                launcher.setVelocity(1460);
             }
             else {
                 launcher.setVelocity(1000);
@@ -148,10 +145,10 @@ public class BestTeleEver extends LinearOpMode {
             }
             //-------------------------------------Angle------------------------------------------
             if (angleFarInput) {
-                angle.setPosition(.64);
+                angle.setPosition(.63);
             }
             else if (angleCloseInput) {
-                angle.setPosition(.61);
+                angle.setPosition(.6);
             }
         }
     }
