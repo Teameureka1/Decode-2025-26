@@ -1,13 +1,15 @@
-package org.firstinspires.ftc.teamcode;
-
+package org.firstinspires.ftc.teamcode.tutorials;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.MecanumDrive;
 import org.firstinspires.ftc.teamcode.mechanisms.AprilTagWebcam;
-import org.firstinspires.ftc.teamcode.mechanisms.MecanumDrive;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 @TeleOp
@@ -27,13 +29,12 @@ public class AprilTagAutoRotate extends OpMode {
 
     double forward, strafe, rotate;
 
-    double[] stepSizes = {1.0, 0.1, .01, .001, .0001};
+    double[] stepSizes = {10.0, 1.0, 0.1, .01, .001, .0001};
 
     int stepIndex = 2;
     @Override
     public void init() {
     aprilTagWebcam.init(hardwareMap, telemetry);
-    drive.init(hardwareMap,false);
 
     telemetry.addLine("Initialized");
     }
@@ -85,7 +86,7 @@ public class AprilTagAutoRotate extends OpMode {
 
         }
 
-        drive.drive(forward, strafe, rotate);
+        drive(forward, strafe, rotate);
 
         if (gamepad1.bWasPressed()) {
             stepIndex = (stepIndex + 1) % stepSizes.length;
@@ -118,5 +119,56 @@ public class AprilTagAutoRotate extends OpMode {
         telemetry.addData("Tuning D", "%.4f D-pad L/R", kd);
         telemetry.addData("Step Size", "%.4f (B Button)", stepSizes[stepIndex]);
 
+    }
+
+
+    private void drive(double forward, double strafe, double rotate) {
+        DcMotorEx fl;
+        DcMotorEx br;
+        DcMotorEx bl;
+        DcMotorEx fr;
+
+        fl = hardwareMap.get(DcMotorEx.class, "fl");
+        bl = hardwareMap.get(DcMotorEx.class, "bl");
+        br = hardwareMap.get(DcMotorEx.class, "br");
+        fr = hardwareMap.get(DcMotorEx.class, "fr");
+
+        fl.setDirection(DcMotorSimple.Direction.REVERSE);
+        br.setDirection(DcMotorSimple.Direction.FORWARD);
+        bl.setDirection(DcMotorSimple.Direction.REVERSE);
+        fr.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        double axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+        double lateral = gamepad1.left_stick_x;
+        double yaw = gamepad1.right_stick_x;
+        double max;
+        double frontLeftPower = axial + lateral + yaw;
+        double frontRightPower = axial - lateral - yaw;
+        double backLeftPower = axial - lateral + yaw;
+        double backRightPower = axial + lateral - yaw;
+
+        max = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
+        max = Math.max(max, Math.abs(backLeftPower));
+        max = Math.max(max, Math.abs(backRightPower));
+
+
+        if (max > 1.0) {
+            frontLeftPower /= max;
+            frontRightPower /= max;
+            backLeftPower /= max;
+            backRightPower /= max;
+
+        }
+        double throttle = Range.clip(gamepad1.right_trigger + .2, 0, 1);
+        fl.setPower(frontLeftPower * throttle);
+        fr.setPower(frontRightPower * throttle);
+        bl.setPower(backLeftPower * throttle);
+        br
+                .setPower(backRightPower * throttle);
     }
 }

@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,10 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
-import java.text.BreakIterator;
 
 @TeleOp(name = "BestTeleEver")
 public class BestTeleEver extends LinearOpMode {
@@ -72,7 +68,7 @@ public class BestTeleEver extends LinearOpMode {
             double axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral = gamepad1.left_stick_x;
             double yaw = gamepad1.right_stick_x;
-            double throttle = Range.clip(gamepad1.right_trigger + .2, 0, 1);
+            double throttle = Range.clip(gamepad1.right_trigger + .3, 0, 1);
             double intakeWheelInput = -gamepad2.left_stick_y;
             double intakeStringInput = -gamepad2.right_stick_y;
             double launcherInputFar = gamepad2.right_trigger;
@@ -106,8 +102,7 @@ public class BestTeleEver extends LinearOpMode {
             fl.setPower(frontLeftPower * throttle);
             fr.setPower(frontRightPower * throttle);
             bl.setPower(backLeftPower * throttle);
-            br
-                    .setPower(backRightPower * throttle);
+            br.setPower(backRightPower * throttle);
             //-----------------------------Intake Wheels-------------------------------------
             if (intakeWheelInput > .1) {
                 intakeWheels.setPower(1);
