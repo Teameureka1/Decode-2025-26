@@ -6,23 +6,22 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
-public class Auto {
 
 
-    @Autonomous(name = "auto")
-    @Disabled
-    public class auto extends LinearOpMode {
+    @Autonomous(name = "Auto")
+    public class Auto extends LinearOpMode {
 
-        private DcMotor FL;
-        private DcMotor BL;
-        private DcMotor FR;
-        private DcMotor BR;
-        private Servo blocker;
+        private DcMotor fl;
+        private DcMotor bl;
+        private DcMotor fr;
+        private DcMotor br
+                ;
+        private Servo wall;
         private Servo angle;
-        private DcMotor Artifactlauncher;
+        private DcMotor launcher;
         private DcMotor intakewheels;
         private DcMotor intakestring;
-        private Servo transfer;
+        private Servo kicker;
 
         double Foward_Ticks;
         int Backward_Ticks;
@@ -31,11 +30,11 @@ public class Auto {
         int Y;
         int Z;
         int Strafe_Ticks;
-        boolean FlipLeft;
+        boolean flipLeft;
         int Y_offset;
-        boolean FlipMiddle;
+        boolean flipMiddle;
         int Z_Offset;
-        boolean FlipRight;
+        boolean flipRight;
         double FORWARD_SPEED;
         int Last_Left;
         int Last_Middle;
@@ -48,127 +47,144 @@ public class Auto {
          * This is method for moving forward and backwards
          */
         private void Slow_Forward(int Power, int Distance) {
-            Foward_Ticks = -FL.getCurrentPosition();
-            FL.setDirection(DcMotor.Direction.REVERSE);
-            BL.setDirection(DcMotor.Direction.REVERSE);
-            FR.setPower(0.5);
-            FL.setPower(0.5);
-            BL.setPower(0.5);
-            BR.setPower(0.5);
+            Foward_Ticks = -fl.getCurrentPosition();
+            fl.setDirection(DcMotor.Direction.REVERSE);
+            bl.setDirection(DcMotor.Direction.REVERSE);
+            fr.setPower(0.5);
+            fl.setPower(0.5);
+            bl.setPower(0.5);
+            br
+                    .setPower(0.5);
             while (opModeIsActive() && Foward_Ticks < Distance) {
-                telemetry.addData("Motor ", FL.getCurrentPosition());
+                telemetry.addData("Motor ", fl.getCurrentPosition());
                 telemetry.addData("Ticks", Distance);
-                Foward_Ticks = -FL.getCurrentPosition();
+                Foward_Ticks = -fl.getCurrentPosition();
                 telemetry.update();
             }
-            FR.setPower(0);
-            FL.setPower(0);
-            BL.setPower(0);
-            BR.setPower(0);
+            fr.setPower(0);
+            fl.setPower(0);
+            bl.setPower(0);
+            br
+                    .setPower(0);
         }
 
         /**
          * This is method for moving forward and backwards
          */
         private void TurnRight(int Power, int Distance) {
-            Foward_Ticks = FL.getCurrentPosition();
-            Strafe_Ticks = -FR.getCurrentPosition();
-            Backward_Ticks = BR.getCurrentPosition();
-            FL.setDirection(DcMotor.Direction.REVERSE);
-            BL.setDirection(DcMotor.Direction.REVERSE);
-            BL.setPower(FORWARD_SPEED);
-            FL.setPower(FORWARD_SPEED);
-            FR.setPower(-FORWARD_SPEED);
-            BR.setPower(-FORWARD_SPEED);
+            Foward_Ticks = fl.getCurrentPosition();
+            Strafe_Ticks = -fr.getCurrentPosition();
+            Backward_Ticks = br
+                    .getCurrentPosition();
+            fl.setDirection(DcMotor.Direction.REVERSE);
+            bl.setDirection(DcMotor.Direction.REVERSE);
+            bl.setPower(FORWARD_SPEED);
+            fl.setPower(FORWARD_SPEED);
+            fr.setPower(-FORWARD_SPEED);
+            br
+                    .setPower(-FORWARD_SPEED);
             while (opModeIsActive() && Strafe_Ticks < Distance && Foward_Ticks < Distance) {
-                telemetry.addData("Motor FL", -FL.getCurrentPosition());
-                telemetry.addData("Motor FR", FR.getCurrentPosition());
-                telemetry.addData("Motor BR", BR.getCurrentPosition());
+                telemetry.addData("Motor fl", -fl.getCurrentPosition());
+                telemetry.addData("Motor fr", fr.getCurrentPosition());
+                telemetry.addData("Motor br" +
+                        "", br
+                        .getCurrentPosition());
                 telemetry.addData("Ticks", Distance);
-                Strafe_Ticks = FR.getCurrentPosition();
-                Backward_Ticks = BR.getCurrentPosition();
-                Foward_Ticks = FL.getCurrentPosition();
+                Strafe_Ticks = fr.getCurrentPosition();
+                Backward_Ticks = br
+                        .getCurrentPosition();
+                Foward_Ticks = fl.getCurrentPosition();
                 telemetry.update();
             }
-            FR.setPower(0);
-            FL.setPower(0);
-            BL.setPower(0);
-            BR.setPower(0);
+            fr.setPower(0);
+            fl.setPower(0);
+            bl.setPower(0);
+            br
+                    .setPower(0);
         }
 
         /**
          * This is method for moving forward and backwards
          */
         private void TurnLeft(int Power, int Distance) {
-            Foward_Ticks = FL.getCurrentPosition();
-            Strafe_Ticks = -FR.getCurrentPosition();
-            Backward_Ticks = BR.getCurrentPosition();
-            FL.setDirection(DcMotor.Direction.REVERSE);
-            BL.setDirection(DcMotor.Direction.REVERSE);
-            BL.setPower(-FORWARD_SPEED);
-            FL.setPower(-FORWARD_SPEED);
-            FR.setPower(FORWARD_SPEED);
-            BR.setPower(FORWARD_SPEED);
+            Foward_Ticks = fl.getCurrentPosition();
+            Strafe_Ticks = -fr.getCurrentPosition();
+            Backward_Ticks = br
+                    .getCurrentPosition();
+            fl.setDirection(DcMotor.Direction.REVERSE);
+            bl.setDirection(DcMotor.Direction.REVERSE);
+            bl.setPower(-FORWARD_SPEED);
+            fl.setPower(-FORWARD_SPEED);
+            fr.setPower(FORWARD_SPEED);
+            br
+                    .setPower(FORWARD_SPEED);
             while (opModeIsActive() && Strafe_Ticks < Distance && Foward_Ticks < Distance) {
-                telemetry.addData("Motor FL", -FL.getCurrentPosition());
-                telemetry.addData("Motor FR", FR.getCurrentPosition());
-                telemetry.addData("Motor BR", BR.getCurrentPosition());
+                telemetry.addData("Motor fl", -fl.getCurrentPosition());
+                telemetry.addData("Motor fr", fr.getCurrentPosition());
+                telemetry.addData("Motor br" +
+                        "", br
+                        .getCurrentPosition());
                 telemetry.addData("Ticks", Distance);
-                Strafe_Ticks = FR.getCurrentPosition();
-                Backward_Ticks = BR.getCurrentPosition();
-                Foward_Ticks = FL.getCurrentPosition();
+                Strafe_Ticks = fr.getCurrentPosition();
+                Backward_Ticks = br
+                        .getCurrentPosition();
+                Foward_Ticks = fl.getCurrentPosition();
                 telemetry.update();
             }
-            FR.setPower(0);
-            FL.setPower(0);
-            BL.setPower(0);
-            BR.setPower(0);
+            fr.setPower(0);
+            fl.setPower(0);
+            bl.setPower(0);
+            br
+                    .setPower(0);
         }
 
         /**
          * This is method for moving forward and backwards
          */
         private void Forward(int Power, int Distance) {
-            Foward_Ticks = -FL.getCurrentPosition();
-            FL.setDirection(DcMotor.Direction.REVERSE);
-            BL.setDirection(DcMotor.Direction.REVERSE);
-            FR.setPower(FORWARD_SPEED);
-            FL.setPower(FORWARD_SPEED);
-            BL.setPower(FORWARD_SPEED);
-            BR.setPower(FORWARD_SPEED);
+            Foward_Ticks = -fl.getCurrentPosition();
+            fl.setDirection(DcMotor.Direction.REVERSE);
+            bl.setDirection(DcMotor.Direction.REVERSE);
+            fr.setPower(FORWARD_SPEED);
+            fl.setPower(FORWARD_SPEED);
+            bl.setPower(FORWARD_SPEED);
+            br
+                    .setPower(FORWARD_SPEED);
             while (opModeIsActive() && Foward_Ticks < Distance) {
-                telemetry.addData("Motor ", FL.getCurrentPosition());
+                telemetry.addData("Motor ", fl.getCurrentPosition());
                 telemetry.addData("Ticks", Distance);
-                Foward_Ticks = -FL.getCurrentPosition();
+                Foward_Ticks = -fl.getCurrentPosition();
                 telemetry.update();
             }
-            FR.setPower(0);
-            FL.setPower(0);
-            BL.setPower(0);
-            BR.setPower(0);
+            fr.setPower(0);
+            fl.setPower(0);
+            bl.setPower(0);
+            br.setPower(0);
         }
 
         /**
          * This is method for moving forward and backwards
          */
         private void Backward(int Power, int Distance) {
-            Foward_Ticks = FL.getCurrentPosition();
-            FL.setDirection(DcMotor.Direction.REVERSE);
-            BL.setDirection(DcMotor.Direction.REVERSE);
-            FR.setPower(-FORWARD_SPEED);
-            FL.setPower(-FORWARD_SPEED);
-            BL.setPower(-FORWARD_SPEED);
-            BR.setPower(-FORWARD_SPEED);
+            Foward_Ticks = fl.getCurrentPosition();
+            fl.setDirection(DcMotor.Direction.REVERSE);
+            bl.setDirection(DcMotor.Direction.REVERSE);
+            fr.setPower(-FORWARD_SPEED);
+            fl.setPower(-FORWARD_SPEED);
+            bl.setPower(-FORWARD_SPEED);
+            br
+                    .setPower(-FORWARD_SPEED);
             while (opModeIsActive() && Foward_Ticks < Distance) {
-                telemetry.addData("Motor ", FL.getCurrentPosition());
+                telemetry.addData("Motor ", fl.getCurrentPosition());
                 telemetry.addData("Ticks", Distance);
-                Foward_Ticks = FL.getCurrentPosition();
+                Foward_Ticks = fl.getCurrentPosition();
                 telemetry.update();
             }
-            FR.setPower(0);
-            FL.setPower(0);
-            BL.setPower(0);
-            BR.setPower(0);
+            fr.setPower(0);
+            fl.setPower(0);
+            bl.setPower(0);
+            br
+                    .setPower(0);
         }
 
         /**
@@ -176,37 +192,38 @@ public class Auto {
          */
         @Override
         public void runOpMode() {
-            FL = hardwareMap.get(DcMotor.class, "FLAsDcMotor");
-            BL = hardwareMap.get(DcMotor.class, "BLAsDcMotor");
-            FR = hardwareMap.get(DcMotor.class, "FRAsDcMotor");
-            BR = hardwareMap.get(DcMotor.class, "BRAsDcMotor");
-            blocker = hardwareMap.get(Servo.class, "blockerAsServo");
+            fl = hardwareMap.get(DcMotor.class, "fl");
+            bl = hardwareMap.get(DcMotor.class, "bl");
+            fr = hardwareMap.get(DcMotor.class, "fr");
+            br
+                    = hardwareMap.get(DcMotor.class, "br");
+            wall = hardwareMap.get(Servo.class, "wall");
             angle = hardwareMap.get(Servo.class, "angle");
-            Artifactlauncher = hardwareMap.get(DcMotor.class, "ArtifactlauncherAsDcMotor");
+            launcher = hardwareMap.get(DcMotor.class, "launcher");
             intakewheels = hardwareMap.get(DcMotor.class, "intake wheels");
             intakestring = hardwareMap.get(DcMotor.class, "intake string");
-            transfer = hardwareMap.get(Servo.class, "transferAsServo");
+            kicker = hardwareMap.get(Servo.class, "kicker");
 
             InitOdometry();
             waitForStart();
             if (opModeIsActive()) {
-                blocker.setPosition(0.94);
+                wall.setPosition(0.94);
                 angle.setPosition(0.6);
-                ((DcMotorEx) Artifactlauncher).setVelocity(1300);
+                ((DcMotorEx) launcher).setVelocity(1300);
                 Reset_Encoders();
-                telemetry.addData("Velocity", ((DcMotorEx) Artifactlauncher).getVelocity());
+                telemetry.addData("Velocity", ((DcMotorEx) launcher).getVelocity());
                 telemetry.addData("x", Get_X());
                 telemetry.addData("y", Get_Y());
                 telemetry.addData("z", Get_Z());
                 telemetry.update();
                 Reset_Encoders();
-                Forward(1, 11000);
+                Forward(1, 12000);
                 Reset_Encoders();
                 Launch_Three();
                 Reset_Encoders();
                 sleep(1000);
-                Artifactlauncher.setPower(0);
-                blocker.setPosition(0.86);
+                launcher.setPower(0);
+                wall.setPosition(0.86);
                 Reset_Encoders();
                 TurnRight(1, 2450);
                 Reset_Encoders();
@@ -229,12 +246,12 @@ public class Auto {
                 Reset_Encoders();
                 StrafeLeft(1, 2950);
                 Reset_Encoders();
-                blocker.setPosition(0.94);
+                wall.setPosition(0.94);
                 Reset_Encoders();
                 Launch_Three();
                 Reset_Encoders();
-                Artifactlauncher.setPower(0);
-                blocker.setPosition(0.86);
+                launcher.setPower(0);
+                wall.setPosition(0.86);
                 sleep(800);
                 Reset_Encoders();
                 Backward(1, 5000);
@@ -246,108 +263,128 @@ public class Auto {
          * This is method for moving forward and backwards
          */
         private void Launch(int Power, int Distance) {
-            ((DcMotorEx) Artifactlauncher).setVelocity(1345);
+            ((DcMotorEx) launcher).setVelocity(1345);
             sleep(900);
-            transfer.setPosition(0.55);
+            kicker.setPosition(0.55);
             sleep(400);
-            transfer.setPosition(0.22);
+            kicker.setPosition(0.22);
         }
 
         /**
          * This is method for moving forward and backwards
          */
         private void StrafeLeft(int Power, int Distance) {
-            Backward_Ticks = BR.getCurrentPosition();
-            Foward_Ticks = -FL.getCurrentPosition();
-            Strafe_Ticks = FR.getCurrentPosition();
-            FL.setDirection(DcMotor.Direction.REVERSE);
-            BL.setDirection(DcMotor.Direction.REVERSE);
-            FR.setPower(FORWARD_SPEED);
-            FL.setPower(-FORWARD_SPEED);
-            BL.setPower(FORWARD_SPEED);
-            BR.setPower(-FORWARD_SPEED);
+            Backward_Ticks = br
+                    .getCurrentPosition();
+            Foward_Ticks = -fl.getCurrentPosition();
+            Strafe_Ticks = fr.getCurrentPosition();
+            fl.setDirection(DcMotor.Direction.REVERSE);
+            bl.setDirection(DcMotor.Direction.REVERSE);
+            fr.setPower(FORWARD_SPEED);
+            fl.setPower(-FORWARD_SPEED);
+            bl.setPower(FORWARD_SPEED);
+            br
+                    .setPower(-FORWARD_SPEED);
             while (opModeIsActive() && Strafe_Ticks < Distance) {
-                if (FL.getCurrentPosition() > 0) {
-                    FL.setPower(-FORWARD_SPEED + 0.027);
-                    BL.setPower(FORWARD_SPEED + 0.027);
-                    BR.setPower(-FORWARD_SPEED);
-                    FR.setPower(FORWARD_SPEED);
-                    telemetry.addData("Motor FL ", FL.getCurrentPosition());
-                    telemetry.addData("Motor FR", -FR.getCurrentPosition());
-                    telemetry.addData("Motor BR", BR.getCurrentPosition());
+                if (fl.getCurrentPosition() > 0) {
+                    fl.setPower(-FORWARD_SPEED + 0.027);
+                    bl.setPower(FORWARD_SPEED + 0.027);
+                    br
+                            .setPower(-FORWARD_SPEED);
+                    fr.setPower(FORWARD_SPEED);
+                    telemetry.addData("Motor fl ", fl.getCurrentPosition());
+                    telemetry.addData("Motor fr", -fr.getCurrentPosition());
+                    telemetry.addData("Motor br" +
+                            "", br
+                            .getCurrentPosition());
                     telemetry.addData("Ticks", Distance);
-                    Backward_Ticks = BR.getCurrentPosition();
-                    Foward_Ticks = FL.getCurrentPosition();
-                    Strafe_Ticks = -FR.getCurrentPosition();
+                    Backward_Ticks = br
+                            .getCurrentPosition();
+                    Foward_Ticks = fl.getCurrentPosition();
+                    Strafe_Ticks = -fr.getCurrentPosition();
                     telemetry.update();
                 }
-                telemetry.addData("Motor FL ", FL.getCurrentPosition());
-                telemetry.addData("Motor FR", -FR.getCurrentPosition());
-                telemetry.addData("Motor BR", BR.getCurrentPosition());
+                telemetry.addData("Motor fl ", fl.getCurrentPosition());
+                telemetry.addData("Motor fr", -fr.getCurrentPosition());
+                telemetry.addData("Motor br" +
+                        "", br
+                        .getCurrentPosition());
                 telemetry.addData("Ticks", Distance);
-                Backward_Ticks = BR.getCurrentPosition();
-                Foward_Ticks = FL.getCurrentPosition();
-                Strafe_Ticks = -FR.getCurrentPosition();
+                Backward_Ticks = br
+                        .getCurrentPosition();
+                Foward_Ticks = fl.getCurrentPosition();
+                Strafe_Ticks = -fr.getCurrentPosition();
                 telemetry.update();
             }
-            FR.setPower(0);
-            FL.setPower(0);
-            BL.setPower(0);
-            BR.setPower(0);
+            fr.setPower(0);
+            fl.setPower(0);
+            bl.setPower(0);
+            br
+                    .setPower(0);
         }
 
         /**
          * This is method for moving forward and backwards
          */
         private void StrafeRight(double Distance) {
-            Backward_Ticks = BR.getCurrentPosition();
-            Foward_Ticks = -FL.getCurrentPosition();
-            Strafe_Ticks = -FR.getCurrentPosition();
-            FL.setDirection(DcMotor.Direction.REVERSE);
-            BL.setDirection(DcMotor.Direction.REVERSE);
-            FR.setPower(-FORWARD_SPEED);
-            FL.setPower(FORWARD_SPEED);
-            BL.setPower(-FORWARD_SPEED);
-            BR.setPower(FORWARD_SPEED);
+            Backward_Ticks = br
+                    .getCurrentPosition();
+            Foward_Ticks = -fl.getCurrentPosition();
+            Strafe_Ticks = -fr.getCurrentPosition();
+            fl.setDirection(DcMotor.Direction.REVERSE);
+            bl.setDirection(DcMotor.Direction.REVERSE);
+            fr.setPower(-FORWARD_SPEED);
+            fl.setPower(FORWARD_SPEED);
+            bl.setPower(-FORWARD_SPEED);
+            br
+                    .setPower(FORWARD_SPEED);
             while (opModeIsActive() && Strafe_Ticks < Distance) {
-                if (FL.getCurrentPosition() > 0) {
-                    FL.setPower(FORWARD_SPEED - 0.027);
-                    BL.setPower(-FORWARD_SPEED - 0.027);
-                    BR.setPower(FORWARD_SPEED);
-                    FR.setPower(-FORWARD_SPEED);
-                    telemetry.addData("Motor FL ", FL.getCurrentPosition());
-                    telemetry.addData("Motor FR", -FR.getCurrentPosition());
-                    telemetry.addData("Motor BR", BR.getCurrentPosition());
+                if (fl.getCurrentPosition() > 0) {
+                    fl.setPower(FORWARD_SPEED - 0.027);
+                    bl.setPower(-FORWARD_SPEED - 0.027);
+                    br
+                            .setPower(FORWARD_SPEED);
+                    fr.setPower(-FORWARD_SPEED);
+                    telemetry.addData("Motor fl ", fl.getCurrentPosition());
+                    telemetry.addData("Motor fr", -fr.getCurrentPosition());
+                    telemetry.addData("Motor br" +
+                            "", br
+                            .getCurrentPosition());
                     telemetry.addData("Ticks", Distance);
-                    Backward_Ticks = BR.getCurrentPosition();
-                    Foward_Ticks = FL.getCurrentPosition();
-                    Strafe_Ticks = -FR.getCurrentPosition();
+                    Backward_Ticks = br
+                            .getCurrentPosition();
+                    Foward_Ticks = fl.getCurrentPosition();
+                    Strafe_Ticks = -fr.getCurrentPosition();
                     telemetry.update();
                 }
-                telemetry.addData("Motor FL ", FL.getCurrentPosition());
-                telemetry.addData("Motor FR", FR.getCurrentPosition());
-                telemetry.addData("Motor BR", BR.getCurrentPosition());
+                telemetry.addData("Motor fl ", fl.getCurrentPosition());
+                telemetry.addData("Motor fr", fr.getCurrentPosition());
+                telemetry.addData("Motor br" +
+                        "", br
+                        .getCurrentPosition());
                 telemetry.addData("Ticks", Distance);
-                Backward_Ticks = BR.getCurrentPosition();
-                Foward_Ticks = FL.getCurrentPosition();
-                Strafe_Ticks = FR.getCurrentPosition();
+                Backward_Ticks = br
+                        .getCurrentPosition();
+                Foward_Ticks = fl.getCurrentPosition();
+                Strafe_Ticks = fr.getCurrentPosition();
                 telemetry.update();
             }
-            FR.setPower(0);
-            FL.setPower(0);
-            BL.setPower(0);
-            BR.setPower(0);
+            fr.setPower(0);
+            fl.setPower(0);
+            bl.setPower(0);
+            br
+                    .setPower(0);
         }
 
         /**
          * This is method for moving forward and backwards
          */
         private void Launch2(int Power, int Distance) {
-            ((DcMotorEx) Artifactlauncher).setVelocity(1340);
+            ((DcMotorEx) launcher).setVelocity(1340);
             sleep(800);
-            transfer.setPosition(0.55);
+            kicker.setPosition(0.55);
             sleep(400);
-            transfer.setPosition(0.22);
+            kicker.setPosition(0.22);
         }
 
         /**
@@ -365,7 +402,7 @@ public class Auto {
             sleep(800);
             intakestring.setPower(0);
             Launch2(1, 100);
-            ((DcMotorEx) Artifactlauncher).setVelocity(1380);
+            ((DcMotorEx) launcher).setVelocity(1380);
         }
 
         /**
@@ -373,31 +410,31 @@ public class Auto {
          */
         private void Launch_Three() {
             Launch(1500, 700);
-            sleep(125);
             intakestring.setPower(-1);
-            sleep(700);
+            sleep(400);
             intakestring.setPower(0);
             Launch(100, 100);
-            sleep(125);
             intakestring.setPower(-1);
-            sleep(800);
+            sleep(400);
             intakestring.setPower(0);
             Launch(1, 100);
-            ((DcMotorEx) Artifactlauncher).setVelocity(1400);
+            ((DcMotorEx) launcher).setVelocity(1400);
         }
 
         /**
          * Describe this function...
          */
         private void Reset_Encoders() {
-            BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            br
+                    .setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            br
+                    .setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
 
@@ -415,20 +452,22 @@ public class Auto {
             double Relative_Y;
             double Relative_X;
 
-            if (FlipLeft) {
-                Raw_Left_Position = BL.getCurrentPosition() * -1;
+            if (flipLeft) {
+                Raw_Left_Position = bl.getCurrentPosition() * -1;
             } else {
-                Raw_Left_Position = BL.getCurrentPosition() * 1;
+                Raw_Left_Position = bl.getCurrentPosition() * 1;
             }
-            if (FlipMiddle) {
-                Raw_Middle_Position = FR.getCurrentPosition() * -1;
+            if (flipMiddle) {
+                Raw_Middle_Position = fr.getCurrentPosition() * -1;
             } else {
-                Raw_Middle_Position = FR.getCurrentPosition() * 1;
+                Raw_Middle_Position = fr.getCurrentPosition() * 1;
             }
-            if (FlipRight) {
-                Raw_Right_Position = BR.getCurrentPosition() * -1;
+            if (flipRight) {
+                Raw_Right_Position = br
+                        .getCurrentPosition() * -1;
             } else {
-                Raw_Right_Position = BR.getCurrentPosition() * 1;
+                Raw_Right_Position = br
+                        .getCurrentPosition() * 1;
             }
             Left_Position = Raw_Left_Position - Last_Left;
             Middle_Position = Raw_Middle_Position - Last_Middle;
@@ -447,9 +486,6 @@ public class Auto {
             Y = (int) (Y + Relative_Y);
         }
 
-        /**
-         * Describe this function...
-         */
         private void Reset_To(double coolx, double cooly, double coolz) {
             X_offset = (int) (Get_X() + (X_offset - coolx));
             Y_offset = (int) (Get_Y() + (Y_offset - cooly));
@@ -464,16 +500,17 @@ public class Auto {
             double Encoder_Wheel_Radius;
             int Encoder_Ticks_per_Rotation;
 
-            FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            br
+                    .setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             Distance = 200;
             FORWARD_SPEED = 0.65;
             Foward_Ticks = 0.5;
-            FlipLeft = false;
-            FlipMiddle = false;
-            FlipRight = true;
+            flipLeft = false;
+            flipMiddle = false;
+            flipRight = true;
             Side_Encoder_Distance = 9.375;
             Middle_encoder_Offset = 4;
             Encoder_Wheel_Radius = 0.944882;
@@ -488,39 +525,28 @@ public class Auto {
             Last_Left = 0;
             Last_Middle = 0;
             Last_Right = 0;
-            BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        /**
-         * Describe this function...
-         */
         private double Get_X() {
             Odometry_Update();
             return X;
         }
 
-        /**
-         * Describe this function...
-         */
         private double Get_Y() {
             Odometry_Update();
             return Y;
         }
 
-        /**
-         * Describe this function...
-         */
         private double Get_Z() {
             Odometry_Update();
             return Z;
         }
     }
-
-}
