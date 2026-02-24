@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.tutorials;
+package org.firstinspires.ftc.teamcode.tutorial;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -24,6 +24,11 @@ public class AprilTagAutoRotate extends OpMode {
     double goalX = 0;
     double angleTolerance = .2;
     double kd = .0001;
+
+
+
+
+
     double curTime = 0;
     double lastTime = 0;
 
@@ -164,7 +169,7 @@ public class AprilTagAutoRotate extends OpMode {
             backRightPower /= max;
 
         }
-        double throttle = Range.clip(gamepad1.right_trigger + .2, 0, 1);
+        double throttle = Range.clip(gamepad1.right_trigger + .3, 0, 1);
         fl.setPower(frontLeftPower * throttle);
         fr.setPower(frontRightPower * throttle);
         bl.setPower(backLeftPower * throttle);

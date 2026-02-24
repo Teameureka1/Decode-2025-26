@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.mechanisms;
 
+import android.os.Build;
 import android.util.Size;
 
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
@@ -41,9 +44,11 @@ public class AprilTagWebcam {
 
 
                 VisionPortal.Builder builder = new VisionPortal.Builder();
-                builder.setCamera(hwMap.get(WebcamName.class, "limelight"));
-                builder.setCameraResolution(new Size(640,480));
-                builder.enableLiveView(false);
+                builder.setCamera((CameraName) hwMap.get(Limelight3A.class, "limelight"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder.setCameraResolution(new Size(640,480));
+        }
+        builder.enableLiveView(false);
 
                 builder.addProcessor(aprilTagProcessor);
 
