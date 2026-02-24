@@ -9,9 +9,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Auto {
 
 
-    @Autonomous(name = "BlueCloseLaunchSixMove (Blocks to Java)")
+    @Autonomous(name = "auto")
     @Disabled
-    public class BlueCloseLaunchSixMove extends LinearOpMode {
+    public class auto extends LinearOpMode {
 
         private DcMotor FL;
         private DcMotor BL;
