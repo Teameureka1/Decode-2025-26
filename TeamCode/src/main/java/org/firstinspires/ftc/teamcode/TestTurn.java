@@ -6,9 +6,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+@Autonomous(name = "TestTurn")
+public class TestTurn extends LinearOpMode{
 
-    @Autonomous(name = "Auto")
-    public class Auto extends LinearOpMode {
+
 
         private DcMotor fl;
         private DcMotor bl;
@@ -176,55 +177,7 @@ import com.qualcomm.robotcore.hardware.Servo;
             InitOdometry();
             waitForStart();
             if (opModeIsActive()) {
-                wall.setPosition(0.94);
-                angle.setPosition(.61);
-                ((DcMotorEx) launcher).setVelocity(1300);
-                Reset_Encoders();
-                telemetry.addData("Velocity", ((DcMotorEx) launcher).getVelocity());
-                telemetry.addData("x", Get_X());
-                telemetry.addData("y", Get_Y());
-                telemetry.addData("z", Get_Z());
-                telemetry.update();
-                Reset_Encoders();
-                Forward(1, 12000);
-                Reset_Encoders();
-                Launch_Three();
-                Reset_Encoders();
-                sleep(1000);
-                launcher.setPower(0);
-                wall.setPosition(0.86);
-                Reset_Encoders();
-                TurnRight(1, 2800);
-                Reset_Encoders();
-                StrafeLeft(1, 4600);
-                intakewheels.setPower(-1);
-                intakestring.setPower(-1);
-                sleep(1000);
-                Slow_Forward(1, 11300);
-                Reset_Encoders();
-                Backward(1, 6500);
-                Reset_Encoders();
-                sleep(250);
-                intakewheels.setPower(1);
-                intakestring.setPower(-1);
-                sleep(1000);
-                intakestring.setPower(0);
-                intakewheels.setPower(0);
-                Reset_Encoders();
-                TurnLeft(1, 3100);
-                Reset_Encoders();
-                StrafeLeft(1, 2950);
-                Reset_Encoders();
-                wall.setPosition(0.94);
-                Reset_Encoders();
-                Launch_Three();
-                Reset_Encoders();
-                launcher.setPower(0);
-                wall.setPosition(0.86);
-                sleep(800);
-                Reset_Encoders();
-                Backward(1, 5000);
-                StrafeLeft(1, 5000);
+               TurnLeft(1, 2085);
             }
         }
 
@@ -252,9 +205,9 @@ import com.qualcomm.robotcore.hardware.Servo;
                     bl.setPower(drivePower + 0.027);
                     br.setPower(-drivePower);
                     fr.setPower(drivePower);
-                    telemetry.addData("Motor fl ", fl.getCurrentPosition());
+                    telemetry.addData("Motor fl", fl.getCurrentPosition());
                     telemetry.addData("Motor fr", -fr.getCurrentPosition());
-                    telemetry.addData("Motor br" + "", br.getCurrentPosition());
+                    telemetry.addData("Motor br", br.getCurrentPosition());
                     telemetry.addData("Ticks", Distance);
                     Backward_Ticks = br.getCurrentPosition();
                     Foward_Ticks = fl.getCurrentPosition();
