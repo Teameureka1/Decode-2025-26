@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.Range;
 
@@ -36,9 +38,9 @@ public class IMUTurn90 extends LinearOpMode {
         // IMU setup (Control Hub built-in)
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(
-                new com.qualcomm.hardware.rev.RevHubOrientationOnRobot(
-                        com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                        com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
                 )
         );
         imu.initialize(parameters);
@@ -50,7 +52,7 @@ public class IMUTurn90 extends LinearOpMode {
             // Reset yaw to zero before turning
             imu.resetYaw();
 
-            turnToAngle(90, .2);  // Turn 90 degrees at 40% max power
+            turnToAngle(90, .4);  // Turn 90 degrees at 40% max power
 
             sleep(1000);
         }
@@ -58,13 +60,14 @@ public class IMUTurn90 extends LinearOpMode {
     private void turnToAngle(double targetAngle, double maxPower) {
 
         double kP = 0.003;   // proportional
-        double kD = 0.002;   // damping
+        double kD = 0.001;   // damping
         double tolerance = 6; // degrees
 
         double lastError = 0;
         long lastTime = System.currentTimeMillis();
         long insideStartTime = 0;
 
+        double power = 0;
         while (opModeIsActive()) {
 
             double currentAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
@@ -79,14 +82,14 @@ public class IMUTurn90 extends LinearOpMode {
             double deltaTime = (currentTime - lastTime) / 1000.0;
             double derivative = (error - lastError) / deltaTime;
 
-            double power = (kP * error) + (kD * derivative);
+            power = (kP * error) + (kD * derivative);
             power = Range.clip(power, -maxPower, maxPower);
 
             // Smooth slow-down near target
             if (Math.abs(error) < 15) power *= 0.6;
 
             // Prevent tiny twitching
-            if (Math.abs(power) < 0.22) power = 0;
+            if (Math.abs(power) < 0.3) power = 0;
 
             // Apply power to mecanum wheels
             frontLeft.setPower(power);
@@ -97,7 +100,7 @@ public class IMUTurn90 extends LinearOpMode {
             // --- Stop if within tolerance for 200ms ---
             if (Math.abs(error) <= tolerance) {
                 if (insideStartTime == 0) insideStartTime = System.currentTimeMillis();
-                if (System.currentTimeMillis() - insideStartTime >= 200) break;
+                if (System.currentTimeMillis() - insideStartTime >= 300) break;
             } else {
                 insideStartTime = 0;
             }
@@ -111,6 +114,12 @@ public class IMUTurn90 extends LinearOpMode {
             telemetry.addData("Power", power);
             telemetry.update();
         }
+
+        frontLeft.setPower(-0.05 * Math.signum(power));
+        frontRight.setPower(0.05 * Math.signum(power));
+        backLeft.setPower(-0.05 * Math.signum(power));
+        backRight.setPower(0.05 * Math.signum(power));
+        sleep(50);
 
         // Stop motors
         frontLeft.setPower(0);
