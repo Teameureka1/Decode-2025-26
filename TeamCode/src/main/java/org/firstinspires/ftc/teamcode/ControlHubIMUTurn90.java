@@ -61,8 +61,8 @@ public class ControlHubIMUTurn90 extends LinearOpMode {
 
     private void turnToAngle(double targetAngle) {
 
-        double power = 0.4;
-        double tolerance = 7; // bigger tolerance prevents shaking
+        double power = .6;
+        double tolerance = 3; // bigger tolerance prevents shaking
         long startTime = System.currentTimeMillis();
 
         while (opModeIsActive()) {
@@ -81,7 +81,7 @@ public class ControlHubIMUTurn90 extends LinearOpMode {
             }
 
             // Safety timeout (2 seconds)
-            if (System.currentTimeMillis() - startTime > 1475) {
+            if (System.currentTimeMillis() - startTime > 985) {
                 break;
             }
 
