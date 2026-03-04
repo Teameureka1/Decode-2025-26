@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -37,8 +38,8 @@ public class ControlHubIMUTurn90 extends LinearOpMode {
 
         IMU.Parameters parameters = new IMU.Parameters(
                 new com.qualcomm.hardware.rev.RevHubOrientationOnRobot(
-                        com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                        com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                        com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection.UP
                 )
         );
 
@@ -61,7 +62,8 @@ public class ControlHubIMUTurn90 extends LinearOpMode {
 
     private void turnToAngle(double targetAngle) {
 
-        double power = .6;
+
+        double power = .35;
         double tolerance = 3; // bigger tolerance prevents shaking
         long startTime = System.currentTimeMillis();
 
@@ -80,8 +82,8 @@ public class ControlHubIMUTurn90 extends LinearOpMode {
                 break;
             }
 
-            // Safety timeout (2 seconds)
-            if (System.currentTimeMillis() - startTime > 985) {
+            // Safety timeout (1250 seconds)
+            if (System.currentTimeMillis() - startTime > 3000) {
                 break;
             }
 
@@ -101,13 +103,6 @@ public class ControlHubIMUTurn90 extends LinearOpMode {
         frontLeft.setPower(0);
         frontRight.setPower(0);
         backLeft.setPower(0);
-        backRight.setPower(0);
-    }
-
-    private void stopMotors() {
-        frontLeft.setPower(0);
-        backLeft.setPower(0);
-        frontRight.setPower(0);
         backRight.setPower(0);
     }
 }
