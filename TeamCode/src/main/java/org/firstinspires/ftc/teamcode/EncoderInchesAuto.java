@@ -3,14 +3,18 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
 
 @Autonomous(name = "EncoderInchesAuto")
 public class EncoderInchesAuto extends LinearOpMode {
 
-    DcMotor fl, bl, fr, br;
+    public DcMotorEx odometerForward;
+    public DcMotorEx odometerStrafe;
+    DcMotorEx fl, bl, fr, br;
     IMU imu;
 
     static final double WHEEL_DIAMETER_INCHES = 4.0;
@@ -21,10 +25,21 @@ public class EncoderInchesAuto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         // Drive motors
-        fl = hardwareMap.get(DcMotor.class, "fl");
-        bl = hardwareMap.get(DcMotor.class, "bl");
-        fr = hardwareMap.get(DcMotor.class, "fr");
-        br = hardwareMap.get(DcMotor.class, "br");
+        fl = hardwareMap.get(DcMotorEx.class, "fl");
+        bl = hardwareMap.get(DcMotorEx.class, "bl");
+        fr = hardwareMap.get(DcMotorEx.class, "fr");
+        br = hardwareMap.get(DcMotorEx.class, "br");
+
+        odometerForward = fl;
+        odometerStrafe = bl;
+
+        fl.getCurrentPosition();
+        bl.getCurrentPosition();
+
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         fl.setDirection(DcMotor.Direction.REVERSE);
         bl.setDirection(DcMotor.Direction.REVERSE);
@@ -34,8 +49,7 @@ public class EncoderInchesAuto extends LinearOpMode {
         fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -47,13 +61,14 @@ public class EncoderInchesAuto extends LinearOpMode {
         waitForStart();
 
         if(opModeIsActive()) {
-            moveForward(12, 0.5);
-            strafeRight(10, 0.4);
-            moveBackward(6, 0.3);
-            strafeLeft(8, 0.6);
-            turnToAngle(90);
+
 
             telemetry.addLine("Finished Autonomous");
+            while(opModeIsActive()) {
+                telemetry.addData("Forward Ticks ", fl.getCurrentPosition());
+                telemetry.addData("Strafe Ticks", bl.getCurrentPosition());
+                telemetry.update();
+            }
             telemetry.update();
         }
     }
@@ -114,15 +129,6 @@ public class EncoderInchesAuto extends LinearOpMode {
         bl.setPower(power);
         fr.setPower(power);
         br.setPower(power);
-
-        while(opModeIsActive() &&
-                (fl.isBusy() || bl.isBusy() || fr.isBusy() || br.isBusy())) {
-            telemetry.addData("FL", fl.getCurrentPosition());
-            telemetry.addData("FR", fr.getCurrentPosition());
-            telemetry.addData("BL", bl.getCurrentPosition());
-            telemetry.addData("BR", br.getCurrentPosition());
-            telemetry.update();
-        }
     }
 
     private void hardStop() {
@@ -134,7 +140,7 @@ public class EncoderInchesAuto extends LinearOpMode {
     }
 
     private void turnToAngle(double targetAngle) {
-        double power = 0.5;
+        double power = 0.4;
         double tolerance = 3; // degrees
 
         while(opModeIsActive()) {

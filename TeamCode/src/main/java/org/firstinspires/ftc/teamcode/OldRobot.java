@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name = "BestTeleEver")
-public class BestTeleEver extends LinearOpMode {
+@TeleOp(name = "Old Robot")
+public class OldRobot extends LinearOpMode {
 
     private DcMotorEx fl;
     private DcMotorEx br;
