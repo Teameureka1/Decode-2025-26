@@ -100,7 +100,7 @@ public class NewRobot extends LinearOpMode {
                 intake.setPower(1);
                 kicker.setPower(1);
             } else if (intakeInput > .1) {
-                intake.setPower(-.6);
+                intake.setPower(-.4);
                 kicker.setPower(-1);
             } else {
                 intake.setPower(0);
@@ -119,10 +119,10 @@ public class NewRobot extends LinearOpMode {
                 launcher.setVelocity(0);
             }
             if (gamepad2.a) {
-                wall.setPosition(.5);
+                wall.setPosition(.05);
             }
             if (gamepad2.y) {
-                wall.setPosition(.68);
+                wall.setPosition(.25);
             }
 
         }
