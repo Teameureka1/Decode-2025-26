@@ -12,7 +12,7 @@ public class FlywheelTuner extends OpMode {
 
     public DcMotorEx launcher;
 
-    double highVelocity = 1700;
+    double highVelocity = 1675;
     double lowVelocity = 1000;
 
     double curTargetVelocity = highVelocity;
@@ -29,7 +29,7 @@ public class FlywheelTuner extends OpMode {
     public void init() {
         launcher = hardwareMap.get(DcMotorEx.class, "launcher");
         launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        launcher.setDirection(DcMotorSimple.Direction.FORWARD);
+        launcher.setDirection(DcMotorSimple.Direction.REVERSE);
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, 0, 0, F);
         launcher.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
         telemetry.addLine("Init Complete");

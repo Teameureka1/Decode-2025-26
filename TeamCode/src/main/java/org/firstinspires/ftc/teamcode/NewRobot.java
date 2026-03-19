@@ -15,6 +15,7 @@ public class NewRobot extends LinearOpMode {
     private DcMotorEx intake;
     private DcMotorEx kicker;
     private DcMotorEx launcher;
+    private DcMotorEx launcher2;
 
     private DcMotorEx fl;
     private DcMotorEx br;
@@ -31,9 +32,12 @@ public class NewRobot extends LinearOpMode {
         intake = hardwareMap.get(DcMotorEx.class, "intake");
         kicker = hardwareMap.get(DcMotorEx.class, "kicker");
         launcher = hardwareMap.get(DcMotorEx.class, "launcher");
+        launcher2 = hardwareMap.get(DcMotorEx.class, "launcher2");
+
 
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(55, 0, 0, 14.5);
         launcher.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        launcher2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
 
 
         fl = hardwareMap.get(DcMotorEx.class, "fl");
@@ -42,9 +46,11 @@ public class NewRobot extends LinearOpMode {
         br = hardwareMap.get(DcMotorEx.class, "br");
         fr = hardwareMap.get(DcMotorEx.class, "fr");
         //--------------------DIRECTION--------------------------------
-        intake.setDirection(DcMotorSimple.Direction.FORWARD);
-        kicker.setDirection(DcMotorSimple.Direction.REVERSE);
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        kicker.setDirection(DcMotorSimple.Direction.FORWARD);
         launcher.setDirection(DcMotorSimple.Direction.REVERSE);
+        launcher2.setDirection(DcMotorSimple.Direction.FORWARD);
+
 
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
         br.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -57,7 +63,6 @@ public class NewRobot extends LinearOpMode {
         bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-       launcher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         //-------------------START OF OPMODE--------------------------
@@ -73,7 +78,7 @@ public class NewRobot extends LinearOpMode {
             double intakeBackwardsInput = -gamepad2.left_stick_y;
             double launcherInput = gamepad2.right_trigger;
             double launcherInputFar = gamepad2.left_trigger;
-            double throttle = Range.clip(gamepad1.right_trigger + .22, 0, 1);
+            double throttle = Range.clip(gamepad1.right_trigger + .23, 0, 1);
 
             double frontLeftPower = axial + lateral + yaw;
             double frontRightPower = axial - lateral - yaw;
@@ -97,33 +102,37 @@ public class NewRobot extends LinearOpMode {
             br.setPower(backRightPower * throttle);
             //---------------------INTAKE----------------------------
             if (intakeBackwardsInput > .05) {
-                intake.setPower(1);
+                intake.setPower(.6);
                 kicker.setPower(1);
             } else if (intakeInput > .1) {
-                intake.setPower(-.4);
+                intake.setPower(-1);
                 kicker.setPower(-1);
             } else {
                 intake.setPower(0);
                 kicker.setPower(0);
             }
+            if (gamepad2.a) {
+                wall.setPosition(.15);
+            }
+            if (gamepad2.y) {
+                wall.setPosition(.32);
+            }
             //-------------------------Launcher------------------------------------------------
             // ---------------Close-----------------------
             if (launcherInput > .35) {
-                launcher.setVelocity(1375);
+                launcher.setVelocity(1240);
+                launcher2.setVelocity(1240);
             }
             //-----------------Far-------------------------
             else if (launcherInputFar > .35) {
-                launcher.setVelocity(1615);
+                launcher.setVelocity(1700);
+                launcher2.setVelocity(1700);
             }
             else {
-                launcher.setVelocity(0);
+                launcher.setVelocity(100);
+                launcher2.setVelocity(100);
             }
-            if (gamepad2.a) {
-                wall.setPosition(.05);
-            }
-            if (gamepad2.y) {
-                wall.setPosition(.25);
-            }
+
 
         }
     }
