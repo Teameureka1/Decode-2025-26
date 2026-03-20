@@ -102,7 +102,7 @@ public class NewRobot extends LinearOpMode {
             br.setPower(backRightPower * throttle);
             //---------------------INTAKE----------------------------
             if (intakeBackwardsInput > .05) {
-                intake.setPower(.6);
+                intake.setPower(1);
                 kicker.setPower(1);
             } else if (intakeInput > .1) {
                 intake.setPower(-1);
@@ -120,17 +120,17 @@ public class NewRobot extends LinearOpMode {
             //-------------------------Launcher------------------------------------------------
             // ---------------Close-----------------------
             if (launcherInput > .35) {
-                launcher.setVelocity(1240);
-                launcher2.setVelocity(1240);
+                launcher.setVelocity(1180);
+                launcher2.setVelocity(1180);
             }
             //-----------------Far-------------------------
             else if (launcherInputFar > .35) {
-                launcher.setVelocity(1700);
-                launcher2.setVelocity(1700);
+                launcher.setVelocity(1520);
+                launcher2.setVelocity(1520);
             }
             else {
-                launcher.setVelocity(100);
-                launcher2.setVelocity(100);
+                launcher.setVelocity(1000);
+                launcher2.setVelocity(1000);
             }
 
 
