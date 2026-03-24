@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -21,10 +23,15 @@ public class NewRobot extends LinearOpMode {
     private DcMotorEx br;
     private DcMotorEx bl;
     private DcMotorEx fr;
-
+    private Limelight3A limelight;
     Servo wall;
 
-
+    // Auto-rotate tuning
+    private final double kP       = 0.02;  // Proportional gain
+    private final double minPower = 0.06;  // Minimum rotational powerServo wall;
+    private final double maxPower = 0.4;   // Maximum rotational power
+    private final double deadzone = 0.8;   // Degrees deadzone for rotation
+    @Override
     public void runOpMode() throws InterruptedException {
 
         //--------------------CONFIGURATION---------------------------
@@ -63,13 +70,17 @@ public class NewRobot extends LinearOpMode {
         bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-
+         // --- LIMELIGHT SETUP ---
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        telemetry.setMsTransmissionInterval(11);
+        limelight.pipelineSwitch(8);
+        limelight.start();
 
         //-------------------START OF OPMODE--------------------------
 
         waitForStart();
         while (opModeIsActive()) {
-
+                    
         //-------------------GAMEPAD INPUTS---------------------------
             double axial = -gamepad1.left_stick_y;
             double lateral = gamepad1.left_stick_x;
@@ -120,20 +131,18 @@ public class NewRobot extends LinearOpMode {
             //-------------------------Launcher------------------------------------------------
             // ---------------Close-----------------------
             if (launcherInput > .35) {
-                launcher.setVelocity(1180);
-                launcher2.setVelocity(1180);
+                launcher.setVelocity(1140);
+                launcher2.setVelocity(1140);
             }
             //-----------------Far-------------------------
             else if (launcherInputFar > .35) {
-                launcher.setVelocity(1520);
-                launcher2.setVelocity(1520);
+                launcher.setVelocity(1700);
+                launcher2.setVelocity(1700);
             }
             else {
                 launcher.setVelocity(1000);
                 launcher2.setVelocity(1000);
             }
-
-
         }
     }
 }

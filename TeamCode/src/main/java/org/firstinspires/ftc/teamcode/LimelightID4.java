@@ -6,18 +6,27 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.List;
 
-@TeleOp(name = "Mecanum Limelight AutoRotate ID20 Deadzone")
-public class MecanumLimelightAutoRotateID20Deadzone extends LinearOpMode {
+@TeleOp(name = "LimelightID4")
+public class LimelightID4 extends LinearOpMode {
 
     // Mecanum motors
     private DcMotor frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
+    private DcMotorEx intake;
+    private DcMotorEx kicker;
+    private DcMotorEx launcher;
+    private DcMotorEx launcher2;
+
 
     // Limelight 3A
     private Limelight3A limelight;
+
 
     // Auto-rotate tuning
     private final double kP       = 0.02;  // Proportional gain
@@ -33,12 +42,27 @@ public class MecanumLimelightAutoRotateID20Deadzone extends LinearOpMode {
         backLeftMotor   = hardwareMap.get(DcMotor.class, "bl");
         frontRightMotor = hardwareMap.get(DcMotor.class, "fr");
         backRightMotor  = hardwareMap.get(DcMotor.class, "br");
+        Servo wall = hardwareMap.get(Servo.class, "wall");
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
+        kicker = hardwareMap.get(DcMotorEx.class, "kicker");
+        launcher = hardwareMap.get(DcMotorEx.class, "launcher");
+        launcher2 = hardwareMap.get(DcMotorEx.class, "launcher2");
+
 
         // Adjust directions if needed
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
         backRightMotor.setDirection(DcMotor.Direction.FORWARD);
+
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        kicker.setDirection(DcMotorSimple.Direction.FORWARD);
+        launcher.setDirection(DcMotorSimple.Direction.REVERSE);
+        launcher2.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(55, 0, 0, 14.5);
+        launcher.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        launcher2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
 
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -47,7 +71,9 @@ public class MecanumLimelightAutoRotateID20Deadzone extends LinearOpMode {
 
         // --- LIMELIGHT SETUP ---
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
-
+        telemetry.setMsTransmissionInterval(11);
+        limelight.pipelineSwitch(8);
+        limelight.start();
 
         telemetry.addLine("Ready! Press left trigger to auto-rotate to Tag 20");
         telemetry.update();
@@ -59,11 +85,40 @@ public class MecanumLimelightAutoRotateID20Deadzone extends LinearOpMode {
             // --- GAMEPAD INPUT ---
             double y = -gamepad1.left_stick_y; // Forward/back
             double x = gamepad1.left_stick_x;  // Strafe left/right
-            double manualRotation = gamepad1.right_stick_x * 0.7; // adjust sensitivity here
+            double manualRotation = gamepad1.right_stick_x * .7; // adjust sensitivity here
             double rotation = manualRotation;
 
             boolean leftTrigger = gamepad1.left_trigger > 0.1; // Auto-rotate trigger
+            double intakeInput = gamepad2.left_stick_y;
+            double intakeBackwardsInput = -gamepad2.left_stick_y;
+            double launcherInput = gamepad2.right_trigger;
+//---------------------INTAKE----------------------------
+            if (intakeBackwardsInput > .05) {
+                intake.setPower(1);
+                kicker.setPower(1);
+            } else if (intakeInput > .1) {
+                intake.setPower(-1);
+                kicker.setPower(-1);
+            } else {
+                intake.setPower(0);
+                kicker.setPower(0);
+            }
+            if (gamepad2.a) {
+                wall.setPosition(.15);
+            }
+            if (gamepad2.y) {
+                wall.setPosition(.32);
+            }
+            //-------------------------Launcher------------------------------------------------
+            // ---------------Close-----------------------
+            if (launcherInput > .35) {
+                launcher.setVelocity(1375);
+                launcher2.setVelocity(1375);
+            } else  {
+                launcher2.setVelocity(0);
+                launcher.setVelocity(0);
 
+            }
             if (leftTrigger) {
 
                 telemetry.addLine("=== AUTO ROTATE ACTIVE ===");
@@ -88,20 +143,20 @@ public class MecanumLimelightAutoRotateID20Deadzone extends LinearOpMode {
                         telemetry.addLine("No AprilTags Detected");
                         rotation = 0;
                     }
-                     else {
+                    else {
 
-                        boolean tag20Found = false;
+                        boolean tag4Found = false;
 
                         for (LLResultTypes.FiducialResult fr : fiducials) {
 
                             telemetry.addData("Seen Tag ID", fr.getFiducialId());
 
-                            if (fr.getFiducialId() == 20) {
+                            if (fr.getFiducialId() == 4) {
 
-                                tag20Found = true;
+                                tag4Found = true;
 
                                 double tx = fr.getTargetXDegrees();
-                                telemetry.addData("Tag20 TX", tx);
+                                telemetry.addData("Tag4 TX", tx);
 
                                 // --- DEADZONE & PROPORTIONAL ROTATION ---
                                 if (Math.abs(tx) < deadzone) {
@@ -109,7 +164,7 @@ public class MecanumLimelightAutoRotateID20Deadzone extends LinearOpMode {
                                     telemetry.addLine("Aligned (Inside Deadzone)");
                                 }
                                 else {
-                                    rotation = -tx * kP;
+                                    rotation = tx * kP;
 
                                     // Minimum rotation power
                                     if (Math.abs(rotation) < minPower) {
@@ -128,8 +183,8 @@ public class MecanumLimelightAutoRotateID20Deadzone extends LinearOpMode {
                             }
                         }
 
-                        if (!tag20Found) {
-                            telemetry.addLine("Tag 20 NOT Found");
+                        if (!tag4Found) {
+                            telemetry.addLine("Tag4 NOT Found");
                             rotation = 0; // fallback
                         }
                     }
@@ -162,5 +217,5 @@ public class MecanumLimelightAutoRotateID20Deadzone extends LinearOpMode {
             backRightMotor.setPower(br);
         }
         telemetry.update();
-        }
     }
+}
