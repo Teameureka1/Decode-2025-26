@@ -20,7 +20,7 @@ public class LimelightID20 extends LinearOpMode {
     private DcMotorEx intake, kicker, launcher, launcher2;
     private Limelight3A limelight;
 
-    private final double kP = 0.02;
+    private final double kP = 0.03;
     private final double minPower = 0.09;
     private final double maxPower = 0.38;
     private final double deadzone = 0.8;
@@ -106,8 +106,8 @@ public class LimelightID20 extends LinearOpMode {
 
             // === ONE‑TAP TRIPLE SHOT WITH SPIN-UP WAIT ===
 
-// Start burst when B is pressed
-            if (gamepad2.b && !tripleShotActive) {
+            // Start burst when B is pressed
+            if (gamepad2.x && !tripleShotActive) {
                 tripleShotActive = true;
                 tripleShotStartTime = System.currentTimeMillis();
 
@@ -116,18 +116,21 @@ public class LimelightID20 extends LinearOpMode {
                 launcher2.setVelocity(1275);
             }
 
-            // If burst is active, manage timing
+
             if (tripleShotActive) {
 
+                launcher.setVelocity(1275);
+                launcher2.setVelocity(1275);
                 long elapsed = System.currentTimeMillis() - tripleShotStartTime;
 
-                // Wait ~300ms for launcher to reach velocity
-                if (elapsed > 300 && elapsed < 1300) {
-                    kicker.setPower(1);   // Start kicker AFTER spin-up
+
+                if (elapsed > 1000 && elapsed < 1300) {
+
+                    kicker.setPower(1);
                 }
 
                 // Stop after ~1 second of firing
-                if (elapsed > 1300) {
+                if (elapsed > 1800) {
                     kicker.setPower(0);
                     tripleShotActive = false;
                 }
