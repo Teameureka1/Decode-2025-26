@@ -130,7 +130,7 @@ public class OldRobot extends LinearOpMode {
                 launcher.setVelocity(1480);
             }
             else {
-                launcher.setVelocity(1000);
+                launcher.setVelocity(0);
             }
             // -----------------------------------Kicker------------------------------------------
             if (kickerInput) {

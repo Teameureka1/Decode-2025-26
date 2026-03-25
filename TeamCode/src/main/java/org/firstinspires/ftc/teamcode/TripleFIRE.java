@@ -14,17 +14,17 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
 
-@TeleOp(name = "LimelightID20")
-public class LimelightID20 extends LinearOpMode {
+@TeleOp(name = "TripleFIRE")
+public class TripleFIRE extends LinearOpMode {
 
     private DcMotor frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
     private DcMotorEx intake, kicker, launcher, launcher2;
     private Limelight3A limelight;
 
     private final double kP = 0.035;
-    private final double minPower = 0.23;
+    private final double minPower = 0.25;
     private final double maxPower = 0.4;
-    private final double deadzone = 0.6;
+    private final double deadzone = 0.8;
 
     // === TRIPLE SHOT VARIABLES ===
     private boolean tripleShotActive = false;
@@ -105,8 +105,8 @@ public class LimelightID20 extends LinearOpMode {
                     launcher.setVelocity(1180);
                     launcher2.setVelocity(1180);
                 } else if (gamepad2.left_trigger > 0.35) {
-                    launcher.setVelocity(1580);
-                    launcher2.setVelocity(1580);
+                    launcher.setVelocity(1480);
+                    launcher2.setVelocity(1480);
                 } else {
                     launcher.setVelocity(1000);
                     launcher2.setVelocity(1000);
@@ -118,33 +118,34 @@ public class LimelightID20 extends LinearOpMode {
                 tripleShotActive = true;
                 tripleShotStartTime = runTime.seconds();
 
+                // Start launcher spin-up
                 launcher.setVelocity(1540);
                 launcher2.setVelocity(1540);
-
-                wall.setPosition(.15);
-            }
-            if (gamepad2.a && gamepad2.b && gamepad2.y && gamepad2.x) {
-                requestOpModeStop();
             }
 
             if (tripleShotActive) {
 
                 double elapsed = runTime.seconds() - tripleShotStartTime;
 
+                // Keep launcher at firing speed
                 launcher.setVelocity(1540);
                 launcher2.setVelocity(1540);
+                kicker.setPower(1);
+                intake.setPower(1);
 
+                // Wait for launcher to reach velocity BEFORE firing
                 boolean launcherReady = launcher.getVelocity() >= targetMotorVelocity - 50;
 
+                // FIRE ONLY when launcher is ready AND within 3 seconds
                 if (launcherReady && elapsed < 2.7) {
-                    kicker.setPower(1);
-                    intake.setPower(1);
+                    wall.setPosition(.15);
                 } else {
                     kicker.setPower(0);
                     intake.setPower(0);
                 }
 
-                if (elapsed > 2.75) {
+                // End burst
+                if (elapsed > 2.7) {
                     tripleShotActive = false;
                     wall.setPosition(.32);
                 }
