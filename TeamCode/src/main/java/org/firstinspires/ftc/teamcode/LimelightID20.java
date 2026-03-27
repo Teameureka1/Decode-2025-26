@@ -21,15 +21,15 @@ public class LimelightID20 extends LinearOpMode {
     private DcMotorEx intake, kicker, launcher, launcher2;
     private Limelight3A limelight;
 
+    // Reverse burst variables
+    boolean reverseBurstActive = false;
+    double reverseStartTime = 0;
+    boolean intakeWasUp = false;
+
     private final double kP = 0.035;
     private final double minPower = 0.23;
     private final double maxPower = 0.4;
     private final double deadzone = 0.6;
-
-    // === TRIPLE SHOT VARIABLES ===
-    private boolean tripleShotActive = false;
-    private double tripleShotStartTime = 0;
-    private final int targetMotorVelocity = 1540;
 
     ElapsedTime runTime = new ElapsedTime();
 
@@ -51,7 +51,8 @@ public class LimelightID20 extends LinearOpMode {
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        intake.setDirection(DcMotorSimple.Direction.FORWARD);
+        kicker.setDirection(DcMotorSimple.Direction.REVERSE);
         launcher.setDirection(DcMotorSimple.Direction.REVERSE);
 
         PIDFCoefficients pidf = new PIDFCoefficients(55, 0, 0, 14.5);
@@ -82,11 +83,32 @@ public class LimelightID20 extends LinearOpMode {
             // === INTAKE ===
             double intakeY = gamepad2.left_stick_y;
 
-            if (!tripleShotActive) {
-                if (intakeY > 0.1) {
+            // Detect stick UP properly (FTC sticks are negative when pushed up)
+            boolean intakeUp = intakeY < -0.1;
+
+            // Trigger reverse on RELEASE of UP
+            if (!intakeUp && intakeWasUp && !reverseBurstActive) {
+                reverseBurstActive = true;
+                reverseStartTime = runTime.milliseconds();
+            }
+
+            // Reverse burst (100 ms)
+            if (reverseBurstActive) {
+                if (runTime.milliseconds() - reverseStartTime < 200) {
+                    intake.setPower(1);
+
+                } else {
+                    reverseBurstActive = false;
+                    intake.setPower(0);
+                    kicker.setPower(0);
+                }
+            }
+            // Normal control
+            else {
+                if (intakeY < -0.1) {  // stick UP
                     intake.setPower(-1);
                     kicker.setPower(-1);
-                } else if (intakeY < -0.1) {
+                } else if (intakeY > 0.1) { // stick DOWN
                     intake.setPower(1);
                     kicker.setPower(1);
                 } else {
@@ -94,63 +116,29 @@ public class LimelightID20 extends LinearOpMode {
                     kicker.setPower(0);
                 }
             }
+
+            // Save stick state for next loop
+            intakeWasUp = intakeUp;
 
             // === WALL SERVO ===
             if (gamepad2.a) wall.setPosition(.15);
             if (gamepad2.y) wall.setPosition(.32);
 
-            // === NORMAL LAUNCHER CONTROL ===
-            if (!tripleShotActive) {
-                if (gamepad2.right_trigger > 0.35) {
-                    launcher.setVelocity(1180);
-                    launcher2.setVelocity(1180);
-                } else if (gamepad2.left_trigger > 0.35) {
-                    launcher.setVelocity(1580);
-                    launcher2.setVelocity(1580);
-                } else {
-                    launcher.setVelocity(1000);
-                    launcher2.setVelocity(1000);
-                }
+            // === LAUNCHER CONTROL ===
+            if (gamepad2.right_trigger > 0.35) {
+                launcher.setVelocity(1180);
+                launcher2.setVelocity(1180);
+            } else if (gamepad2.left_trigger > 0.35) {
+                launcher.setVelocity(1580);
+                launcher2.setVelocity(1580);
+            } else {
+                launcher.setVelocity(1000);
+                launcher2.setVelocity(1000);
             }
 
-            // === ONE‑TAP TRIPLE SHOT ===
-            if (gamepad2.dpad_down && !tripleShotActive) {
-                tripleShotActive = true;
-                tripleShotStartTime = runTime.seconds();
-
-                launcher.setVelocity(1540);
-                launcher2.setVelocity(1540);
-
-                wall.setPosition(.15);
-            }
             if (gamepad2.a && gamepad2.b && gamepad2.y && gamepad2.x) {
                 requestOpModeStop();
             }
-
-            if (tripleShotActive) {
-
-                double elapsed = runTime.seconds() - tripleShotStartTime;
-
-                launcher.setVelocity(1540);
-                launcher2.setVelocity(1540);
-
-                boolean launcherReady = launcher.getVelocity() >= targetMotorVelocity - 50;
-
-                if (launcherReady && elapsed < 2.7) {
-                    kicker.setPower(1);
-                    intake.setPower(1);
-                } else {
-                    kicker.setPower(0);
-                    intake.setPower(0);
-                }
-
-                if (elapsed > 2.75) {
-                    tripleShotActive = false;
-                    wall.setPosition(.32);
-                }
-            }
-
-
 
             // === AUTO ROTATE ===
             if (gamepad1.left_trigger > 0.1) {

@@ -3,12 +3,15 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+@TeleOp
 public class LimelightDistance extends OpMode {
 
     private Limelight3A limelight3A;
 
-    private double Camera_Height_In = 10.96;
+
+    private double Camera_Height_In = 10.9;
     private double Camera_Angle = 20;
     private double Goal_Height = 29.5;
     private double distance = 0;
@@ -25,6 +28,7 @@ public class LimelightDistance extends OpMode {
         LLResult llResult = limelight3A.getLatestResult();
 
         if (llResult != null && llResult.isValid()) {
+            distance = getDistance(llResult.getTy());
             telemetry.addData("Distance", distance);
         } else {
             telemetry.addData("No Target", "Found");
