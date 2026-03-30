@@ -11,9 +11,9 @@ public class LimelightDistance extends OpMode {
     private Limelight3A limelight3A;
 
 
-    private double Camera_Height_In = 10.9;
-    private double Camera_Angle = 20;
-    private double Goal_Height = 29.5;
+    private double Camera_Height_CM = 25.85;
+    private double Camera_Angle = 19;
+    private double Goal_Height = 74.95;
     private double distance = 0;
 
     @Override
@@ -27,10 +27,7 @@ public class LimelightDistance extends OpMode {
     @Override
     public void loop() {
         LLResult llResult = limelight3A.getLatestResult();
-
-        double knownDistance = 48;
-        double cameraAngle = Math.toDegrees(Math.atan((Goal_Height-Camera_Height_In)/knownDistance)) - llResult.getTy();
-        telemetry.addData("Camera Angle", cameraAngle);
+        
 
         if (llResult != null && llResult.isValid()) {
             distance = getDistance(llResult.getTy());
@@ -43,7 +40,7 @@ public class LimelightDistance extends OpMode {
 
     public double getDistance(double ty) {
          double angleToTarget = Camera_Angle + ty;
-               double heightDifference = Goal_Height - Camera_Height_In;
+               double heightDifference = Goal_Height - Camera_Height_CM ;
                return heightDifference / Math.tan(Math.toRadians(angleToTarget));
 
     }
