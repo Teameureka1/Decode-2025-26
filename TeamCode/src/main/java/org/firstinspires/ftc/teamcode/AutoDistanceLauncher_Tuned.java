@@ -14,27 +14,43 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
 
-@TeleOp(name = "LimelightID20")
-public class LimelightID20 extends LinearOpMode {
+@TeleOp(name = "AutoDistanceLauncher_Tuned")
+public class AutoDistanceLauncher_Tuned extends LinearOpMode {
 
     private DcMotor frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
     private DcMotorEx intake, kicker, launcher, launcher2;
     private Limelight3A limelight;
 
-    // Reverse burst variables
+    // Intake burst
     boolean reverseBurstActive = false;
     double reverseStartTime = 0;
     boolean intakeWasUp = false;
 
+    // Auto-rotate tuning
     private final double kP = 0.035;
     private final double minPower = 0.23;
     private final double maxPower = 0.4;
     private final double deadzone = 0.6;
 
+    // Distance (CM)
+    private final double CAMERA_HEIGHT = 25.85;
+    private final double CAMERA_ANGLE = 19;
+    private final double GOAL_HEIGHT = 74.95;
+
+    // Launcher tuning (new)
+    private final double BASE_VELOCITY = 900;
+    private final double DISTANCE_MULTIPLIER = 2.3; // tuned: 150cm -> 1300
+    private final double MIN_VELOCITY = 1000;
+    private final double MAX_VELOCITY = 1680;
+
+    // Smoothing (prevents jumpy RPM)
+    private double currentVelocity = 1000;
+    private final double SMOOTHING = 0.15;
+
     ElapsedTime runTime = new ElapsedTime();
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
 
         frontLeftMotor  = hardwareMap.get(DcMotor.class, "fl");
         backLeftMotor   = hardwareMap.get(DcMotor.class, "bl");
@@ -72,43 +88,68 @@ public class LimelightID20 extends LinearOpMode {
 
         while (opModeIsActive()) {
 
+            // === DRIVE INPUT ===
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x;
             double rotation = gamepad1.right_stick_x * 0.7;
 
-            // === THROTTLE ===
             double throttle = gamepad1.right_trigger;
             double speedMultiplier = 0.3 + (0.7 * throttle);
 
+            // === DISTANCE ===
+            double distance = -1;
+            LLResult llResult = limelight.getLatestResult();
+
+            if (llResult != null && llResult.isValid()) {
+                distance = getDistance(llResult.getTy());
+                telemetry.addData("Distance (cm)", distance);
+            } else {
+                telemetry.addData("Target", "NOT FOUND");
+            }
+
+            // === TARGET VELOCITY (NEW FORMULA) ===
+            double targetVelocity;
+
+            if (distance > 0) {
+                targetVelocity = BASE_VELOCITY + (distance * DISTANCE_MULTIPLIER);
+            } else {
+                targetVelocity = MIN_VELOCITY; // fallback
+            }
+
+            // Clamp velocity
+            targetVelocity = Math.max(MIN_VELOCITY, Math.min(MAX_VELOCITY, targetVelocity));
+
+            // Smooth velocity
+            currentVelocity += (targetVelocity - currentVelocity) * SMOOTHING;
+
+            launcher.setVelocity(currentVelocity);
+            launcher2.setVelocity(currentVelocity);
+
+            telemetry.addData("Target Vel", targetVelocity);
+            telemetry.addData("Actual Vel", currentVelocity);
+
             // === INTAKE ===
             double intakeY = gamepad2.left_stick_y;
-
-            // Detect stick UP properly (FTC sticks are negative when pushed up)
             boolean intakeUp = intakeY < -0.1;
 
-            // Trigger reverse on RELEASE of UP
             if (!intakeUp && intakeWasUp && !reverseBurstActive) {
                 reverseBurstActive = true;
                 reverseStartTime = runTime.milliseconds();
             }
 
-            // Reverse burst (150 ms)
             if (reverseBurstActive) {
                 if (runTime.milliseconds() - reverseStartTime < 150) {
                     intake.setPower(1);
-
                 } else {
                     reverseBurstActive = false;
                     intake.setPower(0);
                     kicker.setPower(0);
                 }
-            }
-            // Normal control
-            else {
-                if (intakeY < -0.1) {  // stick UP
+            } else {
+                if (intakeY < -0.1) {
                     intake.setPower(-1);
                     kicker.setPower(-1);
-                } else if (intakeY > 0.1) { // stick DOWN
+                } else if (intakeY > 0.1) {
                     intake.setPower(1);
                     kicker.setPower(1);
                 } else {
@@ -117,28 +158,11 @@ public class LimelightID20 extends LinearOpMode {
                 }
             }
 
-            // Save stick state for next loop
             intakeWasUp = intakeUp;
 
             // === WALL SERVO ===
             if (gamepad2.a) wall.setPosition(.15);
             if (gamepad2.y) wall.setPosition(.32);
-
-            // === LAUNCHER CONTROL ===
-            if (gamepad2.right_trigger > 0.35) {
-                launcher.setVelocity(1180);
-                launcher2.setVelocity(1180);
-            } else if (gamepad2.left_trigger > 0.35) {
-                launcher.setVelocity(1580);
-                launcher2.setVelocity(1580);
-            } else {
-                launcher.setVelocity(1000);
-                launcher2.setVelocity(1000);
-            }
-
-            if (gamepad2.a && gamepad2.b && gamepad2.y && gamepad2.x) {
-                requestOpModeStop();
-            }
 
             // === AUTO ROTATE ===
             if (gamepad1.left_trigger > 0.1) {
@@ -191,6 +215,15 @@ public class LimelightID20 extends LinearOpMode {
             backLeftMotor.setPower(bl);
             frontRightMotor.setPower(fr);
             backRightMotor.setPower(br);
+
+            telemetry.update();
         }
+    }
+
+    // === DISTANCE FUNCTION ===
+    public double getDistance(double ty) {
+        double angleToTarget = CAMERA_ANGLE + ty;
+        double heightDifference = GOAL_HEIGHT - CAMERA_HEIGHT;
+        return heightDifference / Math.tan(Math.toRadians(angleToTarget));
     }
 }
