@@ -27,7 +27,7 @@ public class LimelightDistance extends OpMode {
     @Override
     public void loop() {
         LLResult llResult = limelight3A.getLatestResult();
-        
+
 
         if (llResult != null && llResult.isValid()) {
             distance = getDistance(llResult.getTy());

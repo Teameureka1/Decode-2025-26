@@ -12,7 +12,7 @@ public class FlywheelTuner extends OpMode {
 
     public DcMotorEx launcher;
 
-    double highVelocity = 1675;
+    double highVelocity = 1700;
     double lowVelocity = 1000;
 
     double curTargetVelocity = highVelocity;
