@@ -26,10 +26,10 @@ public class LimelightID20 extends LinearOpMode {
     double reverseStartTime = 0;
     boolean intakeWasUp = false;
 
-    private final double kP = 0.035;
-    private final double minPower = 0.23;
-    private final double maxPower = 0.4;
-    private final double deadzone = 0.6;
+    private final double kP = 0.3; // was .035
+    private final double minPower = .3; // was .23
+    private final double maxPower = .5; // was .4
+    private final double deadzone = 0.6; // was .8
 
     ElapsedTime runTime = new ElapsedTime();
 
@@ -83,10 +83,8 @@ public class LimelightID20 extends LinearOpMode {
             // === INTAKE ===
             double intakeY = gamepad2.left_stick_y;
 
-            // Detect stick UP properly (FTC sticks are negative when pushed up)
             boolean intakeUp = intakeY < -0.1;
 
-            // Trigger reverse on RELEASE of UP
             if (!intakeUp && intakeWasUp && !reverseBurstActive) {
                 reverseBurstActive = true;
                 reverseStartTime = runTime.milliseconds();
@@ -116,8 +114,6 @@ public class LimelightID20 extends LinearOpMode {
                     kicker.setPower(0);
                 }
             }
-
-            // Save stick state for next loop
             intakeWasUp = intakeUp;
 
             // === WALL SERVO ===
@@ -126,11 +122,11 @@ public class LimelightID20 extends LinearOpMode {
 
             // === LAUNCHER CONTROL ===
             if (gamepad2.right_trigger > 0.35) {
-                launcher.setVelocity(1180);
-                launcher2.setVelocity(1180);
+                launcher.setVelocity(1300);
+                launcher2.setVelocity(1300);
             } else if (gamepad2.left_trigger > 0.35) {
-                launcher.setVelocity(1580);
-                launcher2.setVelocity(1580);
+                launcher.setVelocity(2000);
+                launcher2.setVelocity(2000);
             } else {
                 launcher.setVelocity(1000);
                 launcher2.setVelocity(1000);
