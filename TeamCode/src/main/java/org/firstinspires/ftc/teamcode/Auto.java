@@ -21,7 +21,7 @@ public class Auto extends OpMode {
 
     private final Pose startPose = new Pose(18, 122.5, Math.toRadians(135));
     private final Pose scorePose = new Pose(46, 91, Math.toRadians(129.5));
-    private final Pose scorePose2 = new Pose(52, 112, Math.toRadians(144));
+    private final Pose scorePose2 = new Pose(52, 112, Math.toRadians(145));
 
     private final Pose pickup1Pose = new Pose(23, 84, Math.toRadians(180));
     private final Pose pickup2Pose = new Pose(23, 57, Math.toRadians(180));
