@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
+import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
@@ -15,12 +17,15 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 public class Auto extends OpMode {
 
     private Follower follower;
+    private ElapsedTime timer = new ElapsedTime();
 
     private final Pose startPose = new Pose(18, 122.5, Math.toRadians(135));
-    private final Pose scorePose = new Pose(52.9, 89, Math.toRadians(135));
-    private final Pose pickup1Pose = new Pose(37, 121, Math.toRadians(0));
-    private final Pose pickup2Pose = new Pose(43, 130, Math.toRadians(0));
-    private final Pose pickup3Pose = new Pose(49, 135, Math.toRadians(0));
+    private final Pose scorePose = new Pose(46, 91, Math.toRadians(129.5));
+    private final Pose scorePose2 = new Pose(52, 112, Math.toRadians(144));
+
+    private final Pose pickup1Pose = new Pose(23, 84, Math.toRadians(180));
+    private final Pose pickup2Pose = new Pose(23, 57, Math.toRadians(180));
+    private final Pose pickup3Pose = new Pose(22, 34, Math.toRadians(180));
 
     private Path scorePreload;
     private PathChain grabPickup1, scorePickup1, grabPickup2, scorePickup2, grabPickup3, scorePickup3;
@@ -33,7 +38,7 @@ public class Auto extends OpMode {
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
 
         grabPickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose, pickup1Pose))
+                .addPath(new BezierCurve(scorePose, new Pose(55, 77, 0), pickup1Pose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading())
                 .build();
 
@@ -43,7 +48,7 @@ public class Auto extends OpMode {
                 .build();
 
         grabPickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose, pickup2Pose))
+                .addPath(new BezierCurve(scorePose, new Pose(52.4, 49.7, 0), pickup2Pose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), pickup2Pose.getHeading())
                 .build();
 
@@ -53,13 +58,13 @@ public class Auto extends OpMode {
                 .build();
 
         grabPickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose, pickup3Pose))
+                .addPath(new BezierCurve(scorePose, new Pose(57, 20, 0), pickup3Pose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), pickup3Pose.getHeading())
                 .build();
 
         scorePickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(pickup3Pose, scorePose))
-                .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose.getHeading())
+                .addPath(new BezierLine(pickup3Pose, scorePose2))
+                .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose2.getHeading())
                 .build();
     }
 
@@ -83,44 +88,72 @@ public class Auto extends OpMode {
 
         switch (step) {
 
-            case 0:
+            case 0: // finished preload score
                 if (!follower.isBusy()) {
+                    timer.reset();
+                    step++;
+                }
+                break;
+
+            case 1: // WAIT at preload score
+                if (timer.seconds() > 0.5) {
                     follower.followPath(grabPickup1);
                     step++;
                 }
                 break;
 
-            case 1:
+            case 2: // go pickup 1
                 if (!follower.isBusy()) {
                     follower.followPath(scorePickup1);
                     step++;
                 }
                 break;
 
-            case 2:
+            case 3: // WAIT at score 1
                 if (!follower.isBusy()) {
+                    timer.reset();
+                    step++;
+                }
+                break;
+
+            case 4:
+                if (timer.seconds() > 0.5) {
                     follower.followPath(grabPickup2);
                     step++;
                 }
                 break;
 
-            case 3:
+            case 5: // go pickup 2
                 if (!follower.isBusy()) {
                     follower.followPath(scorePickup2);
                     step++;
                 }
                 break;
 
-            case 4:
+            case 6: // WAIT at score 2
                 if (!follower.isBusy()) {
+                    timer.reset();
+                    step++;
+                }
+                break;
+
+            case 7:
+                if (timer.seconds() > 0.5) {
                     follower.followPath(grabPickup3);
                     step++;
                 }
                 break;
 
-            case 5:
+            case 8: // go pickup 3
                 if (!follower.isBusy()) {
                     follower.followPath(scorePickup3);
+                    step++;
+                }
+                break;
+
+            case 9: // WAIT at final score
+                if (!follower.isBusy()) {
+                    timer.reset();
                     step++;
                 }
                 break;
