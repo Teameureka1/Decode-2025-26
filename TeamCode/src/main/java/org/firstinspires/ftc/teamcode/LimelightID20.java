@@ -12,6 +12,8 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Configuration.Config;
+
 import java.util.List;
 
 @TeleOp(name = "LimelightID20")
@@ -21,7 +23,6 @@ public class LimelightID20 extends LinearOpMode {
     private DcMotorEx intake, kicker, launcher, launcher2;
     private Limelight3A limelight;
 
-    // Reverse burst variables
     boolean reverseBurstActive = false;
     double reverseStartTime = 0;
     boolean intakeWasUp = false;
@@ -33,40 +34,14 @@ public class LimelightID20 extends LinearOpMode {
 
     ElapsedTime runTime = new ElapsedTime();
 
+    Config robot;
+
     @Override
     public void runOpMode() throws InterruptedException {
 
-        frontLeftMotor  = hardwareMap.get(DcMotor.class, "fl");
-        backLeftMotor   = hardwareMap.get(DcMotor.class, "bl");
-        frontRightMotor = hardwareMap.get(DcMotor.class, "fr");
-        backRightMotor  = hardwareMap.get(DcMotor.class, "br");
+        robot = new Config(this);
+        robot.init();
 
-        intake   = hardwareMap.get(DcMotorEx.class, "intake");
-        kicker   = hardwareMap.get(DcMotorEx.class, "kicker");
-        launcher = hardwareMap.get(DcMotorEx.class, "launcher");
-        launcher2 = hardwareMap.get(DcMotorEx.class, "launcher2");
-
-        Servo wall = hardwareMap.get(Servo.class, "wall");
-
-        frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
-        backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
-
-        intake.setDirection(DcMotorSimple.Direction.FORWARD);
-        kicker.setDirection(DcMotorSimple.Direction.REVERSE);
-        launcher.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        PIDFCoefficients pidf = new PIDFCoefficients(55, 0, 0, 14.5);
-        launcher.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidf);
-        launcher2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidf);
-
-        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.pipelineSwitch(8);
-        limelight.start();
 
         waitForStart();
 
@@ -81,7 +56,7 @@ public class LimelightID20 extends LinearOpMode {
             double speedMultiplier = 0.3 + (0.7 * throttle);
 
             // === INTAKE ===
-            double intakeY = gamepad2.left_stick_y;
+            double intakeY = -gamepad2.left_stick_y;
 
             boolean intakeUp = intakeY < -0.1;
 
@@ -90,11 +65,9 @@ public class LimelightID20 extends LinearOpMode {
                 reverseStartTime = runTime.milliseconds();
             }
 
-            // Reverse burst (150 ms)
             if (reverseBurstActive) {
                 if (runTime.milliseconds() - reverseStartTime < 150) {
                     intake.setPower(1);
-
                 } else {
                     reverseBurstActive = false;
                     intake.setPower(0);
@@ -103,10 +76,11 @@ public class LimelightID20 extends LinearOpMode {
             }
             // Normal control
             else {
-                if (intakeY < -0.1) {  // stick UP
+                if (intakeY < -0.1) {
+
                     intake.setPower(-1);
                     kicker.setPower(-1);
-                } else if (intakeY > 0.1) { // stick DOWN
+                } else if (intakeY > 0.1) {
                     intake.setPower(1);
                     kicker.setPower(1);
                 } else {
@@ -117,8 +91,8 @@ public class LimelightID20 extends LinearOpMode {
             intakeWasUp = intakeUp;
 
             // === WALL SERVO ===
-            if (gamepad2.a) wall.setPosition(.15);
-            if (gamepad2.y) wall.setPosition(.32);
+            if (gamepad2.a) robot.wall.setPosition(.15);
+            if (gamepad2.y) robot.wall.setPosition(.32);
 
             // === LAUNCHER CONTROL ===
             if (gamepad2.right_trigger > 0.35) {
