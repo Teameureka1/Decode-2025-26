@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
 
-    @TeleOp(name = "LimelightID24")
+
     public class limelightid24 extends LinearOpMode {
 
         private DcMotor frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;

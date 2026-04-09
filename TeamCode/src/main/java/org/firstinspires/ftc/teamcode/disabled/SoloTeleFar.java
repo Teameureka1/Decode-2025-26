@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name = "SoloTeleFar")
+
 public class SoloTeleFar extends LinearOpMode {
 
     private DcMotorEx fl;

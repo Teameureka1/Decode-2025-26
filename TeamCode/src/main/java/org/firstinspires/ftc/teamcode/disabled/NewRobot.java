@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name = "New Robot")
+
 public class NewRobot extends LinearOpMode {
     //------------------------CODE NAMES-----------------------------
     private DcMotorEx intake;

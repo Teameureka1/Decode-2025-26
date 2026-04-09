@@ -5,11 +5,6 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Configuration.Config;
@@ -19,28 +14,27 @@ import java.util.List;
 @TeleOp(name = "LimelightID20")
 public class LimelightID20 extends LinearOpMode {
 
-    private DcMotor frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
-    private DcMotorEx intake, kicker, launcher, launcher2;
     private Limelight3A limelight;
+    private Config robot;
 
     boolean reverseBurstActive = false;
     double reverseStartTime = 0;
     boolean intakeWasUp = false;
 
-    private final double kP = 0.3; // was .035
-    private final double minPower = .3; // was .23
-    private final double maxPower = .5; // was .4
-    private final double deadzone = 0.6; // was .8
+    private final double kP = 0.3;
+    private final double minPower = .3;
+    private final double maxPower = .5;
+    private final double deadzone = 0.6;
 
     ElapsedTime runTime = new ElapsedTime();
-
-    Config robot;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
+        // ✅ INIT CONFIG
         robot = new Config(this);
         robot.init();
+
 
 
         waitForStart();
@@ -57,7 +51,6 @@ public class LimelightID20 extends LinearOpMode {
 
             // === INTAKE ===
             double intakeY = -gamepad2.left_stick_y;
-
             boolean intakeUp = intakeY < -0.1;
 
             if (!intakeUp && intakeWasUp && !reverseBurstActive) {
@@ -67,25 +60,22 @@ public class LimelightID20 extends LinearOpMode {
 
             if (reverseBurstActive) {
                 if (runTime.milliseconds() - reverseStartTime < 150) {
-                    intake.setPower(1);
+                    robot.intake.setPower(1);
                 } else {
                     reverseBurstActive = false;
-                    intake.setPower(0);
-                    kicker.setPower(0);
+                    robot.intake.setPower(0);
+                    robot.kicker.setPower(0);
                 }
-            }
-            // Normal control
-            else {
+            } else {
                 if (intakeY < -0.1) {
-
-                    intake.setPower(-1);
-                    kicker.setPower(-1);
+                    robot.intake.setPower(-1);
+                    robot.kicker.setPower(-1);
                 } else if (intakeY > 0.1) {
-                    intake.setPower(1);
-                    kicker.setPower(1);
+                    robot.intake.setPower(1);
+                    robot.kicker.setPower(1);
                 } else {
-                    intake.setPower(0);
-                    kicker.setPower(0);
+                    robot.intake.setPower(0);
+                    robot.kicker.setPower(0);
                 }
             }
             intakeWasUp = intakeUp;
@@ -94,23 +84,23 @@ public class LimelightID20 extends LinearOpMode {
             if (gamepad2.a) robot.wall.setPosition(.15);
             if (gamepad2.y) robot.wall.setPosition(.32);
 
-            // === LAUNCHER CONTROL ===
+            // === LAUNCHER ===
             if (gamepad2.right_trigger > 0.35) {
-                launcher.setVelocity(1300);
-                launcher2.setVelocity(1300);
+                robot.launcher.setVelocity(1300);
+                robot.launcher2.setVelocity(1300);
             } else if (gamepad2.left_trigger > 0.35) {
-                launcher.setVelocity(2000);
-                launcher2.setVelocity(2000);
+                robot.launcher.setVelocity(2000);
+                robot.launcher2.setVelocity(2000);
             } else {
-                launcher.setVelocity(1000);
-                launcher2.setVelocity(1000);
+                robot.launcher.setVelocity(1000);
+                robot.launcher2.setVelocity(1000);
             }
 
             if (gamepad2.a && gamepad2.b && gamepad2.y && gamepad2.x) {
                 requestOpModeStop();
             }
 
-            // === AUTO ROTATE ===
+            // === AUTO ROTATE (LIMELIGHT) ===
             if (gamepad1.left_trigger > 0.1) {
 
                 LLResult result = limelight.getLatestResult();
@@ -157,10 +147,10 @@ public class LimelightID20 extends LinearOpMode {
                 br /= max;
             }
 
-            frontLeftMotor.setPower(fl);
-            backLeftMotor.setPower(bl);
-            frontRightMotor.setPower(fr);
-            backRightMotor.setPower(br);
+            robot.frontLeftMotor.setPower(fl);
+            robot.backLeftMotor.setPower(bl);
+            robot.frontRightMotor.setPower(fr);
+            robot.backRightMotor.setPower(br);
         }
     }
 }

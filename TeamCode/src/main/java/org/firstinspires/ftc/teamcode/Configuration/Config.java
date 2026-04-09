@@ -14,11 +14,12 @@ public class Config {
     public Config(LinearOpMode linearOpMode) {
         opmode = linearOpMode;
     }
+
     public DcMotor frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
     public DcMotorEx intake, kicker, launcher, launcher2;
     public Servo wall;
     public Limelight3A limelight;
-    
+
     public void init() {
         HardwareMap hwMap = opmode.hardwareMap;
 
@@ -32,25 +33,28 @@ public class Config {
         launcher = hwMap.get(DcMotorEx.class, "launcher");
         launcher2 = hwMap.get(DcMotorEx.class, "launcher2");
 
-        Servo wall = hwMap.get(Servo.class, "wall");
+        wall = hwMap.get(Servo.class, "wall");
         limelight = hwMap.get(Limelight3A.class, "limelight");
 
+        // Motor Directions
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
         kicker.setDirection(DcMotorSimple.Direction.REVERSE);
         launcher.setDirection(DcMotorSimple.Direction.REVERSE);
-
+        // Wheel Brakes
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        // Launcher Initialization
         PIDFCoefficients pidf = new PIDFCoefficients(55, 0, 0, 14.5);
         launcher.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidf);
         launcher2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidf);
 
+        // Limelight Initialization
         limelight.pipelineSwitch(8);
         limelight.start();
 

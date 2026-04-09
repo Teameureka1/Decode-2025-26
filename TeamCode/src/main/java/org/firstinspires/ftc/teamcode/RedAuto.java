@@ -16,8 +16,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "Auto (Toggle Red/Blue)")
-public class Auto extends OpMode {
+@Autonomous(name = "RedAuto")
+public class RedAuto extends OpMode {
 
     private Follower follower;
     private ElapsedTime timer = new ElapsedTime();
@@ -25,39 +25,20 @@ public class Auto extends OpMode {
     private DcMotorEx intake, kicker;
     private Servo wall;
 
-    // 🔥 SIDE SELECTION
-    private boolean isRed = false;
+    // === MIRRORED POSES (CENTER = 72) ===
+    private final Pose startPose = new Pose(144 - 18, 122.5, Math.PI - Math.toRadians(135));
+    private final Pose scorePose = new Pose(144 - 46, 91, Math.PI - Math.toRadians(130));
+    private final Pose scorePose2 = new Pose(144 - 52, 112, Math.PI - Math.toRadians(145));
 
-    // === BASE (BLUE) POSES ===
-    private final Pose startPoseBase = new Pose(18, 122.5, Math.toRadians(135));
-    private final Pose scorePoseBase = new Pose(46, 91, Math.toRadians(130));
-    private final Pose scorePose2Base = new Pose(52, 112, Math.toRadians(145));
-
-    private final Pose pickup1Base = new Pose(18.5, 80, Math.toRadians(180));
-    private final Pose pickup2Base = new Pose(10, 58, Math.toRadians(180));
-    private final Pose pickup3Base = new Pose(9, 36, Math.toRadians(180));
-
-    // === ACTUAL POSES (after mirroring) ===
-    private Pose startPose, scorePose, scorePose2;
-    private Pose pickup1Pose, pickup2Pose, pickup3Pose;
+    private final Pose pickup1Pose = new Pose(144 - 18.5, 80, Math.PI - Math.toRadians(180));
+    private final Pose pickup2Pose = new Pose(144 - 10, 58, Math.PI - Math.toRadians(180));
+    private final Pose pickup3Pose = new Pose(144 - 9, 36, Math.PI - Math.toRadians(180));
 
     private Path scorePreload;
     private PathChain grabPickup1, scorePickup1, grabPickup2, scorePickup2, grabPickup3, scorePickup3;
 
     private int step = 0;
 
-    // === MIRROR FUNCTION ===
-    private Pose mirror(Pose p) {
-        if (!isRed) return p;
-
-        return new Pose(
-                144 - p.getX(),
-                p.getY(),
-                Math.PI - p.getHeading()
-        );
-    }
-
-    // === INTAKE ===
     private void intakeIn() {
         intake.setPower(.7);
         kicker.setPower(1);
@@ -73,25 +54,21 @@ public class Auto extends OpMode {
         kicker.setPower(0);
     }
 
-    // === WALL ===
-    private void wallDown() { wall.setPosition(0.15); }
-    private void wallUp() { wall.setPosition(0.32); }
+    private void wallDown() {
+        wall.setPosition(0.15);
+    }
+
+    private void wallUp() {
+        wall.setPosition(0.32);
+    }
 
     public void buildPaths() {
-
-        // APPLY MIRROR HERE
-        startPose = mirror(startPoseBase);
-        scorePose = mirror(scorePoseBase);
-        scorePose2 = mirror(scorePose2Base);
-        pickup1Pose = mirror(pickup1Base);
-        pickup2Pose = mirror(pickup2Base);
-        pickup3Pose = mirror(pickup3Base);
 
         scorePreload = new Path(new BezierLine(startPose, scorePose));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
 
         grabPickup1 = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose, mirror(new Pose(47, 78, 0)), pickup1Pose))
+                .addPath(new BezierCurve(scorePose, new Pose(144 - 47, 78, 0), pickup1Pose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading())
                 .build();
 
@@ -101,17 +78,17 @@ public class Auto extends OpMode {
                 .build();
 
         grabPickup2 = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose, mirror(new Pose(52, 46, 0)), pickup2Pose))
+                .addPath(new BezierCurve(scorePose, new Pose(144 - 52, 46, 0), pickup2Pose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), pickup2Pose.getHeading())
                 .build();
 
         scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierCurve(pickup2Pose, mirror(new Pose(41, 64, 0)), scorePose))
+                .addPath(new BezierCurve(pickup2Pose, new Pose(144 - 41, 64, 0), scorePose))
                 .setLinearHeadingInterpolation(pickup2Pose.getHeading(), scorePose.getHeading())
                 .build();
 
         grabPickup3 = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose, mirror(new Pose(58, 16, 0)), pickup3Pose))
+                .addPath(new BezierCurve(scorePose, new Pose(144 - 58, 16, 0), pickup3Pose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), pickup3Pose.getHeading())
                 .build();
 
@@ -125,6 +102,8 @@ public class Auto extends OpMode {
     public void init() {
         follower = Constants.createFollower(hardwareMap);
 
+        follower.setMaxPower(1);
+
         intake = hardwareMap.get(DcMotorEx.class, "intake");
         kicker = hardwareMap.get(DcMotorEx.class, "kicker");
         wall = hardwareMap.get(Servo.class, "wall");
@@ -133,26 +112,15 @@ public class Auto extends OpMode {
         kicker.setDirection(DcMotorSimple.Direction.REVERSE);
 
         wallUp();
-    }
 
-    @Override
-    public void init_loop() {
-
-        if (gamepad1.a) isRed = false;
-        if (gamepad1.b) isRed = true;
-
-        telemetry.addData("Selected Side", isRed ? "RED" : "BLUE");
-        telemetry.addLine("Press A = Blue | B = Red");
+        buildPaths();
+        follower.setStartingPose(startPose);
     }
 
     @Override
     public void start() {
-        buildPaths();
-
-        follower.setStartingPose(startPose);
-        follower.setMaxPower(1);
-
         step = 0;
+        wallUp();
         follower.followPath(scorePreload);
     }
 
