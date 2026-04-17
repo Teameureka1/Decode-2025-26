@@ -14,7 +14,6 @@ import java.util.List;
 @TeleOp(name = "LimelightID20")
 public class LimelightID20 extends LinearOpMode {
 
-    private Limelight3A limelight;
     private Config robot;
 
     boolean reverseBurstActive = false;
@@ -43,7 +42,7 @@ public class LimelightID20 extends LinearOpMode {
 
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x;
-            double rotation = gamepad1.right_stick_x * 0.7;
+            double rotation = gamepad1.right_stick_x * 0.75;
 
             // === THROTTLE ===
             double throttle = gamepad1.right_trigger;
@@ -68,10 +67,9 @@ public class LimelightID20 extends LinearOpMode {
                 }
             } else {
                 if (intakeY < -0.1) {
-                    robot.intake.setPower(-1);
                     robot.kicker.setPower(-1);
                 } else if (intakeY > 0.1) {
-                    robot.intake.setPower(1);
+                    robot.intake.setPower(.6);
                     robot.kicker.setPower(1);
                 } else {
                     robot.intake.setPower(0);
@@ -86,14 +84,14 @@ public class LimelightID20 extends LinearOpMode {
 
             // === LAUNCHER ===
             if (gamepad2.right_trigger > 0.35) {
-                robot.launcher.setVelocity(1300);
-                robot.launcher2.setVelocity(1300);
+                robot.launcher.setVelocity(1320);
+                robot.launcher2.setVelocity(1320);
             } else if (gamepad2.left_trigger > 0.35) {
-                robot.launcher.setVelocity(2000);
-                robot.launcher2.setVelocity(2000);
+                robot.launcher.setVelocity(1620);
+                robot.launcher2.setVelocity(1620);
             } else {
-                robot.launcher.setVelocity(1000);
-                robot.launcher2.setVelocity(1000);
+                robot.launcher.setVelocity(1140);
+                robot.launcher2.setVelocity(1140);
             }
 
             if (gamepad2.a && gamepad2.b && gamepad2.y && gamepad2.x) {
@@ -103,7 +101,7 @@ public class LimelightID20 extends LinearOpMode {
             // === AUTO ROTATE (LIMELIGHT) ===
             if (gamepad1.left_trigger > 0.1) {
 
-                LLResult result = limelight.getLatestResult();
+                LLResult result = robot.limelight.getLatestResult();
 
                 if (result != null && result.isValid()) {
 

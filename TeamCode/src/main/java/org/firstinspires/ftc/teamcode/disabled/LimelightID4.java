@@ -3,217 +3,153 @@ package org.firstinspires.ftc.teamcode.disabled;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.Configuration.Config;
 
 import java.util.List;
 
+@TeleOp(name = "LimelightID4")
 public class LimelightID4 extends LinearOpMode {
 
-    // Mecanum motors
-    private DcMotor frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
-    private DcMotorEx intake;
-    private DcMotorEx kicker;
-    private DcMotorEx launcher;
-    private DcMotorEx launcher2;
+    private Config robot;
 
+    boolean reverseBurstActive = false;
+    double reverseStartTime = 0;
+    boolean intakeWasUp = false;
 
-    // Limelight 3A
-    private Limelight3A limelight;
+    private final double kP = 0.3;
+    private final double minPower = .55;
+    private final double maxPower = .65;
+    private final double deadzone = 1;
 
-
-    // Auto-rotate tuning
-    private final double kP       = 0.02;  // Proportional gain
-    private final double minPower = 0.06;  // Minimum rotational power
-    private final double maxPower = 0.4;   // Maximum rotational power
-    private final double deadzone = 0.8;   // Degrees deadzone for rotation
+    ElapsedTime runTime = new ElapsedTime();
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        // --- INIT MOTORS ---
-        frontLeftMotor  = hardwareMap.get(DcMotor.class, "fl");
-        backLeftMotor   = hardwareMap.get(DcMotor.class, "bl");
-        frontRightMotor = hardwareMap.get(DcMotor.class, "fr");
-        backRightMotor  = hardwareMap.get(DcMotor.class, "br");
-        Servo wall = hardwareMap.get(Servo.class, "wall");
-        intake = hardwareMap.get(DcMotorEx.class, "intake");
-        kicker = hardwareMap.get(DcMotorEx.class, "kicker");
-        launcher = hardwareMap.get(DcMotorEx.class, "launcher");
-        launcher2 = hardwareMap.get(DcMotorEx.class, "launcher2");
+        // ✅ INIT CONFIG
+        robot = new Config(this);
+        robot.init();
 
 
-        // Adjust directions if needed
-        frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
-        backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
-        frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
-        backRightMotor.setDirection(DcMotor.Direction.FORWARD);
 
-        intake.setDirection(DcMotorSimple.Direction.REVERSE);
-        kicker.setDirection(DcMotorSimple.Direction.FORWARD);
-        launcher.setDirection(DcMotorSimple.Direction.REVERSE);
-        launcher2.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(55, 0, 0, 14.5);
-        launcher.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-        launcher2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-
-        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        // --- LIMELIGHT SETUP ---
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        telemetry.setMsTransmissionInterval(11);
-        limelight.pipelineSwitch(8);
-        limelight.start();
-
-        telemetry.addLine("Ready! Press left trigger to auto-rotate to Tag 20");
-        telemetry.update();
         waitForStart();
 
         while (opModeIsActive()) {
 
-            telemetry.addData("Limelight Connected", limelight.isConnected());
-            // --- GAMEPAD INPUT ---
-            double y = -gamepad1.left_stick_y; // Forward/back
-            double x = gamepad1.left_stick_x;  // Strafe left/right
-            double manualRotation = gamepad1.right_stick_x * .7; // adjust sensitivity here
-            double rotation = manualRotation;
+            double y = -gamepad1.left_stick_y;
+            double x = gamepad1.left_stick_x;
+            double rotation = gamepad1.right_stick_x * 0.75;
 
-            boolean leftTrigger = gamepad1.left_trigger > 0.1; // Auto-rotate trigger
-            double intakeInput = gamepad2.left_stick_y;
-            double intakeBackwardsInput = -gamepad2.left_stick_y;
-            double launcherInput = gamepad2.right_trigger;
-//---------------------INTAKE----------------------------
-            if (intakeBackwardsInput > .05) {
-                intake.setPower(1);
-                kicker.setPower(1);
-            } else if (intakeInput > .1) {
-                intake.setPower(-1);
-                kicker.setPower(-1);
+            // === THROTTLE ===
+            double throttle = gamepad1.right_trigger;
+            double speedMultiplier = 0.3 + (0.7 * throttle);
+
+            // === INTAKE ===
+            double intakeY = -gamepad2.left_stick_y;
+            boolean intakeUp = intakeY < -0.1;
+
+            if (!intakeUp && intakeWasUp && !reverseBurstActive) {
+                reverseBurstActive = true;
+                reverseStartTime = runTime.milliseconds();
+            }
+
+            if (reverseBurstActive) {
+                if (runTime.milliseconds() - reverseStartTime < 150) {
+                    robot.intake.setPower(1);
+                } else {
+                    reverseBurstActive = false;
+                    robot.intake.setPower(0);
+                    robot.kicker.setPower(0);
+                }
             } else {
-                intake.setPower(0);
-                kicker.setPower(0);
-            }
-            if (gamepad2.a) {
-                wall.setPosition(.15);
-            }
-            if (gamepad2.y) {
-                wall.setPosition(.32);
-            }
-            //-------------------------Launcher------------------------------------------------
-            // ---------------Close-----------------------
-            if (launcherInput > .35) {
-                launcher.setVelocity(1375);
-                launcher2.setVelocity(1375);
-            } else  {
-                launcher2.setVelocity(0);
-                launcher.setVelocity(0);
-
-            }
-            if (leftTrigger) {
-
-                telemetry.addLine("=== AUTO ROTATE ACTIVE ===");
-
-                LLResult result = limelight.getLatestResult();
-
-                if (result == null) {
-                    telemetry.addLine("Limelight: NO DATA (null result)");
-                    rotation = 0; // prevent rotation if camera not responding
+                if (intakeY < -0.1) {
+                    robot.intake.setPower(-.6);
+                    robot.kicker.setPower(-1);
+                } else if (intakeY > 0.1) {
+                    robot.intake.setPower(.6);
+                    robot.kicker.setPower(1);
+                } else {
+                    robot.intake.setPower(0);
+                    robot.kicker.setPower(0);
                 }
-                else if (!result.isValid()) {
-                    telemetry.addLine("Limelight: Running, No Targets");
-                    rotation = 0; // no target seen
-                }
-                else {
+            }
+            intakeWasUp = intakeUp;
 
-                    telemetry.addLine("Limelight: VALID Target Data");
+            // === WALL SERVO ===
+            if (gamepad2.a) robot.wall.setPosition(.15);
+            if (gamepad2.y) robot.wall.setPosition(.32);
 
-                    List<LLResultTypes.FiducialResult> fiducials = result.getFiducialResults();
+            // === LAUNCHER ===
+            if (gamepad2.right_trigger > 0.35) {
+                robot.launcher.setVelocity(2500);
+                robot.launcher2.setVelocity(2500);
+            } else if (gamepad2.left_trigger > 0.35) {
+                robot.launcher.setVelocity(1620);
+                robot.launcher2.setVelocity(1620);
+            } else {
+                robot.launcher.setVelocity(1140);
+                robot.launcher2.setVelocity(1140);
+            }
 
-                    if (fiducials == null || fiducials.size() == 0) {
-                        telemetry.addLine("No AprilTags Detected");
-                        rotation = 0;
-                    }
-                    else {
+            if (gamepad2.a && gamepad2.b && gamepad2.y && gamepad2.x) {
+                requestOpModeStop();
+            }
 
-                        boolean tag4Found = false;
+            // === AUTO ROTATE (LIMELIGHT) ===
+            if (gamepad1.left_trigger > 0.1) {
 
-                        for (LLResultTypes.FiducialResult fr : fiducials) {
+                LLResult result = robot.limelight.getLatestResult();
 
-                            telemetry.addData("Seen Tag ID", fr.getFiducialId());
+                if (result != null && result.isValid()) {
 
-                            if (fr.getFiducialId() == 4) {
+                    List<LLResultTypes.FiducialResult> tags = result.getFiducialResults();
 
-                                tag4Found = true;
+                    for (LLResultTypes.FiducialResult fr : tags) {
+                        if (fr.getFiducialId() == 4) {
 
-                                double tx = fr.getTargetXDegrees();
-                                telemetry.addData("Tag4 TX", tx);
+                            double tx = fr.getTargetXDegrees();
 
-                                // --- DEADZONE & PROPORTIONAL ROTATION ---
-                                if (Math.abs(tx) < deadzone) {
-                                    rotation = 0;
-                                    telemetry.addLine("Aligned (Inside Deadzone)");
-                                }
-                                else {
-                                    rotation = tx * kP;
+                            if (Math.abs(tx) < deadzone) {
+                                rotation = 0;
+                            } else {
+                                rotation = tx * kP;
 
-                                    // Minimum rotation power
-                                    if (Math.abs(rotation) < minPower) {
-                                        rotation = Math.signum(rotation) * minPower;
-                                    }
+                                if (Math.abs(rotation) < minPower)
+                                    rotation = Math.signum(rotation) * minPower;
 
-                                    // Clamp maximum rotation power
-                                    if (Math.abs(rotation) > maxPower) {
-                                        rotation = Math.signum(rotation) * maxPower;
-                                    }
-
-                                    telemetry.addData("Rotation Power", rotation);
-                                }
-
-                                break; // stop once Tag 20 is handled
+                                if (Math.abs(rotation) > maxPower)
+                                    rotation = Math.signum(rotation) * maxPower;
                             }
-                        }
-
-                        if (!tag4Found) {
-                            telemetry.addLine("Tag4 NOT Found");
-                            rotation = 0; // fallback
+                            break;
                         }
                     }
                 }
-
-                telemetry.update();
             }
 
-            // --- MECANUM DRIVE CALCULATION ---
-            double fl = y + x + rotation;
-            double bl = y - x + rotation;
-            double fr = y - x - rotation;
-            double br = y + x - rotation;
+            // === MECANUM DRIVE ===
+            double fl = (y + x + rotation) * speedMultiplier;
+            double bl = (y - x + rotation) * speedMultiplier;
+            double fr = (y - x - rotation) * speedMultiplier;
+            double br = (y + x - rotation) * speedMultiplier;
 
-            // Normalize powers
-            double maxPow = Math.max(Math.abs(fl), Math.abs(bl));
-            maxPow = Math.max(maxPow, Math.abs(fr));
-            maxPow = Math.max(maxPow, Math.abs(br));
-            if (maxPow > 1.0) {
-                fl /= maxPow;
-                bl /= maxPow;
-                fr /= maxPow;
-                br /= maxPow;
+            double max = Math.max(Math.max(Math.abs(fl), Math.abs(bl)),
+                    Math.max(Math.abs(fr), Math.abs(br)));
+
+            if (max > 1.0) {
+                fl /= max;
+                bl /= max;
+                fr /= max;
+                br /= max;
             }
 
-            // Set motor powers
-            frontLeftMotor.setPower(fl);
-            backLeftMotor.setPower(bl);
-            frontRightMotor.setPower(fr);
-            backRightMotor.setPower(br);
+            robot.frontLeftMotor.setPower(fl);
+            robot.backLeftMotor.setPower(bl);
+            robot.frontRightMotor.setPower(fr);
+            robot.backRightMotor.setPower(br);
         }
-        telemetry.update();
     }
 }

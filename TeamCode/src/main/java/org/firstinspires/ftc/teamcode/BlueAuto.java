@@ -44,12 +44,12 @@ public class BlueAuto extends OpMode {
 
     // === INTAKE FUNCTIONS ===
     private void intakeIn() {
-        intake.setPower(.825);
+        intake.setPower(.65);
         kicker.setPower(1);
     }
 
     private void intakeInFast() {
-        intake.setPower(.9);
+        intake.setPower(.75);
         kicker.setPower(1);
     }
 
@@ -78,7 +78,7 @@ public class BlueAuto extends OpMode {
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
 
         grabPickup1 = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose, new Pose(47, 74, 0), pickup1Pose))
+                .addPath(new BezierCurve(scorePose, new Pose(52.8, 74, 0), pickup1Pose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading())
                 .build();
 
@@ -88,7 +88,7 @@ public class BlueAuto extends OpMode {
                 .build();
 
         grabPickup2 = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose, new Pose(52, 46, 0), pickup2Pose))
+                .addPath(new BezierCurve(scorePose, new Pose(58.5, 47, 0), pickup2Pose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), pickup2Pose.getHeading())
                 .build();
 
@@ -133,7 +133,7 @@ public class BlueAuto extends OpMode {
     public void start() {
         step = 0;
         wallUp();
-        follower.followPath(scorePreload); // ✅ Drive to scoring position first
+        follower.followPath(scorePreload);
     }
 
     @Override
@@ -143,7 +143,6 @@ public class BlueAuto extends OpMode {
 
         switch (step) {
 
-            // Step 0 → wait until scorePreload path finishes
             case 0:
                 if (!follower.isBusy()) {
                     timer.reset();
@@ -151,11 +150,10 @@ public class BlueAuto extends OpMode {
                 }
                 break;
 
-            // Step 1 → spit out preloads
+            // === PRELOAD SPIT (2 sec) ===
             case 1:
-                if (timer.seconds() < 0.6) { // eject for 0.6 seconds
-                    intakeOut();
-                } else {
+                intakeOut();
+                if (timer.seconds() > 2.0) {
                     intakeStop();
                     timer.reset();
                     wallDown();
@@ -176,8 +174,9 @@ public class BlueAuto extends OpMode {
                 }
                 break;
 
+            // === SPIT 1 (2 sec) ===
             case 3:
-                if (!follower.isBusy() && timer.seconds() > .7) {
+                if (!follower.isBusy()) {
                     intakeOut();
                     timer.reset();
                     step++;
@@ -185,7 +184,7 @@ public class BlueAuto extends OpMode {
                 break;
 
             case 4:
-                if (timer.seconds() > .5) {
+                if (timer.seconds() > 2.0) {
                     intakeStop();
                     wallDown();
                     intakeIn();
@@ -205,8 +204,9 @@ public class BlueAuto extends OpMode {
                 }
                 break;
 
+            // === SPIT 2 (2 sec) ===
             case 6:
-                if (!follower.isBusy() && timer.seconds() > .7) {
+                if (!follower.isBusy()) {
                     intakeOut();
                     timer.reset();
                     step++;
@@ -214,7 +214,7 @@ public class BlueAuto extends OpMode {
                 break;
 
             case 7:
-                if (timer.seconds() > 0.7) {
+                if (timer.seconds() > 2.0) {
                     intakeStop();
                     wallDown();
                     intakeIn();
@@ -234,6 +234,7 @@ public class BlueAuto extends OpMode {
                 }
                 break;
 
+            // === FINAL SPIT (2 sec) ===
             case 9:
                 if (!follower.isBusy()) {
                     intakeOut();
@@ -243,7 +244,7 @@ public class BlueAuto extends OpMode {
                 break;
 
             case 10:
-                if (timer.seconds() > 0.6) {
+                if (timer.seconds() > 2.0) {
                     intakeStop();
                     follower.setMaxPower(1);
                     follower.followPath(returnToStart);
