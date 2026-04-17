@@ -15,9 +15,11 @@ public class Config {
         opmode = linearOpMode;
     }
 
+
     public DcMotor frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
     public DcMotorEx intake, kicker, launcher, launcher2;
     public Servo wall;
+    public Servo vision;
     public Limelight3A limelight;
 
     public void init() {
@@ -34,6 +36,8 @@ public class Config {
         launcher2 = hwMap.get(DcMotorEx.class, "launcher2");
 
         wall = hwMap.get(Servo.class, "wall");
+
+
         limelight = hwMap.get(Limelight3A.class, "limelight");
 
         // Motor Directions

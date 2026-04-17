@@ -5,6 +5,7 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Configuration.Config;
@@ -15,26 +16,26 @@ import java.util.List;
 public class LimelightID20 extends LinearOpMode {
 
     private Config robot;
+    public Servo vision;
+    public final double indicatorLightVision = .3175, indicatorLightVisionIntake = 0.45, indicatorLightOff = 0;
 
     boolean reverseBurstActive = false;
     double reverseStartTime = 0;
     boolean intakeWasUp = false;
 
-    private final double kP = 0.3;
-    private final double minPower = .3;
-    private final double maxPower = .5;
-    private final double deadzone = 0.6;
+    private final double kP = .27;
+    private final double minPower = .4;
+    private final double maxPower = .55;
+    private final double deadzone = 0.8;
 
     ElapsedTime runTime = new ElapsedTime();
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        // ✅ INIT CONFIG
         robot = new Config(this);
         robot.init();
-
-
+        vision = hardwareMap.get(Servo.class, "vision");
 
         waitForStart();
 
@@ -44,7 +45,6 @@ public class LimelightID20 extends LinearOpMode {
             double x = gamepad1.left_stick_x;
             double rotation = gamepad1.right_stick_x * 0.75;
 
-            // === THROTTLE ===
             double throttle = gamepad1.right_trigger;
             double speedMultiplier = 0.3 + (0.7 * throttle);
 
@@ -67,9 +67,10 @@ public class LimelightID20 extends LinearOpMode {
                 }
             } else {
                 if (intakeY < -0.1) {
+                    robot.intake.setPower(-.585);
                     robot.kicker.setPower(-1);
                 } else if (intakeY > 0.1) {
-                    robot.intake.setPower(.6);
+                    robot.intake.setPower(.585);
                     robot.kicker.setPower(1);
                 } else {
                     robot.intake.setPower(0);
@@ -98,7 +99,9 @@ public class LimelightID20 extends LinearOpMode {
                 requestOpModeStop();
             }
 
-            // === AUTO ROTATE (LIMELIGHT) ===
+            // === LIMELIGHT + AUTO ROTATE + LIGHT (TRIGGER CONTROLLED) ===
+            boolean tagAligned = false;
+
             if (gamepad1.left_trigger > 0.1) {
 
                 LLResult result = robot.limelight.getLatestResult();
@@ -114,6 +117,7 @@ public class LimelightID20 extends LinearOpMode {
 
                             if (Math.abs(tx) < deadzone) {
                                 rotation = 0;
+                                tagAligned = true;
                             } else {
                                 rotation = tx * kP;
 
@@ -127,6 +131,13 @@ public class LimelightID20 extends LinearOpMode {
                         }
                     }
                 }
+            }
+
+            // === LIGHT ONLY WHEN ALIGNED AND TRIGGER HELD ===
+            if (tagAligned && gamepad1.left_trigger > 0.1) {
+                vision.setPosition(indicatorLightVision);
+            } else {
+                vision.setPosition(indicatorLightOff);
             }
 
             // === MECANUM DRIVE ===

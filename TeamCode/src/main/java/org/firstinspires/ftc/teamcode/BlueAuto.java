@@ -153,12 +153,12 @@ public class BlueAuto extends OpMode {
             // === PRELOAD SPIT (2 sec) ===
             case 1:
                 intakeOut();
-                if (timer.seconds() > 2.0) {
+                if (timer.seconds() > 1) {
                     intakeStop();
                     timer.reset();
                     wallDown();
                     intakeInFast();
-                    follower.setMaxPower(.8);
+                    follower.setMaxPower(.95);
                     follower.followPath(grabPickup1);
                     step++;
                 }
@@ -184,11 +184,11 @@ public class BlueAuto extends OpMode {
                 break;
 
             case 4:
-                if (timer.seconds() > 2.0) {
+                if (timer.seconds() > 1) {
                     intakeStop();
                     wallDown();
                     intakeIn();
-                    follower.setMaxPower(.8);
+                    follower.setMaxPower(.95);
                     follower.followPath(grabPickup2);
                     step++;
                 }
@@ -214,11 +214,11 @@ public class BlueAuto extends OpMode {
                 break;
 
             case 7:
-                if (timer.seconds() > 2.0) {
+                if (timer.seconds() > 1) {
                     intakeStop();
                     wallDown();
                     intakeIn();
-                    follower.setMaxPower(.8);
+                    follower.setMaxPower(.95);
                     follower.followPath(grabPickup3);
                     step++;
                 }
@@ -244,7 +244,7 @@ public class BlueAuto extends OpMode {
                 break;
 
             case 10:
-                if (timer.seconds() > 2.0) {
+                if (timer.seconds() > 1) {
                     intakeStop();
                     follower.setMaxPower(1);
                     follower.followPath(returnToStart);
