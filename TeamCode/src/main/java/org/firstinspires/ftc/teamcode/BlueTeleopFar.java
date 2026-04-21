@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -12,11 +12,13 @@ import org.firstinspires.ftc.teamcode.Configuration.Config;
 
 import java.util.List;
 
-@TeleOp(name = "LimelightID20")
-public class LimelightID20 extends LinearOpMode {
+@TeleOp(name = "BlueTeleopFar")
+public class BlueTeleopFar extends LinearOpMode {
 
     private Config robot;
+    public Limelight3A limelight;
     public Servo vision;
+    public Servo vision1;
     public final double indicatorLightVision = .3175, indicatorLightVisionIntake = 0.45, indicatorLightOff = 0;
 
     boolean reverseBurstActive = false;
@@ -36,6 +38,11 @@ public class LimelightID20 extends LinearOpMode {
         robot = new Config(this);
         robot.init();
         vision = hardwareMap.get(Servo.class, "vision");
+        vision1 = hardwareMap.get(Servo.class, "vision1");
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        // Limelight Initialization
+        limelight.pipelineSwitch(9);
+        limelight.start();
 
         waitForStart();
 
@@ -85,11 +92,11 @@ public class LimelightID20 extends LinearOpMode {
 
             // === LAUNCHER ===
             if (gamepad2.right_trigger > 0.35) {
-                robot.launcher.setVelocity(1320);
-                robot.launcher2.setVelocity(1320);
+                robot.launcher.setVelocity(1260);
+                robot.launcher2.setVelocity(1260);
             } else if (gamepad2.left_trigger > 0.35) {
-                robot.launcher.setVelocity(1620);
-                robot.launcher2.setVelocity(1620);
+                robot.launcher.setVelocity(1560);
+                robot.launcher2.setVelocity(1560);
             } else {
                 robot.launcher.setVelocity(1140);
                 robot.launcher2.setVelocity(1140);
@@ -136,8 +143,10 @@ public class LimelightID20 extends LinearOpMode {
             // === LIGHT ONLY WHEN ALIGNED AND TRIGGER HELD ===
             if (tagAligned && gamepad1.left_trigger > 0.1) {
                 vision.setPosition(indicatorLightVision);
+                vision1.setPosition(indicatorLightVision);
             } else {
                 vision.setPosition(indicatorLightOff);
+                vision1.setPosition(indicatorLightOff);
             }
 
             // === MECANUM DRIVE ===

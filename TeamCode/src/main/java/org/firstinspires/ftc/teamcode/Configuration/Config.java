@@ -19,7 +19,6 @@ public class Config {
     public DcMotor frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
     public DcMotorEx intake, kicker, launcher, launcher2;
     public Servo wall;
-    public Servo vision;
     public Limelight3A limelight;
 
     public void init() {
