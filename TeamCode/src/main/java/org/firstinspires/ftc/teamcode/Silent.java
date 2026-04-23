@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.Configuration.Config;
 
 import java.util.List;
 
-@TeleOp(name = "BlueTeleopClose")
-public class BlueTeleopClose extends LinearOpMode {
+@TeleOp(name = "Silent")
+public class Silent extends LinearOpMode {
 
     private Config robot;
 
@@ -52,13 +52,10 @@ public class BlueTeleopClose extends LinearOpMode {
 
         launcher = hardwareMap.get(DcMotorEx.class, "launcher");
         launcher2 = hardwareMap.get(DcMotorEx.class, "launcher2");
-
         launcher.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         launcher2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-
         launcher.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         launcher2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
 
         colorSensor = hardwareMap.get(ColorSensor.class, "color");
         sensor = hardwareMap.get(ColorSensor.class, "sensor");
@@ -121,8 +118,8 @@ public class BlueTeleopClose extends LinearOpMode {
                 robot.launcher.setVelocity(1560);
                 robot.launcher2.setVelocity(1560);
             } else {
-                robot.launcher.setVelocity(1000);
-                robot.launcher2.setVelocity(1000);
+                robot.launcher.setVelocity(0);
+                robot.launcher2.setVelocity(0);
             }
 
             // ================= LIMELIGHT =================
@@ -206,10 +203,6 @@ public class BlueTeleopClose extends LinearOpMode {
             telemetry.addData("Transfer Sensor", sensor.alpha());
             telemetry.addData("Launch Velocity:", launcher.getVelocity());
             telemetry.addData("Launch2 Velocity:", launcher2.getVelocity());
-            telemetry.addData("L1 Vel", launcher.getVelocity());
-            telemetry.addData("L2 Vel", launcher2.getVelocity());
-            telemetry.addData("L1 Pos", launcher.getCurrentPosition());
-            telemetry.addData("L2 Pos", launcher2.getCurrentPosition());
 
             telemetry.update();
         }

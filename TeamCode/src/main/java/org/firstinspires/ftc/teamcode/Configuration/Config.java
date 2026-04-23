@@ -53,9 +53,9 @@ public class Config {
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Launcher Initialization
-        PIDFCoefficients pidf = new PIDFCoefficients(55, 0, 0, 14.5);
-        launcher.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidf);
-        launcher2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidf);
+        PIDFCoefficients pidf = new PIDFCoefficients(55, 0, 0, 15.5);
+        launcher.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidf);
+        launcher2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidf);
 
         // Limelight Initialization
         limelight.pipelineSwitch(8);

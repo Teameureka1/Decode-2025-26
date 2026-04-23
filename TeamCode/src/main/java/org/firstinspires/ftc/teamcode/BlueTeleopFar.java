@@ -95,8 +95,8 @@ public class BlueTeleopFar extends LinearOpMode {
                 robot.launcher.setVelocity(1260);
                 robot.launcher2.setVelocity(1260);
             } else if (gamepad2.left_trigger > 0.35) {
-                robot.launcher.setVelocity(1560);
-                robot.launcher2.setVelocity(1560);
+                robot.launcher.setVelocity(1600);
+                robot.launcher2.setVelocity(1600);
             } else {
                 robot.launcher.setVelocity(1140);
                 robot.launcher2.setVelocity(1140);

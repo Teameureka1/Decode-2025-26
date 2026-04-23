@@ -6,12 +6,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-
+@TeleOp
 public class FlywheelTuner extends OpMode {
 
     public DcMotorEx launcher;
 
-    double highVelocity = 1700;
+    double highVelocity = 1600;
     double lowVelocity = 1000;
 
     double curTargetVelocity = highVelocity;
