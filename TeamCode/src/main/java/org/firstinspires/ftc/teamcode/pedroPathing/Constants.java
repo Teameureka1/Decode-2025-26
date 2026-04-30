@@ -18,7 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
     // Put Robot weight in kg & 10.2 kg in pounds is 22.5 pounds
-            .mass(13) // was 10.22
+            .mass(13.1) // was 10.22
             .centripetalScaling(0.001)
             .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(.05, .095, .0021693))
             .translationalPIDFCoefficients(new PIDFCoefficients(1.5, 0, 0.01, 0.01))

@@ -9,6 +9,7 @@ import com.pedropathing.paths.PathChain;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -16,46 +17,70 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "Blue Auto")
-public class BlueAuto extends OpMode {
+@Autonomous(name = "BlueAutoClose")
+public class BlueAutoClose extends OpMode {
 
     private Follower follower;
+
     private ElapsedTime timer = new ElapsedTime();
+    private ElapsedTime stepTimer = new ElapsedTime();
 
-    // === INTAKE ===
+    private final double TARGET_VELOCITY = 1220;
+    private final double VELOCITY_TOLERANCE = 40;
+
     private DcMotorEx intake, kicker;
-
-    // === WALL SERVO ===
+    private DcMotorEx launcher, launcher2;
     private Servo wall;
 
-    private final Pose startPose = new Pose(18, 122.5, Math.toRadians(135));
-    private final Pose scorePose = new Pose(46, 91, Math.toRadians(130));
+    private final Pose startPose = new Pose(18, 122.5, Math.toRadians(130));
+    private final Pose scorePose = new Pose(46, 91, Math.toRadians(125));
     private final Pose scorePose2 = new Pose(52, 112, Math.toRadians(145));
 
-    private final Pose pickup1Pose = new Pose(19, 82.8, Math.toRadians(180));
-    private final Pose pickup2Pose = new Pose(9, 58, Math.toRadians(180));
-    private final Pose pickup3Pose = new Pose(9, 36, Math.toRadians(180));
+    private final Pose pickup1Pose = new Pose(17, 80, Math.toRadians(175));
+    private final Pose pickup2Pose = new Pose(4, 56, Math.toRadians(175));
+    private final Pose pickup3Pose = new Pose(4, 34, Math.toRadians(175));
 
     private Path scorePreload;
     private PathChain grabPickup1, scorePickup1, grabPickup2, scorePickup2, grabPickup3, scorePickup3;
-    private Path returnToStart;
 
     private int step = 0;
 
-    // === INTAKE FUNCTIONS ===
+    private boolean isLaunching = false;
+    private double launchStartTime = 0;
+    private final double LAUNCH_TIME = 2;
+    private boolean waitingForSpeed = false;
+
+    private void startLaunch() {
+        waitingForSpeed = true;
+        isLaunching = false;
+    }
+
+    private void updateLaunch() {
+
+        double v1 = launcher.getVelocity();
+        double v2 = launcher2.getVelocity();
+
+        boolean atSpeed =
+                Math.abs(v1 - TARGET_VELOCITY) < VELOCITY_TOLERANCE &&
+                        Math.abs(v2 - TARGET_VELOCITY) < VELOCITY_TOLERANCE;
+
+        if (waitingForSpeed && atSpeed) {
+            waitingForSpeed = false;
+            isLaunching = true;
+            launchStartTime = timer.seconds();
+
+            kicker.setPower(1);
+        }
+
+        if (isLaunching && timer.seconds() - launchStartTime > LAUNCH_TIME) {
+            kicker.setPower(0);
+            isLaunching = false;
+        }
+    }
+
     private void intakeIn() {
-        intake.setPower(.65);
+        intake.setPower(0.6);
         kicker.setPower(1);
-    }
-
-    private void intakeInFast() {
-        intake.setPower(.75);
-        kicker.setPower(1);
-    }
-
-    private void intakeOut() {
-        intake.setPower(-1);
-        kicker.setPower(-1);
     }
 
     private void intakeStop() {
@@ -63,9 +88,8 @@ public class BlueAuto extends OpMode {
         kicker.setPower(0);
     }
 
-    // === WALL FUNCTIONS ===
     private void wallUp() {
-        wall.setPosition(0.15);
+        wall.setPosition(0.11);
     }
 
     private void wallDown() {
@@ -106,27 +130,37 @@ public class BlueAuto extends OpMode {
                 .addPath(new BezierLine(pickup3Pose, scorePose2))
                 .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose2.getHeading())
                 .build();
-
-        returnToStart = new Path(new BezierLine(scorePose2, startPose));
-        returnToStart.setLinearHeadingInterpolation(scorePose2.getHeading(), startPose.getHeading());
     }
 
     @Override
     public void init() {
+
         follower = Constants.createFollower(hardwareMap);
         follower.setMaxPower(1);
 
         intake = hardwareMap.get(DcMotorEx.class, "intake");
         kicker = hardwareMap.get(DcMotorEx.class, "kicker");
         wall = hardwareMap.get(Servo.class, "wall");
+        launcher = hardwareMap.get(DcMotorEx.class, "launcher");
+        launcher2 = hardwareMap.get(DcMotorEx.class, "launcher2");
 
-        intake.setDirection(DcMotorSimple.Direction.FORWARD);
+        launcher.setDirection(DcMotorSimple.Direction.REVERSE);
         kicker.setDirection(DcMotorSimple.Direction.REVERSE);
 
         wallUp();
 
         buildPaths();
         follower.setStartingPose(startPose);
+
+        launcher.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        launcher2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+        launcher.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        launcher2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+        PIDFCoefficients pidf = new PIDFCoefficients(50, 0, 0, 15.4);
+        launcher.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidf);
+        launcher2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidf);
     }
 
     @Override
@@ -134,10 +168,16 @@ public class BlueAuto extends OpMode {
         step = 0;
         wallUp();
         follower.followPath(scorePreload);
+        stepTimer.reset();
     }
 
     @Override
     public void loop() {
+
+        updateLaunch();
+
+        launcher.setVelocity(TARGET_VELOCITY);
+        launcher2.setVelocity(TARGET_VELOCITY);
 
         follower.update();
 
@@ -145,20 +185,20 @@ public class BlueAuto extends OpMode {
 
             case 0:
                 if (!follower.isBusy()) {
-                    timer.reset();
+                    stepTimer.reset();
                     step++;
                 }
                 break;
 
-            // === PRELOAD SPIT (2 sec) ===
             case 1:
-                intakeOut();
-                if (timer.seconds() > 1) {
-                    intakeStop();
-                    timer.reset();
+                if (stepTimer.seconds() > 2 && !isLaunching) {
+                    startLaunch();
+                }
+
+                if (stepTimer.seconds() > 3) {
+                    stepTimer.reset();
                     wallDown();
-                    intakeInFast();
-                    follower.setMaxPower(.95);
+                    follower.setMaxPower(0.9);
                     follower.followPath(grabPickup1);
                     step++;
                 }
@@ -167,30 +207,29 @@ public class BlueAuto extends OpMode {
             case 2:
                 if (!follower.isBusy()) {
                     intakeStop();
-                    wallUp();
+                    wallDown();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup1);
                     step++;
                 }
                 break;
 
-            // === SPIT 1 (2 sec) ===
             case 3:
                 if (!follower.isBusy()) {
-                    intakeOut();
-                    timer.reset();
+                    if (!isLaunching) startLaunch();
+                    stepTimer.reset();
                     step++;
                 }
                 break;
 
             case 4:
-                if (timer.seconds() > 1) {
-                    intakeStop();
-                    wallDown();
+                if (stepTimer.seconds() > 1.24) {
                     intakeIn();
-                    follower.setMaxPower(.95);
+                    wallDown();
+                    follower.setMaxPower(0.9);
                     follower.followPath(grabPickup2);
                     step++;
+                    stepTimer.reset();
                 }
                 break;
 
@@ -204,23 +243,22 @@ public class BlueAuto extends OpMode {
                 }
                 break;
 
-            // === SPIT 2 (2 sec) ===
             case 6:
                 if (!follower.isBusy()) {
-                    intakeOut();
-                    timer.reset();
+                    if (!isLaunching) startLaunch();
+                    stepTimer.reset();
                     step++;
                 }
                 break;
 
             case 7:
-                if (timer.seconds() > 1) {
-                    intakeStop();
-                    wallDown();
+                if (stepTimer.seconds() > 1.25) {
                     intakeIn();
-                    follower.setMaxPower(.95);
+                    wallDown();
+                    follower.setMaxPower(0.9);
                     follower.followPath(grabPickup3);
                     step++;
+                    stepTimer.reset();
                 }
                 break;
 
@@ -234,38 +272,32 @@ public class BlueAuto extends OpMode {
                 }
                 break;
 
-            // === FINAL SPIT (2 sec) ===
             case 9:
                 if (!follower.isBusy()) {
-                    intakeOut();
-                    timer.reset();
+                    if (!isLaunching) startLaunch();
+                    stepTimer.reset();
                     step++;
                 }
                 break;
 
             case 10:
-                if (timer.seconds() > 1) {
-                    intakeStop();
-                    follower.setMaxPower(1);
-                    follower.followPath(returnToStart);
-                    step++;
-                }
-                break;
-
-            case 11:
-                if (!follower.isBusy()) {
-                    intakeStop();
-                    step++;
+                if (stepTimer.seconds() > 2) {
+                    requestOpModeStop();
                 }
                 break;
         }
 
         telemetry.addData("Step", step);
+        telemetry.addData("Launching", isLaunching);
+        telemetry.addData("L1 Vel", launcher.getVelocity());
+        telemetry.addData("L2 Vel", launcher2.getVelocity());
         telemetry.update();
     }
 
     @Override
     public void stop() {
+        launcher.setVelocity(0);
+        launcher2.setVelocity(0);
         intakeStop();
     }
 }

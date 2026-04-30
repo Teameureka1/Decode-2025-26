@@ -11,17 +11,17 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "Path Oval Small Medium")
-public class PathOval extends OpMode {
+@Autonomous(name = "Oval Path")
+public class PinpointTest extends OpMode {
 
     private Follower follower;
     private ElapsedTime timer = new ElapsedTime();
 
-    // === ~9 INCH SQUARE (3x previous test) ===
+
     private final Pose startPose  = new Pose(23, 120, 0);
-    private final Pose point1Pose = new Pose(32, 120, 0); // +9 X
-    private final Pose point2Pose = new Pose(32, 111, 0); // -9 Y
-    private final Pose point3Pose = new Pose(23, 111, 0); // -9 X
+    private final Pose point1Pose = new Pose(32, 120, 0);
+    private final Pose point2Pose = new Pose(32, 111, 0);
+    private final Pose point3Pose = new Pose(23, 111, 0);
 
     private Path path1, path2, path3, path4;
 

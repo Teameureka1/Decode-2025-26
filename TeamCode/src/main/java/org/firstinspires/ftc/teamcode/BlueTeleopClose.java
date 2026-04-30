@@ -23,7 +23,7 @@ public class BlueTeleopClose extends LinearOpMode {
     private final double COLORIntake_THRESHOLD = 45;
     private final double COLORTransfer_THRESHOLD = 85;
 
-    // ==================Intake ==========================`
+    // ==================Intake Initialization ==========================`
     private long intakeStopTime = 0;
     private boolean wasIntaking = false;
     private final long REVERSE_TIME_MS = 50;
@@ -68,7 +68,8 @@ public class BlueTeleopClose extends LinearOpMode {
                     wasIntaking = false;
                 }
 
-                // Run reverse for 150 ms after release
+                // Run reverse for 150 ms after release, because if we have 4 artifacts
+                // it will spit the 4th one out.
                 if (now - intakeStopTime < REVERSE_TIME_MS) {
                     robot.intake.setVelocity(-1500);   // reverse burst
                 } else {

@@ -2,112 +2,99 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.teamcode.Configuration.Config;
 
 import java.util.List;
 
-@TeleOp(name = "BlueTeleopFar")
+@TeleOp(name = "Blue Far")
 public class BlueTeleopFar extends LinearOpMode {
 
     private Config robot;
-    public Limelight3A limelight;
-    public Servo vision;
-    public Servo vision1;
-    public final double indicatorLightVision = .3175, indicatorLightVisionIntake = 0.45, indicatorLightOff = 0;
 
-    boolean reverseBurstActive = false;
-    double reverseStartTime = 0;
-    boolean intakeWasUp = false;
+    // ================= LIGHT VALUES =================
+    private final double OFF = 0.0;
+    private final double GREEN = 0.475;
+    private final double ORANGE = 0.333;
 
-    private final double kP = .27;
-    private final double minPower = .4;
-    private final double maxPower = .55;
-    private final double deadzone = 0.8;
+    private boolean intakeFull = false;
+    private final double COLORIntake_THRESHOLD = 45;
+    private final double COLORTransfer_THRESHOLD = 85;
 
-    ElapsedTime runTime = new ElapsedTime();
+    // ==================Intake Initialization ==========================`
+    private long intakeStopTime = 0;
+    private boolean wasIntaking = false;
+    private final long REVERSE_TIME_MS = 50;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
 
         robot = new Config(this);
         robot.init();
-        vision = hardwareMap.get(Servo.class, "vision");
-        vision1 = hardwareMap.get(Servo.class, "vision1");
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        // Limelight Initialization
-        limelight.pipelineSwitch(9);
-        limelight.start();
+        robot.limelight.pipelineSwitch(9);
 
         waitForStart();
 
         while (opModeIsActive()) {
 
+            // ================= DRIVE =================
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x;
             double rotation = gamepad1.right_stick_x * 0.75;
+            double speed = 0.3 + (0.7 * gamepad1.right_trigger);
 
-            double throttle = gamepad1.right_trigger;
-            double speedMultiplier = 0.3 + (0.7 * throttle);
+            // ================= INTAKE =================
+            double intakeInput = -gamepad2.left_stick_y;
+            long now = System.currentTimeMillis();
 
-            // === INTAKE ===
-            double intakeY = -gamepad2.left_stick_y;
-            boolean intakeUp = intakeY < -0.1;
+            if (intakeInput < -0.1) {
+                // Intake in
+                robot.intake.setVelocity(-1000);
+                robot.kicker.setPower(-1);
+                wasIntaking = true;
 
-            if (!intakeUp && intakeWasUp && !reverseBurstActive) {
-                reverseBurstActive = true;
-                reverseStartTime = runTime.milliseconds();
-            }
+            } else if (intakeInput > 0.1) {
+                // Intake out
+                robot.intake.setVelocity(1000);
+                robot.kicker.setPower(1);
+                wasIntaking = true;
 
-            if (reverseBurstActive) {
-                if (runTime.milliseconds() - reverseStartTime < 150) {
-                    robot.intake.setPower(1);
+            } else {
+                // Stick released
+                if (wasIntaking) {
+                    intakeStopTime = now;
+                    wasIntaking = false;
+                }
+
+                // Run reverse for 150 ms after release, because if we have 4 artifacts
+                // it will spit the 4th one out.
+                if (now - intakeStopTime < REVERSE_TIME_MS) {
+                    robot.intake.setVelocity(-1500);   // reverse burst
                 } else {
-                    reverseBurstActive = false;
                     robot.intake.setPower(0);
                     robot.kicker.setPower(0);
                 }
+            }
+            // ================= WALL =================
+            if (gamepad2.a) robot.wall.setPosition(0.15);
+            if (gamepad2.y) robot.wall.setPosition(0.32);
+
+            // ================= LAUNCHER =================
+            if (gamepad2.right_trigger > 0.5) {
+                robot.launcher.setVelocity(1300);
+                robot.launcher2.setVelocity(1300);
+            } else if (gamepad2.left_trigger > 0.5) {
+                robot.launcher.setVelocity(1620);
+                robot.launcher2.setVelocity(1620);
             } else {
-                if (intakeY < -0.1) {
-                    robot.intake.setPower(-.585);
-                    robot.kicker.setPower(-1);
-                } else if (intakeY > 0.1) {
-                    robot.intake.setPower(.585);
-                    robot.kicker.setPower(1);
-                } else {
-                    robot.intake.setPower(0);
-                    robot.kicker.setPower(0);
-                }
-            }
-            intakeWasUp = intakeUp;
-
-            // === WALL SERVO ===
-            if (gamepad2.a) robot.wall.setPosition(.15);
-            if (gamepad2.y) robot.wall.setPosition(.32);
-
-            // === LAUNCHER ===
-            if (gamepad2.right_trigger > 0.35) {
-                robot.launcher.setVelocity(1260);
-                robot.launcher2.setVelocity(1260);
-            } else if (gamepad2.left_trigger > 0.35) {
-                robot.launcher.setVelocity(1600);
-                robot.launcher2.setVelocity(1600);
-            } else {
-                robot.launcher.setVelocity(1140);
-                robot.launcher2.setVelocity(1140);
+                robot.launcher.setVelocity(1000);
+                robot.launcher2.setVelocity(1000);
             }
 
-            if (gamepad2.a && gamepad2.b && gamepad2.y && gamepad2.x) {
-                requestOpModeStop();
-            }
-
-            // === LIMELIGHT + AUTO ROTATE + LIGHT (TRIGGER CONTROLLED) ===
-            boolean tagAligned = false;
+            // ================= LIMELIGHT =================
+            boolean locked = false;
 
             if (gamepad1.left_trigger > 0.1) {
 
@@ -122,43 +109,53 @@ public class BlueTeleopFar extends LinearOpMode {
 
                             double tx = fr.getTargetXDegrees();
 
-                            if (Math.abs(tx) < deadzone) {
+                            if (Math.abs(tx) < 0.8) {
                                 rotation = 0;
-                                tagAligned = true;
+                                locked = true;
                             } else {
-                                rotation = tx * kP;
-
-                                if (Math.abs(rotation) < minPower)
-                                    rotation = Math.signum(rotation) * minPower;
-
-                                if (Math.abs(rotation) > maxPower)
-                                    rotation = Math.signum(rotation) * maxPower;
+                                rotation = tx * 0.27;
+                                rotation = Math.max(-0.55, Math.min(rotation, 0.55));
                             }
-                            break;
                         }
                     }
                 }
             }
 
-            // === LIGHT ONLY WHEN ALIGNED AND TRIGGER HELD ===
-            if (tagAligned && gamepad1.left_trigger > 0.1) {
-                vision.setPosition(indicatorLightVision);
-                vision1.setPosition(indicatorLightVision);
+            // ================= COLOR SENSORS =================
+            if (robot.intakeSensor.alpha() > COLORIntake_THRESHOLD && robot.transferSensor.alpha() > COLORTransfer_THRESHOLD) {
+                intakeFull = true;
             } else {
-                vision.setPosition(indicatorLightOff);
-                vision1.setPosition(indicatorLightOff);
+                intakeFull = false;
             }
 
-            // === MECANUM DRIVE ===
-            double fl = (y + x + rotation) * speedMultiplier;
-            double bl = (y - x + rotation) * speedMultiplier;
-            double fr = (y - x - rotation) * speedMultiplier;
-            double br = (y + x - rotation) * speedMultiplier;
+            // ================= LIGHT SYSTEM =================
+            if (locked) {
 
-            double max = Math.max(Math.max(Math.abs(fl), Math.abs(bl)),
-                    Math.max(Math.abs(fr), Math.abs(br)));
+                robot.vision.setPosition(GREEN);
+                robot.vision1.setPosition(GREEN);
 
-            if (max > 1.0) {
+            } else if (intakeFull) {
+
+                robot.vision.setPosition(ORANGE);
+                robot.vision1.setPosition(ORANGE);
+
+            } else {
+
+                robot.vision.setPosition(OFF);
+                robot.vision1.setPosition(OFF);
+            }
+
+            // ================= DRIVE =================
+            double fl = (y + x + rotation) * speed;
+            double bl = (y - x + rotation) * speed;
+            double fr = (y - x - rotation) * speed;
+            double br = (y + x - rotation) * speed;
+
+            double max = Math.max(Math.abs(fl),
+                    Math.max(Math.abs(bl),
+                            Math.max(Math.abs(fr), Math.abs(br))));
+
+            if (max > 1) {
                 fl /= max;
                 bl /= max;
                 fr /= max;
@@ -169,6 +166,15 @@ public class BlueTeleopFar extends LinearOpMode {
             robot.backLeftMotor.setPower(bl);
             robot.frontRightMotor.setPower(fr);
             robot.backRightMotor.setPower(br);
+
+            // ================= TELEMETRY =================
+            telemetry.addData("Locked", locked);
+            telemetry.addData("Intake Full", intakeFull);
+            telemetry.addData("Intake Sensor", robot.intakeSensor.alpha());
+            telemetry.addData("Transfer Sensor", robot.transferSensor.alpha());
+            telemetry.addData("Launch Velocity:", robot.launcher.getVelocity());
+            telemetry.addData("Launch2 Velocity:", robot.launcher2.getVelocity());
+            telemetry.update();
         }
     }
 }
