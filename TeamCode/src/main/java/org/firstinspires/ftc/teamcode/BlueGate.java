@@ -22,7 +22,7 @@ public class BlueGate extends OpMode {
     private ElapsedTime timer = new ElapsedTime();
 
     private Path scorePreload;
-    private PathChain setUp2, grabPickup2, toGate, scorePickup2; // grabPickup1, scorePickup1, grabPickup3, scorePickup3;
+    private PathChain setUp2, grabPickup2, gateSetup, toGate, outOfGate, scorePickup2; // grabPickup1, scorePickup1, grabPickup3, scorePickup3;
 
     private int step = 0;
 
@@ -58,19 +58,33 @@ public class BlueGate extends OpMode {
 
     public void buildPaths() {
 
-        scorePreload = new Path(new BezierLine(robot.blueStartPose, robot.blueScorePose));
-        scorePreload.setLinearHeadingInterpolation(robot.blueStartPose.getHeading(), robot.blueScorePose.getHeading());
+        scorePreload = new Path(new BezierLine(robot.blueStartClose, robot.blueScorePose));
+        scorePreload.setLinearHeadingInterpolation(robot.blueStartClose.getHeading(), robot.blueScorePose.getHeading());
 
         setUp2 = follower.pathBuilder()
                 .addPath(new BezierLine(robot.blueScorePose, robot.blueSetup2Pose))
                 .setLinearHeadingInterpolation(robot.blueScorePose.getHeading(), robot.blueSetup2Pose.getHeading())
                 .build();
 
+        grabPickup2 = follower.pathBuilder()
+                .addPath(new BezierLine(robot.blueSetup2Pose, robot.bluePickup2Pose))
+                .setLinearHeadingInterpolation(robot.blueSetup2Pose.getHeading(), robot.bluePickup2Pose.getHeading())
+                .build();
+
+        gateSetup = follower.pathBuilder()
+                .addPath(new BezierLine(robot.bluePickup2Pose, robot.blueGateSetupPose))
+                .setLinearHeadingInterpolation(robot.bluePickup2Pose.getHeading(), robot.blueGateSetupPose.getHeading())
+                .build();
+
         toGate = follower.pathBuilder()
-                .addPath(new BezierCurve(robot.bluePickup2Pose, new Pose(50, 50, 270), robot.blueGate))
+                .addPath(new BezierLine(robot.bluePickup2Pose, robot.blueGate))
                 .setLinearHeadingInterpolation(robot.bluePickup2Pose.getHeading(), robot.blueGate.getHeading())
                 .build();
 
+        outOfGate = follower.pathBuilder()
+                .addPath(new BezierLine(robot.blueGate, robot.blueOutOfGate))
+                .setLinearHeadingInterpolation(robot.blueGate.getHeading(), robot.blueOutOfGate.getHeading())
+                .build();
 
             /*scorePickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Pose, scorePose))
@@ -84,8 +98,8 @@ public class BlueGate extends OpMode {
                 .build();
 */
         scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierCurve(robot.bluePickup2Pose, new Pose(41, 64, 0), robot.blueScorePose))
-                .setLinearHeadingInterpolation(robot.bluePickup2Pose.getHeading(), robot.blueScorePose.getHeading())
+                .addPath(new BezierLine(robot.blueOutOfGate, robot.blueScorePose))
+                .setLinearHeadingInterpolation(robot.blueOutOfGate.getHeading(), robot.blueScorePose.getHeading())
                 .build();
 /*
         grabPickup3 = follower.pathBuilder()
@@ -112,7 +126,7 @@ public class BlueGate extends OpMode {
         wallUp();
 
         buildPaths();
-        follower.setStartingPose(robot.blueStartPose);
+        follower.setStartingPose(robot.blueStartClose);
     }
 
     @Override
@@ -170,31 +184,61 @@ public class BlueGate extends OpMode {
                 break;
 */
             case 1:
-                if (timer.seconds() > 1) {
+                if (timer.seconds() > 0) {
                     intakeStop();
-                    wallDown();
-                    intakeIn();
-                    follower.setMaxPower(.95);
-                    follower.followPath(grabPickup2);
+                    follower.setMaxPower(1);
+                    follower.followPath(setUp2);
+                    timer.reset();
                     step++;
                 }
                 break;
             case 2:
                 if (!follower.isBusy()) {
                     intakeStop();
-                    wallUp();
-                    follower.setMaxPower(1);
-                    follower.followPath(toGate);
+                    wallDown();
+                    intakeIn();
+                    follower.setMaxPower(.7);
+                    follower.followPath(grabPickup2);
+                    timer.reset();
                     step++;
                 }
+                break;
             case 3:
                 if (!follower.isBusy()) {
                     intakeStop();
+                    follower.setMaxPower(1);
+                    follower.followPath(gateSetup);
+                    timer.reset();
+                    step++;
+                }
+                break;
+            case 4:
+                if (!follower.isBusy() && timer.seconds() > 2) {
+                    follower.setMaxPower(1);
+                    follower.followPath(toGate);
+                    timer.reset();
+                    step++;
+                }
+                break;
+
+            case 5:
+                if (timer.seconds() > 2) {
+                    follower.setMaxPower(1);
+                    follower.followPath(outOfGate);
+                    timer.reset();
+                    step++;
+                }
+                break;
+
+            case 6:
+                if (!follower.isBusy()) {
                     wallUp();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup2);
+                    timer.reset();
                     step++;
                 }
+                break;
 
 /*
             case 4:
@@ -246,7 +290,7 @@ public class BlueGate extends OpMode {
                 }
                 break;
 */
-            case 4:
+            case 7:
                 if (!follower.isBusy()) {
                     intakeStop();
                     step++;
@@ -258,6 +302,7 @@ public class BlueGate extends OpMode {
 
 
         telemetry.addData("Step", step);
+        telemetry.addData("F", follower.isBusy());
         telemetry.update();
     }
 }

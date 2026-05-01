@@ -32,26 +32,25 @@ public class Config {
     public Limelight3A limelight;
     public ColorSensor intakeSensor;
     public ColorSensor transferSensor;
-
+// BLUE SIDE UPDATED RED SIDE NOT UPDATED
     public final Pose blueStartFar = new Pose(55, 8.39, Math.toRadians(90));
-    public final Pose blueStartPose = new Pose(24.84, 113.78, Math.toRadians(141.63));
+    public final Pose blueStartClose = new Pose(26.4, 114.78, Math.toRadians(141.23));
     public final Pose blueScorePose = new Pose(51,86.8,Math.toRadians(136.6));
     public final Pose blueScorePose2 = new Pose(61.75,100,Math.toRadians(150));
-
-    public final Pose bluePickup1Pose = new Pose(29.5, 75.4, Math.toRadians(-178.3));
-    public final Pose blueSetup1Pose = new Pose(88.72,76.68, Math.toRadians(-179.1));
-    public final Pose bluePickup2Pose = new Pose(25.5,49, Math.toRadians(-178.55));
-    public final Pose blueSetup2Pose = new Pose(88.3,52.81, Math.toRadians(-179.17));
-    public final Pose blueGate = new Pose(70.7,72.82,Math.toRadians(-90.23));
-    public final Pose blueGateSetupPose = new Pose(60.04,52.824, Math.toRadians(-179.31));
-    public final Pose bluePickup3Pose = new Pose(21.88,26.8, Math.toRadians(-178.5));
-    public final Pose blueSetup3Pose = new Pose(88.1,29.06, Math.toRadians(-179.08));
+    public final Pose bluePickup1Pose = new Pose(31.14, 77.16, Math.toRadians(-179.6));
+    public final Pose blueSetup1Pose = new Pose(54.81,76.3, Math.toRadians(-179.6));
+    public final Pose bluePickup2Pose = new Pose(24.9,53.44, Math.toRadians(179.4));
+    public final Pose blueSetup2Pose = new Pose(56.03,52.89, Math.toRadians(-179.47));
+    public final Pose blueGate = new Pose(35,76.2,Math.toRadians(-90.5));
+    public final Pose blueOutOfGate = new Pose(43,76.2, Math.toRadians(-90.5));
+    public final Pose blueGateSetupPose = new Pose(30.1,53.45, Math.toRadians(179.41));
+    public final Pose bluePickup3Pose = new Pose(24,29.1, Math.toRadians(-179.8));
+    public final Pose blueSetup3Pose = new Pose(53,28.8, Math.toRadians(-180));
 
     public final Pose redStartFar = new Pose(89, 8.39, Math.toRadians(90));
     public final Pose redStartPose = new Pose(126.95, 130.5, Math.toRadians(39.455));
     public final Pose redScorePose = new Pose(98,100.64,Math.toRadians(45.76));
     public final Pose redScorePose2 = new Pose(93.95,124.3,Math.toRadians(28.1));
-
     public final Pose redPickup1Pose = new Pose(134.75, 97.6, Math.toRadians(.6));
     public final Pose redSetup1Pose = new Pose(88.72,76.68, Math.toRadians(-179.1));
     public final Pose redPickup2Pose = new Pose(144.63,73.27, Math.toRadians(.123));
