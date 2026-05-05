@@ -22,24 +22,14 @@ public class BlueGate extends OpMode {
     private ElapsedTime timer = new ElapsedTime();
 
     private Path scorePreload;
-    private PathChain setUp2, grabPickup2, gateSetup, toGate, outOfGate, scorePickup2; // grabPickup1, scorePickup1, grabPickup3, scorePickup3;
+    private PathChain setUp2, grabPickup2, gateSetup, toGate, scorePickup2, setUp1, grabPickup1, scorePickup1; // grabPickup1,, grabPickup3, scorePickup3;
 
     private int step = 0;
 
     // === INTAKE FUNCTIONS ===
     private void intakeIn() {
-        robot.intake.setPower(.65);
+        robot.intake.setPower(.5);
         robot.kicker.setPower(1);
-    }
-
-    private void intakeInFast() {
-        robot.intake.setPower(.75);
-        robot.kicker.setPower(1);
-    }
-
-    private void intakeOut() {
-        robot.intake.setPower(-1);
-        robot.kicker.setPower(-1);
     }
 
     private void intakeStop() {
@@ -81,7 +71,6 @@ public class BlueGate extends OpMode {
                 .setLinearHeadingInterpolation(robot.bluePickup2Pose.getHeading(), robot.blueGate.getHeading())
                 .build();
 
-
             /*scorePickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Pose, scorePose))
                 .setLinearHeadingInterpolation(pickup1Pose.getHeading(), scorePose.getHeading())
@@ -94,9 +83,23 @@ public class BlueGate extends OpMode {
                 .build();
 */
         scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierCurve(robot.blueGate, new Pose(76,58,0), robot.blueScorePose))
+                .addPath(new BezierCurve(robot.blueGate, new Pose(60,40,0), robot.blueScorePose))
                 .setLinearHeadingInterpolation(robot.blueGate.getHeading(), robot.blueScorePose.getHeading())
                 .build();
+        setUp1 = follower.pathBuilder()
+                .addPath(new BezierLine(robot.blueScorePose, robot.blueSetup1Pose))
+                .setLinearHeadingInterpolation(robot.blueScorePose.getHeading(), robot.blueSetup1Pose.getHeading())
+                .build();
+        grabPickup1 = follower.pathBuilder()
+                .addPath(new BezierLine(robot.blueSetup1Pose, robot.bluePickup1Pose))
+                .setLinearHeadingInterpolation(robot.blueSetup1Pose.getHeading(), robot.bluePickup1Pose.getHeading())
+                .build();
+        scorePickup1 = follower.pathBuilder()
+                .addPath(new BezierLine(robot.bluePickup1Pose, robot.blueScorePose))
+                .setLinearHeadingInterpolation(robot.bluePickup1Pose.getHeading(), robot.blueScorePose.getHeading())
+                .build();
+
+/*
 /*
         grabPickup3 = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose, new Pose(58, 16, 0), pickup3Pose))
@@ -134,14 +137,17 @@ public class BlueGate extends OpMode {
 
     @Override
     public void loop() {
+        robot.launcher.setVelocity(1280);
+        robot.launcher2.setVelocity(1280);
 
         follower.update();
 
         switch (step) {
 
             case 0:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() && timer.seconds() > 3) {
                     timer.reset();
+                    intakeIn();
                     step++;
                 }
                 break;
@@ -181,10 +187,10 @@ public class BlueGate extends OpMode {
 */
             case 1:
                 if (timer.seconds() > 1) {
-                    intakeStop();
-                    follower.setMaxPower(1);
-                    follower.followPath(setUp2);
                     timer.reset();
+                    follower.setMaxPower(1);
+                    intakeStop();
+                    follower.followPath(setUp2);
                     step++;
                 }
                 break;
@@ -193,7 +199,7 @@ public class BlueGate extends OpMode {
                     intakeStop();
                     wallDown();
                     intakeIn();
-                    follower.setMaxPower(.7);
+                    follower.setMaxPower(.6);
                     follower.followPath(grabPickup2);
                     timer.reset();
                     step++;
@@ -219,7 +225,7 @@ public class BlueGate extends OpMode {
 
 
             case 5:
-                if (!follower.isBusy() && timer.seconds() > .25) {
+                if (!follower.isBusy() && timer.seconds() > 1) {
                     wallUp();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup2);
@@ -279,15 +285,49 @@ public class BlueGate extends OpMode {
                 break;
 */
             case 6:
-                if (!follower.isBusy() && timer.seconds() > .25) {
+                if (!follower.isBusy() && timer.seconds() > 2.3) {
+                    intakeIn();
+                    timer.reset();
+                }
+            case 7:
+                if (!follower.isBusy() && timer.seconds() > 1) {
                     intakeStop();
+                    wallDown();
+                    follower.setMaxPower(1);
+                    follower.followPath(setUp1);
+                    timer.reset();
                     step++;
                 }
                 break;
+            case 8:
+                if (!follower.isBusy() && timer.seconds() > .2) {
+                    intakeIn();
+                    follower.setMaxPower(.7);
+                    follower.followPath(grabPickup1);
+                    timer.reset();
+                    step++;
+                }
+                break;
+            case 9:
+                if (!follower.isBusy() && timer.seconds() >1) {
+                    intakeStop();
+                    wallDown();
+                    follower.setMaxPower(1);
+                    follower.followPath(scorePickup1);
+                    timer.reset();
+                    step++;
+                }
+                break;
+            case 10:
+                if (!follower.isBusy() && timer.seconds() > .5) {
+                    wallUp();
+                    intakeIn();
+                    timer.reset();
+                    step++;
+                }
+                break;
+
         }
-
-
-
 
         telemetry.addData("Step", step);
         telemetry.addData("F", follower.isBusy());
