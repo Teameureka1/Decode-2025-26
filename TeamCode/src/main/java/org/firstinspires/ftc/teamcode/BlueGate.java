@@ -81,10 +81,6 @@ public class BlueGate extends OpMode {
                 .setLinearHeadingInterpolation(robot.bluePickup2Pose.getHeading(), robot.blueGate.getHeading())
                 .build();
 
-        outOfGate = follower.pathBuilder()
-                .addPath(new BezierLine(robot.blueGate, robot.blueOutOfGate))
-                .setLinearHeadingInterpolation(robot.blueGate.getHeading(), robot.blueOutOfGate.getHeading())
-                .build();
 
             /*scorePickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Pose, scorePose))
@@ -98,8 +94,8 @@ public class BlueGate extends OpMode {
                 .build();
 */
         scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(robot.blueOutOfGate, robot.blueScorePose))
-                .setLinearHeadingInterpolation(robot.blueOutOfGate.getHeading(), robot.blueScorePose.getHeading())
+                .addPath(new BezierCurve(robot.blueGate, new Pose(76,58,0), robot.blueScorePose))
+                .setLinearHeadingInterpolation(robot.blueGate.getHeading(), robot.blueScorePose.getHeading())
                 .build();
 /*
         grabPickup3 = follower.pathBuilder()
@@ -184,7 +180,7 @@ public class BlueGate extends OpMode {
                 break;
 */
             case 1:
-                if (timer.seconds() > 0) {
+                if (timer.seconds() > 1) {
                     intakeStop();
                     follower.setMaxPower(1);
                     follower.followPath(setUp2);
@@ -193,7 +189,7 @@ public class BlueGate extends OpMode {
                 }
                 break;
             case 2:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() && timer.seconds() > .25) {
                     intakeStop();
                     wallDown();
                     intakeIn();
@@ -204,7 +200,7 @@ public class BlueGate extends OpMode {
                 }
                 break;
             case 3:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() && timer.seconds() > .25) {
                     intakeStop();
                     follower.setMaxPower(1);
                     follower.followPath(gateSetup);
@@ -213,7 +209,7 @@ public class BlueGate extends OpMode {
                 }
                 break;
             case 4:
-                if (!follower.isBusy() && timer.seconds() > 2) {
+                if (!follower.isBusy() && timer.seconds() > .25) {
                     follower.setMaxPower(1);
                     follower.followPath(toGate);
                     timer.reset();
@@ -221,17 +217,9 @@ public class BlueGate extends OpMode {
                 }
                 break;
 
-            case 5:
-                if (timer.seconds() > 2) {
-                    follower.setMaxPower(1);
-                    follower.followPath(outOfGate);
-                    timer.reset();
-                    step++;
-                }
-                break;
 
-            case 6:
-                if (!follower.isBusy()) {
+            case 5:
+                if (!follower.isBusy() && timer.seconds() > .25) {
                     wallUp();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup2);
@@ -290,8 +278,8 @@ public class BlueGate extends OpMode {
                 }
                 break;
 */
-            case 7:
-                if (!follower.isBusy()) {
+            case 6:
+                if (!follower.isBusy() && timer.seconds() > .25) {
                     intakeStop();
                     step++;
                 }
