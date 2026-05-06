@@ -35,17 +35,18 @@ public class Config {
 // BLUE SIDE UPDATED RED SIDE NOT UPDATED
     public final Pose blueStartFar = new Pose(55, 8.39, Math.toRadians(90));
     public final Pose blueStartClose = new Pose(16.37, 115.9435, Math.toRadians(141));
-    public final Pose blueScorePose = new Pose(50.84,81.467,Math.toRadians(137));
+    public final Pose blueScorePose = new Pose(50.84,81.467,Math.toRadians(136));
     public final Pose blueScorePose2 = new Pose(51.9182,103.703,Math.toRadians(150.25));
-    public final Pose bluePickup1Pose = new Pose(15.2671,73.5182, Math.toRadians(179.176));
-    public final Pose blueSetup1Pose = new Pose(40,73.5182, Math.toRadians(179.176));
-    public final Pose bluePickup2Pose = new Pose(9.5,51.5, Math.toRadians(179.697));
-    public final Pose blueSetup2Pose = new Pose(43.576,49.7, Math.toRadians(179.697));
-    public final Pose blueGate = new Pose(22,60,Math.toRadians(-90));
+    public final Pose bluePickup1Pose = new Pose(15.2671,75, Math.toRadians(180));
+    public final Pose blueSetup1Pose = new Pose(40,75, Math.toRadians(180));
+    public final Pose bluePickup2Pose = new Pose(9.5,51, Math.toRadians(180));
+    public final Pose blueSetup2Pose = new Pose(43.576,51, Math.toRadians(180));
+    public final Pose blueGate = new Pose(19,56,Math.toRadians(-90));
+    public final Pose blueAutoEnd = new Pose(30, 58, Math.toRadians(-90));
     public final Pose blueOutOfGate = new Pose(48,60, Math.toRadians(-90));
     public final Pose blueGateSetupPose = new Pose(17,49.7, Math.toRadians(179.697));
-    public final Pose bluePickup3Pose = new Pose(8.5,26, Math.toRadians(179));
-    public final Pose blueSetup3Pose = new Pose(43,26, Math.toRadians(179));
+    public final Pose bluePickup3Pose = new Pose(8.5,26.5, Math.toRadians(179));
+    public final Pose blueSetup3Pose = new Pose(43,26.5, Math.toRadians(179));
 
     public final Pose redStartFar = new Pose(89, 8.39, Math.toRadians(90));
     public final Pose redStartPose = new Pose(126.95, 130.5, Math.toRadians(39.455));
