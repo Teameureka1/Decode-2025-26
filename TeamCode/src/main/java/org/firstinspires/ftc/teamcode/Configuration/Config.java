@@ -32,6 +32,9 @@ public class Config {
     public Limelight3A limelight;
     public ColorSensor intakeSensor;
     public ColorSensor transferSensor;
+
+    public boolean intakeIsOpen;
+
 // BLUE SIDE UPDATED RED SIDE NOT UPDATED
     public final Pose blueStartFar = new Pose(55, 8.39, Math.toRadians(90));
     public final Pose blueStartClose = new Pose(16.37, 115.9435, Math.toRadians(141));
@@ -43,22 +46,31 @@ public class Config {
     public final Pose blueSetup2Pose = new Pose(43.576,51, Math.toRadians(180));
     public final Pose blueGate = new Pose(19,56,Math.toRadians(-90));
     public final Pose blueAutoEnd = new Pose(30, 58, Math.toRadians(-90));
-    public final Pose blueOutOfGate = new Pose(48,60, Math.toRadians(-90));
     public final Pose blueGateSetupPose = new Pose(17,49.7, Math.toRadians(179.697));
     public final Pose bluePickup3Pose = new Pose(8.5,26.5, Math.toRadians(179));
     public final Pose blueSetup3Pose = new Pose(43,26.5, Math.toRadians(179));
 
     public final Pose redStartFar = new Pose(89, 8.39, Math.toRadians(90));
-    public final Pose redStartPose = new Pose(126.95, 130.5, Math.toRadians(39.455));
-    public final Pose redScorePose = new Pose(98,100.64,Math.toRadians(45.76));
-    public final Pose redScorePose2 = new Pose(93.95,124.3,Math.toRadians(28.1));
-    public final Pose redPickup1Pose = new Pose(134.75, 97.6, Math.toRadians(.6));
-    public final Pose redSetup1Pose = new Pose(88.72,76.68, Math.toRadians(-179.1));
-    public final Pose redPickup2Pose = new Pose(144.63,73.27, Math.toRadians(.123));
-    public final Pose redSetup2Pose = new Pose(111.7,73.4, Math.toRadians(0.6));
-    public final Pose redGate = new Pose(149.3,76.45,Math.toRadians(-89.86));
-    public final Pose redPickup3Pose = new Pose(142.5,49.8, Math.toRadians(-0.1));
-    public final Pose redSetup3Pose = new Pose(112.45,97.38, Math.toRadians(0.17));
+    public final Pose redStartPose = new Pose(129.2095, 122.4811, Math.toRadians(39.3531));
+    public final Pose redScorePose = new Pose(94.4201,92.2024,Math.toRadians(44.547));
+    public final Pose redScorePose2 = new Pose(95.1933,107.5592,Math.toRadians(34));
+    public final Pose redPickup1Pose = new Pose(134, 82.2643, Math.toRadians(0.6));
+    public final Pose redSetup1Pose = new Pose(107.6,81.6, Math.toRadians(1.33));
+    public final Pose redPickup2Pose = new Pose(141,58, Math.toRadians(.08));
+    public final Pose redSetup2Pose = new Pose(107.6,58, Math.toRadians(.08));
+    public final Pose redSetupGate = new Pose(135,58.4,Math.toRadians(0));
+    public final Pose redGateFacingParkingZone = new Pose(138,61,Math.toRadians(-90));
+    public final Pose redGateFacingGoal = new Pose(134,76,Math.toRadians(90));
+    public final Pose redPickup3Pose = new Pose(141,33, Math.toRadians(.8));
+    public final Pose redSetup3Pose = new Pose(107.6,33, Math.toRadians(.8));
+    public final Pose redAutoEnd = new Pose(129,57.8, Math.toRadians(-90));
+    public final Pose redGateHold = new Pose(137.4,61.134, Math.toRadians(37));
+    public final Pose redGateHarvest = new Pose(135.6,60, Math.toRadians(46.5));
+    public final Pose redGateHarvestSetup = new Pose(117.33,60.8657, Math.toRadians(39.38));
+
+
+
+
 
     HardwareMap hwMap;
     public void init() {
@@ -108,5 +120,7 @@ public class Config {
         PIDFCoefficients pidf = new PIDFCoefficients(55, 0, 0, 15.5);
         launcher.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidf);
         launcher2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidf);
+
+
     }
 }

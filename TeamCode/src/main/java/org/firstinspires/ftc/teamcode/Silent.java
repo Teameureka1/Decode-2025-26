@@ -39,6 +39,7 @@ public class Silent extends LinearOpMode {
     private long intakeStopTime = 0;
     private boolean wasIntaking = false;
     private final long REVERSE_TIME_MS = 100;
+    private boolean intakeIsOpen;
 
     @Override
     public void runOpMode() {
@@ -107,8 +108,16 @@ public class Silent extends LinearOpMode {
                 }
             }
             // ================= WALL =================
-            if (gamepad2.a) wall.setPosition(0.15);
-            if (gamepad2.y) wall.setPosition(0.32);
+            if (gamepad2.aWasPressed()) {
+                if (intakeIsOpen) {
+                    intakeIsOpen = false;
+                    wall.setPosition(0.32);
+
+                } else {
+                    intakeIsOpen = true;
+                    wall.setPosition(0.15);
+                }
+            }
 
             // ================= LAUNCHER =================
             if (gamepad2.right_trigger > 0.5) {
@@ -203,6 +212,8 @@ public class Silent extends LinearOpMode {
             telemetry.addData("Transfer Sensor", sensor.alpha());
             telemetry.addData("Launch Velocity:", launcher.getVelocity());
             telemetry.addData("Launch2 Velocity:", launcher2.getVelocity());
+            telemetry.addData("Servo", intakeIsOpen);
+            telemetry.addData("Wall", wall.getPosition());
 
             telemetry.update();
         }

@@ -16,7 +16,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "RedAuto")
 public class RedAuto extends OpMode {
 
     private Follower follower;

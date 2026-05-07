@@ -78,13 +78,19 @@ public class BlueTeleopClose extends LinearOpMode {
                 }
             }
             // ================= WALL =================
-            if (gamepad2.a) robot.wall.setPosition(0.15);
-            if (gamepad2.y) robot.wall.setPosition(0.32);
-
+            if (gamepad2.aWasPressed()) {
+                if (robot.intakeIsOpen) {
+                  robot.intakeIsOpen = false;
+                  robot.wall.setPosition(0.32);
+                } else {
+                    robot.intakeIsOpen = true;
+                    robot.wall.setPosition(0.15);
+                }
+            }
             // ================= LAUNCHER =================
             if (gamepad2.right_trigger > 0.5) {
-                robot.launcher.setVelocity(1300);
-                robot.launcher2.setVelocity(1300);
+                robot.launcher.setVelocity(1150);
+                robot.launcher2.setVelocity(1150);
             } else if (gamepad2.left_trigger > 0.5) {
                 robot.launcher.setVelocity(1620);
                 robot.launcher2.setVelocity(1620);
@@ -131,13 +137,11 @@ public class BlueTeleopClose extends LinearOpMode {
             // ================= LIGHT SYSTEM =================
             if (locked) {
 
-                robot.vision.setPosition(GREEN);
                 robot.vision1.setPosition(GREEN);
 
             } else if (intakeFull) {
 
                 robot.vision.setPosition(ORANGE);
-                robot.vision1.setPosition(ORANGE);
 
             } else {
 

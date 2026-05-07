@@ -17,7 +17,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "BlueAutoClose")
+
 public class BlueAutoClose extends OpMode {
 
     private Follower follower;

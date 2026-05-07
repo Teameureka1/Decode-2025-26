@@ -12,8 +12,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Configuration.Config;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "BlueGate")
-public class BlueGate extends OpMode {
+@Autonomous(name = "redClose12ClassifiedWith9InRamp")
+public class redClose12ClassifiedWith9InRamp extends OpMode {
 
     Config robot;
 
@@ -48,60 +48,60 @@ public class BlueGate extends OpMode {
 
     public void buildPaths() {
 
-        scorePreload = new Path(new BezierLine(robot.blueStartClose, robot.blueScorePose));
-        scorePreload.setLinearHeadingInterpolation(robot.blueStartClose.getHeading(), robot.blueScorePose.getHeading());
+        scorePreload = new Path(new BezierLine(robot.redStartPose, robot.redScorePose));
+        scorePreload.setLinearHeadingInterpolation(robot.redStartPose.getHeading(), robot.redScorePose.getHeading());
 
         setUp2 = follower.pathBuilder()
-                .addPath(new BezierLine(robot.blueScorePose, robot.blueSetup2Pose))
-                .setLinearHeadingInterpolation(robot.blueScorePose.getHeading(), robot.blueSetup2Pose.getHeading())
+                .addPath(new BezierLine(robot.redScorePose, robot.redSetup2Pose))
+                .setLinearHeadingInterpolation(robot.redScorePose.getHeading(), robot.redSetup2Pose.getHeading())
                 .build();
 
         grabPickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(robot.blueSetup2Pose, robot.bluePickup2Pose))
-                .setLinearHeadingInterpolation(robot.blueSetup2Pose.getHeading(), robot.bluePickup2Pose.getHeading())
+                .addPath(new BezierLine(robot.redSetup2Pose, robot.redPickup2Pose))
+                .setLinearHeadingInterpolation(robot.redSetup2Pose.getHeading(), robot.redPickup2Pose.getHeading())
                 .build();
 
         gateSetup = follower.pathBuilder()
-                .addPath(new BezierLine(robot.bluePickup2Pose, robot.blueGateSetupPose))
-                .setLinearHeadingInterpolation(robot.bluePickup2Pose.getHeading(), robot.blueGateSetupPose.getHeading())
+                .addPath(new BezierLine(robot.redPickup2Pose, robot.redSetupGate))
+                .setLinearHeadingInterpolation(robot.redPickup2Pose.getHeading(), robot.redSetupGate.getHeading())
                 .build();
 
         toGate = follower.pathBuilder()
-                .addPath(new BezierLine(robot.bluePickup2Pose, robot.blueGate))
-                .setLinearHeadingInterpolation(robot.bluePickup2Pose.getHeading(), robot.blueGate.getHeading())
+                .addPath(new BezierLine(robot.redPickup2Pose, robot.redGateFacingParkingZone))
+                .setLinearHeadingInterpolation(robot.redPickup2Pose.getHeading(), robot.redGateFacingParkingZone.getHeading())
                 .build();
 
         scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierCurve(robot.blueGate, new Pose(60,40,0), robot.blueScorePose))
-                .setLinearHeadingInterpolation(robot.blueGate.getHeading(), robot.blueScorePose.getHeading())
+                .addPath(new BezierCurve(robot.redGateFacingParkingZone, new Pose(110,40,0), robot.redScorePose))
+                .setLinearHeadingInterpolation(robot.redGateFacingParkingZone.getHeading(), robot.redScorePose.getHeading())
                 .build();
         setUp1 = follower.pathBuilder()
-                .addPath(new BezierLine(robot.blueScorePose, robot.blueSetup1Pose))
-                .setLinearHeadingInterpolation(robot.blueScorePose.getHeading(), robot.blueSetup1Pose.getHeading())
+                .addPath(new BezierLine(robot.redScorePose, robot.redSetup1Pose))
+                .setLinearHeadingInterpolation(robot.redScorePose.getHeading(), robot.redSetup1Pose.getHeading())
                 .build();
         grabPickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(robot.blueSetup1Pose, robot.bluePickup1Pose))
-                .setLinearHeadingInterpolation(robot.blueSetup1Pose.getHeading(), robot.bluePickup1Pose.getHeading())
+                .addPath(new BezierLine(robot.redSetup1Pose, robot.redPickup1Pose))
+                .setLinearHeadingInterpolation(robot.redSetup1Pose.getHeading(), robot.redPickup1Pose.getHeading())
                 .build();
         scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(robot.bluePickup1Pose, robot.blueScorePose))
-                .setLinearHeadingInterpolation(robot.bluePickup1Pose.getHeading(), robot.blueScorePose.getHeading())
+                .addPath(new BezierLine(robot.redPickup1Pose, robot.redScorePose))
+                .setLinearHeadingInterpolation(robot.redPickup1Pose.getHeading(), robot.redScorePose.getHeading())
                 .build();
         setUp3 = follower.pathBuilder()
-                .addPath(new BezierLine(robot.blueScorePose, robot.blueSetup3Pose))
-                .setLinearHeadingInterpolation(robot.blueScorePose.getHeading(), robot.blueSetup3Pose.getHeading())
+                .addPath(new BezierLine(robot.redScorePose, robot.redSetup3Pose))
+                .setLinearHeadingInterpolation(robot.redScorePose.getHeading(), robot.redSetup3Pose.getHeading())
                 .build();
         grabPickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(robot.blueSetup3Pose, robot.bluePickup3Pose))
-                .setLinearHeadingInterpolation(robot.blueSetup3Pose.getHeading(), robot.bluePickup3Pose.getHeading())
+                .addPath(new BezierLine(robot.redSetup3Pose, robot.redPickup3Pose))
+                .setLinearHeadingInterpolation(robot.redSetup3Pose.getHeading(), robot.redPickup3Pose.getHeading())
                 .build();
         scorePickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(robot.bluePickup3Pose, robot.blueScorePose))
-                .setLinearHeadingInterpolation(robot.bluePickup3Pose.getHeading(), robot.blueScorePose.getHeading())
+                .addPath(new BezierLine(robot.redPickup3Pose, robot.redScorePose))
+                .setLinearHeadingInterpolation(robot.redPickup3Pose.getHeading(), robot.redScorePose.getHeading())
                 .build();
         endOfAuto = follower.pathBuilder()
-                .addPath(new BezierLine(robot.blueScorePose, robot.blueAutoEnd))
-                .setLinearHeadingInterpolation(robot.blueScorePose.getHeading(), robot.blueAutoEnd.getHeading())
+                .addPath(new BezierLine(robot.redScorePose, robot.redAutoEnd))
+                .setLinearHeadingInterpolation(robot.redScorePose.getHeading(), robot.redAutoEnd.getHeading())
                 .build();
     }
 
@@ -116,7 +116,7 @@ public class BlueGate extends OpMode {
         wallUp();
 
         buildPaths();
-        follower.setStartingPose(robot.blueStartClose);
+        follower.setStartingPose(robot.redStartPose);
     }
 
     @Override
@@ -136,7 +136,7 @@ public class BlueGate extends OpMode {
         switch (step) {
 
             case 0:
-                if (!follower.isBusy() && robot.launcher2.getVelocity() < 1200 && timer.seconds() > 2.5) {
+                if (!follower.isBusy() && robot.launcher2.getVelocity() < 1240 && timer.seconds() > 3.1) {
                     timer.reset();
                     intakeIn();
                     step++;
@@ -182,7 +182,7 @@ public class BlueGate extends OpMode {
 
 
             case 5:
-                if (!follower.isBusy() && timer.seconds() > 1.25) {
+                if (!follower.isBusy() && timer.seconds() > 2) {
                     wallUp();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup2);
