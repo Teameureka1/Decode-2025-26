@@ -52,14 +52,14 @@ public class Config {
 
     public final Pose redStartFar = new Pose(89, 8.39, Math.toRadians(90));
     public final Pose redStartPose = new Pose(129.2095, 122.4811, Math.toRadians(39.3531));
-    public final Pose redScorePose = new Pose(94.4201,92.2024,Math.toRadians(44.547));
-    public final Pose redScorePose2 = new Pose(95.1933,107.5592,Math.toRadians(34));
+    public final Pose redScorePose = new Pose(96,86,Math.toRadians(44.547));
+    public final Pose redScorePose2 = new Pose(92,103,Math.toRadians(34));
     public final Pose redPickup1Pose = new Pose(134, 82.2643, Math.toRadians(0.6));
     public final Pose redSetup1Pose = new Pose(107.6,81.6, Math.toRadians(1.33));
     public final Pose redPickup2Pose = new Pose(141,58, Math.toRadians(.08));
     public final Pose redSetup2Pose = new Pose(107.6,58, Math.toRadians(.08));
     public final Pose redSetupGate = new Pose(135,58.4,Math.toRadians(0));
-    public final Pose redGateFacingParkingZone = new Pose(138,61,Math.toRadians(-90));
+    public final Pose redGateFacingParkingZone = new Pose(140,61,Math.toRadians(-95));
     public final Pose redGateFacingGoal = new Pose(134,76,Math.toRadians(90));
     public final Pose redPickup3Pose = new Pose(141,33, Math.toRadians(.8));
     public final Pose redSetup3Pose = new Pose(107.6,33, Math.toRadians(.8));

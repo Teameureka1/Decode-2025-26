@@ -22,13 +22,13 @@ public class redCloseGrabFromGate extends OpMode {
     private ElapsedTime timer = new ElapsedTime();
 
     private Path scorePreload;
-    private PathChain setUp2, grabPickup2, gateSetup, toGate2, scorePickup2, gateGrabSetup, gateGrab, gateHarvest, scoreGrab, setUp1, grabPickup1, toGate1, scorePickup1, setUp3, grabPickup3, scorePickup3;
+    private PathChain setUp2, grabPickup2, gateSetup, toGate2, scorePickup2, gateGrabSetup, gateGrab, gateHarvest, scoreGrab, setUp1, grabPickup1, toGate1, scorePickup1, endAuto;
 
     private int step = 0;
 
     // === INTAKE FUNCTIONS ===
     private void intakeIn() {
-        robot.intake.setVelocity(1200);
+        robot.intake.setVelocity(1300);
         robot.kicker.setPower(1);
     }
 
@@ -105,21 +105,15 @@ public class redCloseGrabFromGate extends OpMode {
                 .setLinearHeadingInterpolation(robot.redPickup1Pose.getHeading(), robot.redGateFacingGoal.getHeading())
                 .build();
         scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(robot.redGateFacingGoal, robot.redScorePose2))
-                .setLinearHeadingInterpolation(robot.redGateFacingGoal.getHeading(), robot.redScorePose2.getHeading())
+                .addPath(new BezierLine(robot.redGateFacingGoal, robot.redScorePose))
+                .setLinearHeadingInterpolation(robot.redGateFacingGoal.getHeading(), robot.redScorePose.getHeading())
                 .build();
-        setUp3 = follower.pathBuilder()
-                .addPath(new BezierLine(robot.redScorePose, robot.redSetup3Pose))
-                .setLinearHeadingInterpolation(robot.redScorePose.getHeading(), robot.redSetup3Pose.getHeading())
+        endAuto = follower.pathBuilder()
+                .addPath(new BezierLine(robot.redScorePose, robot.redGateHarvestSetup))
+                .setLinearHeadingInterpolation(robot.redScorePose.getHeading(), robot.redGateHarvestSetup.getHeading())
                 .build();
-        grabPickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(robot.redSetup3Pose, robot.redPickup3Pose))
-                .setLinearHeadingInterpolation(robot.redSetup3Pose.getHeading(), robot.redPickup3Pose.getHeading())
-                .build();
-        scorePickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(robot.redPickup3Pose, robot.redScorePose2))
-                .setLinearHeadingInterpolation(robot.redPickup3Pose.getHeading(), robot.redScorePose2.getHeading())
-                .build();
+
+
     }
 
     @Override
@@ -153,7 +147,7 @@ public class redCloseGrabFromGate extends OpMode {
         switch (step) {
 
             case 0:
-                if (!follower.isBusy() && robot.launcher2.getVelocity() < 1240 && timer.seconds() > 3.1) {
+                if (!follower.isBusy() && robot.launcher2.getVelocity() > 1200 ) {
                     timer.reset();
                     intakeIn();
                     step++;
@@ -170,17 +164,17 @@ public class redCloseGrabFromGate extends OpMode {
                 }
                 break;
             case 2:
-                if (!follower.isBusy() && timer.seconds() > .25) {
+                if (!follower.isBusy()) {
                     wallDown();
                     intakeIn();
-                    follower.setMaxPower(.65);
+                    follower.setMaxPower(.7);
                     follower.followPath(grabPickup2);
                     timer.reset();
                     step++;
                 }
                 break;
             case 3:
-                if (!follower.isBusy() && timer.seconds() > .25) {
+                if (!follower.isBusy()) {
                     intakeStop();
                     follower.setMaxPower(1);
                     follower.followPath(gateSetup);
@@ -189,7 +183,7 @@ public class redCloseGrabFromGate extends OpMode {
                 }
                 break;
             case 4:
-                if (!follower.isBusy() && timer.seconds() > .8) {
+                if (!follower.isBusy()) {
                     follower.setMaxPower(1);
                     follower.followPath(toGate2);
                     timer.reset();
@@ -199,7 +193,7 @@ public class redCloseGrabFromGate extends OpMode {
 
 
             case 5:
-                if (!follower.isBusy() && timer.seconds() > 2.75) {
+                if (!follower.isBusy() && timer.seconds() > 1.5) {
                     wallUp();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup2);
@@ -209,14 +203,14 @@ public class redCloseGrabFromGate extends OpMode {
                 break;
 
             case 6:
-                if (!follower.isBusy() && timer.seconds() > 2.5) {
+                if (!follower.isBusy()) {
                     intakeIn();
                     timer.reset();
                     step++;
                 }
                 break;
             case 7:
-                if (!follower.isBusy() && timer.seconds() > .75) {
+                if (!follower.isBusy() && timer.seconds() > 1) {
                     intakeStop();
                     wallDown();
                     follower.setMaxPower(1);
@@ -226,7 +220,7 @@ public class redCloseGrabFromGate extends OpMode {
                 }
                 break;
             case 8:
-                if (!follower.isBusy() && timer.seconds() > .25) {
+                if (!follower.isBusy()) {
                     intakeIn();
                     follower.setMaxPower(1);
                     follower.followPath(gateGrab);
@@ -254,7 +248,7 @@ public class redCloseGrabFromGate extends OpMode {
                 }
                 break;
             case 11:
-                if (!follower.isBusy() && timer.seconds() > .25) {
+                if (!follower.isBusy()) {
                     intakeIn();
                     timer.reset();
                     step++;
@@ -262,7 +256,7 @@ public class redCloseGrabFromGate extends OpMode {
                 break;
 
             case 12:
-                if (!follower.isBusy() && timer.seconds() > 1.75) {
+                if (!follower.isBusy() && timer.seconds() > 1) {
                     intakeStop();
                     wallDown();
                     follower.setMaxPower(1);
@@ -272,16 +266,16 @@ public class redCloseGrabFromGate extends OpMode {
                 }
                 break;
             case 13:
-                if (!follower.isBusy() && timer.seconds() > .2) {
+                if (!follower.isBusy()) {
                     intakeIn();
-                    follower.setMaxPower(.65);
+                    follower.setMaxPower(.7);
                     follower.followPath(grabPickup1);
                     timer.reset();
                     step++;
                 }
                 break;
             case 14:
-                if (!follower.isBusy() && timer.seconds() > .2) {
+                if (!follower.isBusy()) {
                     intakeStop();
                     follower.setMaxPower(1);
                     follower.followPath(toGate1);
@@ -290,7 +284,7 @@ public class redCloseGrabFromGate extends OpMode {
                 }
                 break;
             case 15:
-                if (!follower.isBusy() && timer.seconds() > 1) {
+                if (!follower.isBusy() && timer.seconds() > 1.5) {
                     intakeStop();
                     wallDown();
                     follower.setMaxPower(1);
@@ -300,30 +294,28 @@ public class redCloseGrabFromGate extends OpMode {
                 }
                 break;
             case 16:
-                if (!follower.isBusy() && timer.seconds() > .5) {
+                if (!follower.isBusy()) {
                     wallUp();
                     intakeIn();
                     timer.reset();
                     step++;
                 }
                 break;
-            case 20:
-                if (!follower.isBusy() && timer.seconds() > 1) {
-                    wallUp();
-                    intakeIn();
+            case 17:
+                if (!follower.isBusy() && timer.seconds() > 1.5) {
+                    intakeStop();
+                    wallDown();
+                    follower.setMaxPower(1);
+                    follower.followPath(endAuto);
                     timer.reset();
                     step++;
                 }
                 break;
-            case 21:
-                if (!follower.isBusy() && timer.seconds() > 2.5) {
-                    requestOpModeStop();
-                }
-
         }
 
         telemetry.addData("launcher Velocity", robot.launcher.getVelocity());
         telemetry.addData("launcher2 Velocity", robot.launcher2.getVelocity());
+
 
         telemetry.addData("Step", step);
         telemetry.addData("F", follower.isBusy());
