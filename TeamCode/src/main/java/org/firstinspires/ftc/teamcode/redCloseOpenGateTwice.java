@@ -48,8 +48,8 @@ public class redCloseOpenGateTwice extends OpMode {
 
     public void buildPaths() {
 
-        scorePreload = new Path(new BezierLine(robot.redStartPose, robot.redScorePose));
-        scorePreload.setLinearHeadingInterpolation(robot.redStartPose.getHeading(), robot.redScorePose.getHeading());
+        scorePreload = new Path(new BezierLine(robot.redStartClose, robot.redScorePose));
+        scorePreload.setLinearHeadingInterpolation(robot.redStartClose.getHeading(), robot.redScorePose.getHeading());
 
         setUp2 = follower.pathBuilder()
                 .addPath(new BezierLine(robot.redScorePose, robot.redSetup2Pose))
@@ -116,7 +116,7 @@ public class redCloseOpenGateTwice extends OpMode {
         wallUp();
 
         buildPaths();
-        follower.setStartingPose(robot.redStartPose);
+        follower.setStartingPose(robot.redStartClose);
     }
 
     @Override

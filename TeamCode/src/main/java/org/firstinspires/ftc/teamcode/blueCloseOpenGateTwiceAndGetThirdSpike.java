@@ -225,12 +225,21 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
                 if (!follower.isBusy()) {
                     intakeStop();
                     follower.setMaxPower(1);
-                    follower.followPath(toGate1);
+                    follower.followPath(gateSetup2);
                     timer.reset();
                     step++;
                 }
                 break;
             case 10:
+                if (!follower.isBusy()) {
+                    intakeStop();
+                    follower.setMaxPower(1);
+                    follower.followPath(toGate1);
+                    timer.reset();
+                    step++;
+                }
+                break;
+            case 11:
                 if (!follower.isBusy() && timer.seconds() > 1.5) {
                     intakeStop();
                     wallDown();
@@ -240,7 +249,7 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
                     step++;
                 }
                 break;
-            case 11:
+            case 12:
                 if (!follower.isBusy()) {
                     wallUp();
                     intakeIn();
@@ -248,7 +257,7 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
                     step++;
                 }
                 break;
-            case 12:
+            case 13:
                 if (!follower.isBusy() && timer.seconds() > 1) {
                     intakeStop();
                     wallDown();
@@ -258,7 +267,7 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
                     step++;
                 }
                 break;
-            case 13:
+            case 14:
                 if (!follower.isBusy()) {
                     intakeIn();
                     follower.setMaxPower(.65);
@@ -267,7 +276,7 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
                     step++;
                 }
                 break;
-            case 14:
+            case 15:
                 if (!follower.isBusy()) {
                     intakeStop();
                     wallDown();
@@ -277,7 +286,7 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
                     step++;
                 }
                 break;
-            case 15:
+            case 16:
                 if (!follower.isBusy()) {
                     wallUp();
                     intakeIn();
@@ -285,7 +294,7 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
                     step++;
                 }
                 break;
-            case 16:
+            case 17:
                 if (!follower.isBusy() && timer.seconds() > 2.5) {
                     requestOpModeStop();
                 }
