@@ -12,8 +12,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Configuration.Config;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "BlueGate")
-public class BlueGate extends OpMode {
+@Autonomous(name = "blueClose12ClassifiedWith9InRamp")
+public class blueClose12ClassifiedWith9InRamp extends OpMode {
 
     Config robot;
 
@@ -28,7 +28,7 @@ public class BlueGate extends OpMode {
 
     // === INTAKE FUNCTIONS ===
     private void intakeIn() {
-        robot.intake.setVelocity(1200);
+        robot.intake.setVelocity(1260);
         robot.kicker.setPower(1);
     }
 
@@ -136,7 +136,7 @@ public class BlueGate extends OpMode {
         switch (step) {
 
             case 0:
-                if (!follower.isBusy() && robot.launcher2.getVelocity() < 1200 && timer.seconds() > 2.5) {
+                if (!follower.isBusy() && robot.launcher2.getVelocity() > 1200) {
                     timer.reset();
                     intakeIn();
                     step++;
@@ -153,7 +153,7 @@ public class BlueGate extends OpMode {
                 }
                 break;
             case 2:
-                if (!follower.isBusy() && timer.seconds() > .25) {
+                if (!follower.isBusy()) {
                     wallDown();
                     intakeIn();
                     follower.setMaxPower(.65);
@@ -163,7 +163,7 @@ public class BlueGate extends OpMode {
                 }
                 break;
             case 3:
-                if (!follower.isBusy() && timer.seconds() > .25) {
+                if (!follower.isBusy()) {
                     intakeStop();
                     follower.setMaxPower(1);
                     follower.followPath(gateSetup);
@@ -172,7 +172,7 @@ public class BlueGate extends OpMode {
                 }
                 break;
             case 4:
-                if (!follower.isBusy() && timer.seconds() > .8) {
+                if (!follower.isBusy()) {
                     follower.setMaxPower(1);
                     follower.followPath(toGate);
                     timer.reset();
@@ -182,7 +182,7 @@ public class BlueGate extends OpMode {
 
 
             case 5:
-                if (!follower.isBusy() && timer.seconds() > 1.25) {
+                if (!follower.isBusy() && timer.seconds() > 1.75) {
                     wallUp();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup2);
@@ -192,14 +192,14 @@ public class BlueGate extends OpMode {
                 break;
 
             case 6:
-                if (!follower.isBusy() && timer.seconds() > 2.5) {
+                if (!follower.isBusy()) {
                     intakeIn();
                     timer.reset();
                     step++;
                 }
                 break;
             case 7:
-                if (!follower.isBusy() && timer.seconds() > 1) {
+                if (!follower.isBusy() && timer.seconds() > 1.25) {
                     intakeStop();
                     wallDown();
                     follower.setMaxPower(1);
@@ -209,7 +209,7 @@ public class BlueGate extends OpMode {
                 }
                 break;
             case 8:
-                if (!follower.isBusy() && timer.seconds() > .2) {
+                if (!follower.isBusy()) {
                     intakeIn();
                     follower.setMaxPower(.65);
                     follower.followPath(grabPickup1);
@@ -218,7 +218,7 @@ public class BlueGate extends OpMode {
                 }
                 break;
             case 9:
-                if (!follower.isBusy() && timer.seconds() > 1) {
+                if (!follower.isBusy()) {
                     intakeStop();
                     wallDown();
                     follower.setMaxPower(1);
@@ -228,7 +228,7 @@ public class BlueGate extends OpMode {
                 }
                 break;
             case 10:
-                if (!follower.isBusy() && timer.seconds() > .5) {
+                if (!follower.isBusy()) {
                     wallUp();
                     intakeIn();
                     timer.reset();
@@ -236,7 +236,7 @@ public class BlueGate extends OpMode {
                 }
                 break;
             case 11:
-                if (!follower.isBusy() && timer.seconds() > 1.75) {
+                if (!follower.isBusy() && timer.seconds() > 1) {
                     intakeStop();
                     wallDown();
                     follower.setMaxPower(1);
@@ -246,7 +246,7 @@ public class BlueGate extends OpMode {
                 }
                 break;
             case 12:
-                if (!follower.isBusy() && timer.seconds() > 1.25) {
+                if (!follower.isBusy()) {
                     intakeIn();
                     follower.setMaxPower(.65);
                     follower.followPath(grabPickup3);
@@ -255,7 +255,7 @@ public class BlueGate extends OpMode {
                 }
                 break;
             case 13:
-                if (!follower.isBusy() && timer.seconds() > .5) {
+                if (!follower.isBusy()) {
                     intakeStop();
                     wallDown();
                     follower.setMaxPower(1);
@@ -265,7 +265,7 @@ public class BlueGate extends OpMode {
                 }
                 break;
             case 14:
-                if (!follower.isBusy() && timer.seconds() > 1) {
+                if (!follower.isBusy()) {
                     wallUp();
                     intakeIn();
                     timer.reset();
@@ -281,11 +281,11 @@ public class BlueGate extends OpMode {
                     timer.reset();
                     step++;
                 }
+                break;
             case 16:
                 if (!follower.isBusy() && timer.seconds() > 2.5) {
                     requestOpModeStop();
                 }
-
         }
 
         telemetry.addData("launcher Velocity", robot.launcher.getVelocity());

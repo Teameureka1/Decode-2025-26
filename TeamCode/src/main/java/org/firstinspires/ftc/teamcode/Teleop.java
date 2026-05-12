@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -10,7 +11,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 public class Teleop extends OpMode {
     private Config robot;
     private Follower follower;
-    private boolean autoMovement;
+    private boolean autoMovement = false;
 
     @Override
     public void init() {
@@ -22,26 +23,42 @@ public class Teleop extends OpMode {
         follower.startTeleOpDrive();
     }
 
+    private Pose park;
+
     @Override
     public void loop() {
         double throttle = gamepad1.right_trigger;
         follower.update();
-        follower.setTeleOpDrive(
-                gamepad1.left_stick_y * throttle,
-                gamepad1.left_stick_x * throttle,
-                gamepad1.right_stick_x * throttle,
-                true
-        );
-        if (gamepad1.aWasPressed()) {
-            if (autoMovement == false) {
 
-                autoMovement = true;
+        if (gamepad1.b && !autoMovement) {
+            autoMovement = true;
+            park = follower.getPose();
+            follower.holdPoint(park);
 
-            } else {
-                autoMovement = false;
-            }
+        }
+        if (Math.abs(gamepad1.left_stick_y)
+                > .1 && Math.abs(gamepad1.left_stick_x)
+                > .1 && Math.abs(gamepad1.right_stick_x)
+                > .1 && autoMovement) {
+
+            autoMovement = false;
+            follower.breakFollowing();
+            follower.startTeleOpDrive();
+
         }
 
 
+        if (!autoMovement){
+            follower.setTeleOpDrive(
+                    (-gamepad1.left_stick_y) * (throttle),
+                    (-gamepad1.left_stick_x) * (throttle),
+                    (-gamepad1.right_stick_x) * (throttle),
+                    true
+            );
+        }
+
+
+
+        telemetry.addData("Auto Movement", autoMovement);
     }
 }
