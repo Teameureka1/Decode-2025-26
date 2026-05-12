@@ -12,8 +12,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Configuration.Config;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "blueClose12ClassifiedWith9InRamp")
-public class blueClose12ClassifiedWith9InRamp extends OpMode {
+@Autonomous(name = "blueCloseOpenGateTwiceAndGetThirdSpike")
+public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
 
     Config robot;
 
@@ -22,13 +22,13 @@ public class blueClose12ClassifiedWith9InRamp extends OpMode {
     private ElapsedTime timer = new ElapsedTime();
 
     private Path scorePreload;
-    private PathChain setUp2, grabPickup2, gateSetup, toGate, scorePickup2, setUp1, grabPickup1, scorePickup1, setUp3, grabPickup3, scorePickup3, endOfAuto;
+    private PathChain setUp2, grabPickup2, gateSetup, toGate2, scorePickup2, setUp1, grabPickup1, gateSetup2, toGate1, scorePickup1, setUp3, grabPickup3, scorePickup3;
 
     private int step = 0;
 
     // === INTAKE FUNCTIONS ===
     private void intakeIn() {
-        robot.intake.setVelocity(1260);
+        robot.intake.setVelocity(1200);
         robot.kicker.setPower(1);
     }
 
@@ -66,7 +66,7 @@ public class blueClose12ClassifiedWith9InRamp extends OpMode {
                 .setLinearHeadingInterpolation(robot.bluePickup2Pose.getHeading(), robot.blueGateSetupPose.getHeading())
                 .build();
 
-        toGate = follower.pathBuilder()
+        toGate2 = follower.pathBuilder()
                 .addPath(new BezierLine(robot.bluePickup2Pose, robot.blueGate))
                 .setLinearHeadingInterpolation(robot.bluePickup2Pose.getHeading(), robot.blueGate.getHeading())
                 .build();
@@ -83,9 +83,17 @@ public class blueClose12ClassifiedWith9InRamp extends OpMode {
                 .addPath(new BezierLine(robot.blueSetup1Pose, robot.bluePickup1Pose))
                 .setLinearHeadingInterpolation(robot.blueSetup1Pose.getHeading(), robot.bluePickup1Pose.getHeading())
                 .build();
+        gateSetup2 = follower.pathBuilder()
+                .addPath(new BezierLine(robot.bluePickup1Pose, robot.blueGateFacingGoalSetup))
+                .setLinearHeadingInterpolation(robot.bluePickup1Pose.getHeading(), robot.blueGateFacingGoalSetup.getHeading())
+                .build();
+        toGate1 = follower.pathBuilder()
+                .addPath(new BezierLine(robot.blueGateFacingGoalSetup, robot.blueGateFacingGoal))
+                .setLinearHeadingInterpolation(robot.blueGateFacingGoalSetup.getHeading(), robot.blueGateFacingGoal.getHeading())
+                .build();
         scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(robot.bluePickup1Pose, robot.blueScorePose))
-                .setLinearHeadingInterpolation(robot.bluePickup1Pose.getHeading(), robot.blueScorePose.getHeading())
+                .addPath(new BezierLine(robot.blueGateFacingGoal, robot.blueScorePose))
+                .setLinearHeadingInterpolation(robot.blueGateFacingGoal.getHeading(), robot.blueScorePose.getHeading())
                 .build();
         setUp3 = follower.pathBuilder()
                 .addPath(new BezierLine(robot.blueScorePose, robot.blueSetup3Pose))
@@ -96,12 +104,8 @@ public class blueClose12ClassifiedWith9InRamp extends OpMode {
                 .setLinearHeadingInterpolation(robot.blueSetup3Pose.getHeading(), robot.bluePickup3Pose.getHeading())
                 .build();
         scorePickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(robot.bluePickup3Pose, robot.blueScorePose))
-                .setLinearHeadingInterpolation(robot.bluePickup3Pose.getHeading(), robot.blueScorePose.getHeading())
-                .build();
-        endOfAuto = follower.pathBuilder()
-                .addPath(new BezierLine(robot.blueScorePose, robot.blueAutoEnd))
-                .setLinearHeadingInterpolation(robot.blueScorePose.getHeading(), robot.blueAutoEnd.getHeading())
+                .addPath(new BezierLine(robot.bluePickup3Pose, robot.blueScorePose2))
+                .setLinearHeadingInterpolation(robot.bluePickup3Pose.getHeading(), robot.blueScorePose2.getHeading())
                 .build();
     }
 
@@ -136,7 +140,7 @@ public class blueClose12ClassifiedWith9InRamp extends OpMode {
         switch (step) {
 
             case 0:
-                if (!follower.isBusy() && robot.launcher2.getVelocity() > 1180) {
+                if (!follower.isBusy() && robot.launcher2.getVelocity() > 1200) {
                     timer.reset();
                     intakeIn();
                     step++;
@@ -174,7 +178,7 @@ public class blueClose12ClassifiedWith9InRamp extends OpMode {
             case 4:
                 if (!follower.isBusy()) {
                     follower.setMaxPower(1);
-                    follower.followPath(toGate);
+                    follower.followPath(toGate2);
                     timer.reset();
                     step++;
                 }
@@ -182,7 +186,7 @@ public class blueClose12ClassifiedWith9InRamp extends OpMode {
 
 
             case 5:
-                if (!follower.isBusy() && timer.seconds() > 1.75) {
+                if (!follower.isBusy() && timer.seconds() > 1.5) {
                     wallUp();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup2);
@@ -199,7 +203,7 @@ public class blueClose12ClassifiedWith9InRamp extends OpMode {
                 }
                 break;
             case 7:
-                if (!follower.isBusy() && timer.seconds() > 1.25) {
+                if (!follower.isBusy() && timer.seconds() > 1) {
                     intakeStop();
                     wallDown();
                     follower.setMaxPower(1);
@@ -220,6 +224,15 @@ public class blueClose12ClassifiedWith9InRamp extends OpMode {
             case 9:
                 if (!follower.isBusy()) {
                     intakeStop();
+                    follower.setMaxPower(1);
+                    follower.followPath(toGate1);
+                    timer.reset();
+                    step++;
+                }
+                break;
+            case 10:
+                if (!follower.isBusy() && timer.seconds() > 1.5) {
+                    intakeStop();
                     wallDown();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup1);
@@ -227,7 +240,7 @@ public class blueClose12ClassifiedWith9InRamp extends OpMode {
                     step++;
                 }
                 break;
-            case 10:
+            case 11:
                 if (!follower.isBusy()) {
                     wallUp();
                     intakeIn();
@@ -235,7 +248,7 @@ public class blueClose12ClassifiedWith9InRamp extends OpMode {
                     step++;
                 }
                 break;
-            case 11:
+            case 12:
                 if (!follower.isBusy() && timer.seconds() > 1) {
                     intakeStop();
                     wallDown();
@@ -245,7 +258,7 @@ public class blueClose12ClassifiedWith9InRamp extends OpMode {
                     step++;
                 }
                 break;
-            case 12:
+            case 13:
                 if (!follower.isBusy()) {
                     intakeIn();
                     follower.setMaxPower(.65);
@@ -254,7 +267,7 @@ public class blueClose12ClassifiedWith9InRamp extends OpMode {
                     step++;
                 }
                 break;
-            case 13:
+            case 14:
                 if (!follower.isBusy()) {
                     intakeStop();
                     wallDown();
@@ -264,20 +277,10 @@ public class blueClose12ClassifiedWith9InRamp extends OpMode {
                     step++;
                 }
                 break;
-            case 14:
+            case 15:
                 if (!follower.isBusy()) {
                     wallUp();
                     intakeIn();
-                    timer.reset();
-                    step++;
-                }
-                break;
-            case 15:
-                if (!follower.isBusy() && timer.seconds() > 2) {
-                    intakeStop();
-                    wallDown();
-                    follower.setMaxPower(1);
-                    follower.followPath(endOfAuto);
                     timer.reset();
                     step++;
                 }
@@ -286,6 +289,7 @@ public class blueClose12ClassifiedWith9InRamp extends OpMode {
                 if (!follower.isBusy() && timer.seconds() > 2.5) {
                     requestOpModeStop();
                 }
+
         }
 
         telemetry.addData("launcher Velocity", robot.launcher.getVelocity());

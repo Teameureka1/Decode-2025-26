@@ -38,13 +38,15 @@ public class Config {
     // BLUE SIDE UPDATED RED SIDE NOT UPDATED
     public final Pose blueStartFar = new Pose(55, 8.39, Math.toRadians(90));
     public final Pose blueStartClose = new Pose(16.37, 115.9435, Math.toRadians(141));
-    public final Pose blueScorePose = new Pose(46,86,Math.toRadians(132.5));
+    public final Pose blueScorePose = new Pose(44,86,Math.toRadians(132));
     public final Pose blueScorePose2 = new Pose(51.9182,103.703,Math.toRadians(150.25));
     public final Pose bluePickup1Pose = new Pose(15.2671,75.5, Math.toRadians(180));
     public final Pose blueSetup1Pose = new Pose(40,75.5, Math.toRadians(180));
     public final Pose bluePickup2Pose = new Pose(9.5,51.5, Math.toRadians(180));
     public final Pose blueSetup2Pose = new Pose(43.576,51.5, Math.toRadians(180));
     public final Pose blueGate = new Pose(19,56,Math.toRadians(-90));
+    public final Pose blueGateFacingGoalSetup = new Pose(21,74,Math.toRadians(90));
+    public final Pose blueGateFacingGoal = new Pose(17,74,Math.toRadians(90));
     public final Pose blueAutoEnd = new Pose(30, 58, Math.toRadians(-90));
     public final Pose blueGateSetupPose = new Pose(17,49.7, Math.toRadians(179.697));
     public final Pose bluePickup3Pose = new Pose(8.5,27, Math.toRadians(179));
