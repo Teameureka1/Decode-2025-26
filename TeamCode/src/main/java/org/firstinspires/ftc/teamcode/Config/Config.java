@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Configuration;
+package org.firstinspires.ftc.teamcode.Config;
 
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -25,6 +25,24 @@ public class Config {
     public Config(OpMode opmode) {
         this.opmode = opmode;
     }
+
+    public void intakeIn() {
+        intake.setVelocity(1260);
+        kicker.setPower(1);
+    }
+
+    public void intakeStop() {
+        intake.setVelocity(0);
+        kicker.setPower(0);
+    }
+    public void wallOpen() {
+        wall.setPosition(0.15);
+    }
+
+    public void wallClose() {
+        wall.setPosition(0.32);
+    }
+
 
     public DcMotorEx frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
     public DcMotorEx intake, kicker, launcher, launcher2;
@@ -112,10 +130,8 @@ public class Config {
         vision = hwMap.get(Servo.class, "vision");
         vision1 = hwMap.get(Servo.class, "vision1");
         wall = hwMap.get(Servo.class, "wall");
-
         intakeSensor = hwMap.get(ColorSensor.class, "color");
         transferSensor = hwMap.get(ColorSensor.class, "sensor");
-
         limelight = hwMap.get(Limelight3A.class, "limelight");
 
         // Limelight Initialization

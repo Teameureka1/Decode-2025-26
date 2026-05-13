@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.disabled;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 
-@TeleOp(name = "Launcher Test")
+// @TeleOp(name = "Launcher Test")
 public class Launcher extends LinearOpMode {
 
     private DcMotorEx launcher;

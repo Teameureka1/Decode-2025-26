@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Auto;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
@@ -9,8 +9,9 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.Configuration.Config;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
+import org.firstinspires.ftc.teamcode.Config.Config;
+import org.firstinspires.ftc.teamcode.PedroPathing.Constants;
 @Autonomous(name = "redClose12ClassifiedWith9InRamp")
 public class redClose12ClassifiedWith9InRamp extends OpMode {
 

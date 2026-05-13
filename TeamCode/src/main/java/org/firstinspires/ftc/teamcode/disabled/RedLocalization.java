@@ -1,27 +1,23 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.disabled;
 
-import com.bylazar.field.Line;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Configuration.Config;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.PedroPathing.Constants;
 
-@TeleOp(name = "Blue Localization")
-public class BlueLocalization extends LinearOpMode {
+public class RedLocalization extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        final Pose blueStartFar = new Pose(55, 8.39, Math.toRadians(90));
+        final Pose redStartFar = new Pose(89, 8.39, Math.toRadians(90));
 
         Follower follower;
         follower = Constants.createFollower(hardwareMap);
 
         waitForStart();
 
-        follower.setStartingPose(blueStartFar);
+        follower.setStartingPose(redStartFar);
         while (opModeIsActive()) {
             follower.update();
             double x = follower.getPose().getX();

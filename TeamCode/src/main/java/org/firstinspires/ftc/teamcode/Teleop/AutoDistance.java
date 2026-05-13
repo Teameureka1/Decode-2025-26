@@ -1,19 +1,21 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Configuration.Config;
+import org.firstinspires.ftc.teamcode.Config.Config;
 
 import java.util.List;
 
-@TeleOp(name = "Ferdinand")
-public class CloseTeleop extends LinearOpMode {
+@TeleOp(name = "AutoDistance")
+public class AutoDistance extends LinearOpMode {
 
     private Config robot;
+
+    private ElapsedTime timer = new ElapsedTime();
 
     @Override
     public void runOpMode() {
@@ -75,10 +77,22 @@ public class CloseTeleop extends LinearOpMode {
                     robot.wall.setPosition(0.15);
                 }
             }
+
             // ================= LAUNCHER =================
-            if (gamepad2.right_trigger > 0.5) {
+            if (gamepad2.aWasPressed()) {
                 robot.launcher.setVelocity(1260);
                 robot.launcher2.setVelocity(1260);
+
+                if (robot.launcher.getVelocity() > 1220) {
+                    timer.reset();
+                    robot.wallOpen();
+                    robot.intakeIn();
+                }
+                if (timer.seconds() > 1) {
+                    robot.launcher.setVelocity(1000);
+                    robot.launcher2.setVelocity(1000);
+                    robot.wallClose();
+                }
             } else if (gamepad2.left_trigger > 0.5) {
                 robot.launcher.setVelocity(1620);
                 robot.launcher2.setVelocity(1620);
