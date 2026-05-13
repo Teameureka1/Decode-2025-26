@@ -5,28 +5,15 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+
 import org.firstinspires.ftc.teamcode.Configuration.Config;
 
 import java.util.List;
 
-@TeleOp(name = "BlueClose")
-public class BlueTeleopClose extends LinearOpMode {
+@TeleOp(name = "Ferdinand")
+public class CloseTeleop extends LinearOpMode {
 
     private Config robot;
-
-    // ================= LIGHT VALUES =================
-    private final double OFF = 0.0;
-    private final double GREEN = 0.475;
-    private final double ORANGE = 0.333;
-
-    private boolean intakeFull = false;
-    private final double COLORIntake_THRESHOLD = 45;
-    private final double COLORTransfer_THRESHOLD = 85;
-
-    // ==================Intake Initialization ==========================`
-    private long intakeStopTime = 0;
-    private boolean wasIntaking = false;
-    private final long REVERSE_TIME_MS = 50;
 
     @Override
     public void runOpMode() {
@@ -53,35 +40,36 @@ public class BlueTeleopClose extends LinearOpMode {
                 // Intake in
                 robot.intake.setVelocity(-1000);
                 robot.kicker.setPower(-1);
-                wasIntaking = true;
+                robot.wasIntaking = true;
 
             } else if (intakeInput > 0.1) {
                 // Intake out
-                robot.intake.setVelocity(1000);
+                robot.intake.setVelocity(1180);
                 robot.kicker.setPower(1);
-                wasIntaking = true;
+                robot.wasIntaking = true;
 
             } else {
                 // Stick released
-                if (wasIntaking) {
-                    intakeStopTime = now;
-                    wasIntaking = false;
+                if (robot.wasIntaking) {
+                    robot.intakeStopTime = now;
+                    robot.wasIntaking = false;
                 }
 
-                // Run reverse for 150 ms after release, because if we have 4 artifacts
+                // Run reverse for 100 ms after release, because if we have 4 artifacts
                 // it will spit the 4th one out.
-                if (now - intakeStopTime < REVERSE_TIME_MS) {
-                    robot.intake.setVelocity(-1500);   // reverse burst
+
+                if (now - robot.intakeStopTime < robot.REVERSE_TIME_MS) {
+                    robot.intake.setVelocity(-1000);   // reverse burst
                 } else {
-                    robot.intake.setPower(0);
+                    robot.intake.setVelocity(0);
                     robot.kicker.setPower(0);
                 }
             }
             // ================= WALL =================
             if (gamepad2.aWasPressed()) {
                 if (robot.intakeIsOpen) {
-                  robot.intakeIsOpen = false;
-                  robot.wall.setPosition(0.32);
+                    robot.intakeIsOpen = false;
+                    robot.wall.setPosition(0.32);
                 } else {
                     robot.intakeIsOpen = true;
                     robot.wall.setPosition(0.15);
@@ -89,8 +77,8 @@ public class BlueTeleopClose extends LinearOpMode {
             }
             // ================= LAUNCHER =================
             if (gamepad2.right_trigger > 0.5) {
-                robot.launcher.setVelocity(1150);
-                robot.launcher2.setVelocity(1150);
+                robot.launcher.setVelocity(1260);
+                robot.launcher2.setVelocity(1260);
             } else if (gamepad2.left_trigger > 0.5) {
                 robot.launcher.setVelocity(1620);
                 robot.launcher2.setVelocity(1620);
@@ -128,25 +116,25 @@ public class BlueTeleopClose extends LinearOpMode {
             }
 
             // ================= COLOR SENSORS =================
-            if (robot.intakeSensor.alpha() > COLORIntake_THRESHOLD && robot.transferSensor.alpha() > COLORTransfer_THRESHOLD) {
-                intakeFull = true;
+            if (robot.intakeSensor.alpha() > robot.COLORIntake_THRESHOLD && robot.transferSensor.alpha() > robot.COLORTransfer_THRESHOLD) {
+                robot.intakeFull = true;
             } else {
-                intakeFull = false;
+                robot.intakeFull = false;
             }
 
             // ================= LIGHT SYSTEM =================
             if (locked) {
 
-                robot.vision1.setPosition(GREEN);
+                robot.vision1.setPosition(robot.GREEN);
 
-            } else if (intakeFull) {
+            } else if (robot.intakeFull) {
 
-                robot.vision.setPosition(ORANGE);
+                robot.vision.setPosition(robot.ORANGE);
 
             } else {
 
-                robot.vision.setPosition(OFF);
-                robot.vision1.setPosition(OFF);
+                robot.vision.setPosition(robot.OFF);
+                robot.vision1.setPosition(robot.OFF);
             }
 
             // ================= DRIVE =================
@@ -173,7 +161,7 @@ public class BlueTeleopClose extends LinearOpMode {
 
             // ================= TELEMETRY =================
             telemetry.addData("Locked", locked);
-            telemetry.addData("Intake Full", intakeFull);
+            telemetry.addData("Intake Full", robot.intakeFull);
             telemetry.addData("Intake Sensor", robot.intakeSensor.alpha());
             telemetry.addData("Transfer Sensor", robot.transferSensor.alpha());
             telemetry.addData("Launch Velocity:", robot.launcher.getVelocity());

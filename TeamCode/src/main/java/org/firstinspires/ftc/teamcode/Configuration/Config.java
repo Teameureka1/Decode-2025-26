@@ -35,6 +35,21 @@ public class Config {
 
     public boolean intakeIsOpen;
 
+    // ================= LIGHT VALUES =================
+    public final double OFF = 0.0;
+    public final double GREEN = 0.475;
+    public final double ORANGE = 0.333;
+
+    public boolean intakeFull = false;
+    public final double COLORIntake_THRESHOLD = 45;
+    public final double COLORTransfer_THRESHOLD = 85;
+
+    // ==================Intake Initialization ==========================`
+    public long intakeStopTime = 0;
+    public boolean wasIntaking = false;
+    public final long REVERSE_TIME_MS = 100;
+
+
     // BLUE SIDE UPDATED RED SIDE NOT UPDATED
     public final Pose blueStartFar = new Pose(55, 8.39, Math.toRadians(90));
     public final Pose blueStartClose = new Pose(16, 115.7435, Math.toRadians(139));
@@ -46,13 +61,13 @@ public class Config {
     public final Pose blueSetup2Pose = new Pose(43.576,51.5, Math.toRadians(180));
     public final Pose blueGate = new Pose(19,56,Math.toRadians(-90));
     public final Pose blueGateFacingGoalSetup = new Pose(19,75.5, Math.toRadians(180));
-    public final Pose blueGateFacingGoal = new Pose(14,72,Math.toRadians(80));
+    public final Pose blueGateFacingGoal = new Pose(14,74.5,Math.toRadians(70));
     public final Pose blueAutoEnd = new Pose(30, 58, Math.toRadians(-90));
     public final Pose blueGateSetupPose = new Pose(17,49.7, Math.toRadians(179.697));
     public final Pose bluePickup3Pose = new Pose(8.5,27, Math.toRadians(179));
     public final Pose blueSetup3Pose = new Pose(43,27, Math.toRadians(179));
-    public final Pose blueGateHold = new Pose(12.05,54.2, Math.toRadians(155.28));
-    public final Pose blueGateHarvest = new Pose(9.2,54.94, Math.toRadians(140.1));
+    public final Pose blueGateHold = new Pose(11.1,54.34, Math.toRadians(155.28));
+    public final Pose blueGateHarvest = new Pose(9,54.9, Math.toRadians(137));
     public final Pose blueGateHarvestSetup = new Pose(36.394,54.5, Math.toRadians(155.7));
 
     public final Pose redStartFar = new Pose(89, 8.39, Math.toRadians(90));
@@ -66,6 +81,7 @@ public class Config {
     public final Pose redSetupGate = new Pose(133,58,Math.toRadians(0));
     public final Pose redGateFacingParkingZone = new Pose(138,62,Math.toRadians(-90));
     public final Pose redGateFacingGoal = new Pose(134,76,Math.toRadians(90));
+    public final Pose redGateFacingGoalSetup = new Pose(129,82.26, Math.toRadians(0));
     public final Pose redPickup3Pose = new Pose(141,33, Math.toRadians(.8));
     public final Pose redSetup3Pose = new Pose(107.6,33, Math.toRadians(.8));
     public final Pose redAutoEnd = new Pose(129,57.8, Math.toRadians(-90));

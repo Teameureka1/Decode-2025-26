@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.HeadingInterpolator;
+import com.pedropathing.paths.Path;
+import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -12,25 +16,30 @@ public class Teleop extends OpMode {
     private Config robot;
     private Follower follower;
     private boolean autoMovement = false;
+    private Pose park;
 
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
         follower.setMaxPower(1);
+        //Runnable pathChain = () -> follower.pathBuilder()
+        //        .addPath(new Path(new BezierLine(follower::getPose, follower::getPose)))
+        //        .setHeadingInterpolation(HeadingInterpolator.facingPoint(follower..getHeading()))
+        //        .build();
     }
     @Override
     public void start() {
         follower.startTeleOpDrive();
     }
 
-    private Pose park;
+
 
     @Override
     public void loop() {
         double throttle = gamepad1.right_trigger;
         follower.update();
 
-        if (gamepad1.b && !autoMovement) {
+        if (gamepad1.bWasPressed() && !autoMovement) {
             autoMovement = true;
             park = follower.getPose();
             follower.holdPoint(park);
@@ -44,6 +53,7 @@ public class Teleop extends OpMode {
             autoMovement = false;
             follower.breakFollowing();
             follower.startTeleOpDrive();
+         //  follower.followPath(pathChain.getY());
 
         }
 

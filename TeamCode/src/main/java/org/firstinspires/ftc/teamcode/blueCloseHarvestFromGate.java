@@ -22,7 +22,7 @@ public class blueCloseHarvestFromGate extends OpMode {
     private final ElapsedTime timer = new ElapsedTime();
 
     private Path scorePreload;
-    private PathChain setUp2, grabPickup2, gateSetup, toGate2, scorePickup2, gateGrabSetup, gateGrab, gateHarvest, scoreGrab, setUp1, grabPickup1, scorePickup1;
+    private PathChain setUp2, grabPickup2, gateSetup, toGate2, scorePickup2, gateGrabSetup, gateGrab, gateHarvest, scoreGrab, setUp1, grabPickup1, gateSet, openGate, scorePickup1;
 
     private int step = 0;
 
@@ -100,6 +100,15 @@ public class blueCloseHarvestFromGate extends OpMode {
                 .addPath(new BezierLine(robot.blueSetup1Pose, robot.bluePickup1Pose))
                 .setLinearHeadingInterpolation(robot.blueSetup1Pose.getHeading(), robot.bluePickup1Pose.getHeading())
                 .build();
+        gateSet = follower.pathBuilder()
+                .addPath(new BezierLine(robot.bluePickup1Pose, robot.blueGateFacingGoalSetup))
+                .setLinearHeadingInterpolation(robot.bluePickup1Pose.getHeading(), robot.blueGateFacingGoalSetup.getHeading())
+                .build();
+        openGate = follower.pathBuilder()
+                .addPath(new BezierLine(robot.blueGateFacingGoalSetup, robot.blueGateFacingGoal))
+                .setLinearHeadingInterpolation(robot.blueGateFacingGoalSetup.getHeading(), robot.blueGateFacingGoal.getHeading())
+                .build();
+
         scorePickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(robot.blueGateFacingGoal, robot.blueScorePose2))
                 .setLinearHeadingInterpolation(robot.blueGateFacingGoal.getHeading(), robot.blueScorePose2.getHeading())
@@ -266,8 +275,24 @@ public class blueCloseHarvestFromGate extends OpMode {
                     step++;
                 }
                 break;
-
             case 14:
+                if (!follower.isBusy()) {
+                    intakeStop();
+
+                    follower.setMaxPower(1);
+                    follower.followPath(gateSet);
+                    timer.reset();
+                    step++;
+                }
+            case 15:
+                if (!follower.isBusy()) {
+                    follower.setMaxPower(1);
+                    follower.followPath(openGate);
+                    timer.reset();
+                    step++;
+                }
+
+            case 16:
                 if (!follower.isBusy() && timer.seconds() > 1.5) {
                     intakeStop();
                     wallDown();
@@ -278,7 +303,7 @@ public class blueCloseHarvestFromGate extends OpMode {
                 }
                 break;
 
-            case 15:
+            case 17:
                 if (!follower.isBusy()) {
                     wallUp();
                     intakeIn();
@@ -286,7 +311,7 @@ public class blueCloseHarvestFromGate extends OpMode {
                     step++;
                 }
                 break;
-            case 16:
+            case 18:
                 if (!follower.isBusy() && timer.seconds() > 3) {
                     wallDown();
                     intakeStop();
