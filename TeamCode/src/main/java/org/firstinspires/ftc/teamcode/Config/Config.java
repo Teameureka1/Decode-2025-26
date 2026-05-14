@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Config;
 
+import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -29,8 +30,9 @@ public class Config {
 
     public ElapsedTime launchTimer = new ElapsedTime();
 
+    public double idleVelocity = 1000;
     public void intakeIn() {
-        intake.setVelocity(1220);
+        intake.setVelocity(1180);
         kicker.setPower(1);
     }
 
@@ -38,6 +40,7 @@ public class Config {
         intake.setVelocity(0);
         kicker.setPower(0);
     }
+
     public void wallOpen() {
         wall.setPosition(0.15);
     }
@@ -45,21 +48,26 @@ public class Config {
     public void wallClose() {
         wall.setPosition(0.32);
     }
-    public void launchThreeUpdater() {
+
+    public void launchThreeUpdater(Follower follower) {
+
         if (!launching) {
 
             return;
         }
 
+        double velocity = calculateLaunchVelocity(blueGetDistanceFromGoal(follower.getPose()));
+
+
         switch (launchSequenceStep) {
 
             case 1:
-                launcher.setVelocity(1260);
-                launcher2.setVelocity(1260);
+                launcher.setVelocity(velocity);
+                launcher2.setVelocity(velocity);
                 launchSequenceStep++;
                 break;
             case 2:
-                if (launcher.getVelocity() > 1220) {
+                if (launcher.getVelocity() > velocity - 40) {
                     wallOpen();
                     intakeIn();
                     launchTimer.reset();
@@ -70,8 +78,8 @@ public class Config {
                 if (launchTimer.seconds() > 1) {
                     intakeStop();
                     wallClose();
-                    launcher.setVelocity(1000);
-                    launcher2.setVelocity(1000);
+                    launcher.setVelocity(idleVelocity);
+                    launcher2.setVelocity(idleVelocity);
                     launchSequenceStep = 1;
                     launching = false;
                 }
@@ -90,8 +98,8 @@ public class Config {
         launching = false;
         intakeStop();
         wallClose();
-        launcher.setVelocity(1000);
-        launcher2.setVelocity(1000);
+        launcher.setVelocity(idleVelocity);
+        launcher2.setVelocity(idleVelocity);
         }
 
 
@@ -161,66 +169,16 @@ public class Config {
         return hypot;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   // public int calculateLaunchVelocity(double distance) {
-
-   //  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    /**
+     *
+     * @param distance use goal distance to robot
+     * @return launch velocity
+     */
+    public double calculateLaunchVelocity(double distance) {
+        double x = distance;
+        double velocity = (-0.000234073 * x*x*x + 0.101791 * x*x -8.57328 * x + 1374.23775);
+        return velocity;
+    }
 
 
     // BLUE SIDE UPDATED RED SIDE NOT UPDATED
