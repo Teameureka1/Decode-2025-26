@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Config.Config;
-import org.firstinspires.ftc.teamcode.PedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Autonomous(name = "redClose12ClassifiedWith9InRamp")
 public class redClose12ClassifiedWith9InRamp extends OpMode {
 
@@ -280,7 +280,7 @@ public class redClose12ClassifiedWith9InRamp extends OpMode {
                     follower.followPath(endOfAuto);
                     timer.reset();
                     step++;
-                }
+                } break;
 
         }
 

@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 // In this class basically if you go to another class and say "Config robot" it will take
 // all of this class and put it there, but remember to add robot.init inside your init.
 // You also you need "robot = new Config(this);" before robot.init.
@@ -26,8 +27,10 @@ public class Config {
         this.opmode = opmode;
     }
 
+    public ElapsedTime launchTimer = new ElapsedTime();
+
     public void intakeIn() {
-        intake.setVelocity(1260);
+        intake.setVelocity(1220);
         kicker.setPower(1);
     }
 
@@ -42,6 +45,54 @@ public class Config {
     public void wallClose() {
         wall.setPosition(0.32);
     }
+    public void launchThreeUpdater() {
+        if (!launching) {
+
+            return;
+        }
+
+        switch (launchSequenceStep) {
+
+            case 1:
+                launcher.setVelocity(1260);
+                launcher2.setVelocity(1260);
+                launchSequenceStep++;
+                break;
+            case 2:
+                if (launcher.getVelocity() > 1220) {
+                    wallOpen();
+                    intakeIn();
+                    launchTimer.reset();
+                    launchSequenceStep++;
+                }
+                break;
+            case 3:
+                if (launchTimer.seconds() > 1) {
+                    intakeStop();
+                    wallClose();
+                    launcher.setVelocity(1000);
+                    launcher2.setVelocity(1000);
+                    launchSequenceStep = 1;
+                    launching = false;
+                }
+                break;
+        }
+
+    }
+
+    public boolean getLaunchStatus() {
+        return launching;
+    }
+    public void startLaunch() {
+        launching = true;
+    }
+    public void stopLaunch() {
+        launching = false;
+        intakeStop();
+        wallClose();
+        launcher.setVelocity(1000);
+        launcher2.setVelocity(1000);
+        }
 
 
     public DcMotorEx frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
@@ -52,6 +103,9 @@ public class Config {
     public ColorSensor transferSensor;
 
     public boolean intakeIsOpen;
+    public boolean intaking;
+    private boolean launching = false;
+    private int launchSequenceStep = 1;
 
     // ================= LIGHT VALUES =================
     public final double OFF = 0.0;
@@ -66,6 +120,107 @@ public class Config {
     public long intakeStopTime = 0;
     public boolean wasIntaking = false;
     public final long REVERSE_TIME_MS = 100;
+
+// ========================== Aim Assist =================================
+    /**
+     *
+     * @param robotPose
+     * @return heading in radians
+     */
+    public double getBlueGoalHeading(Pose robotPose) {
+        double opposite = 144 - robotPose.getY();
+        double adjacent = robotPose.getX();
+        double heading = Math.PI - Math.atan(opposite / adjacent);
+        return heading;
+
+    }
+    public double blueGetDistanceFromGoal(Pose robotPose) {
+        double opposite = 144 - robotPose.getY();
+        double adjacent = robotPose.getX();
+        double hypot = Math.sqrt((opposite * opposite) + (adjacent * adjacent));
+        return hypot;
+    }
+
+    /**
+     *
+     * @param robotPose
+     * @return heading in radians
+     */
+
+    public double redGetGoalHeading(Pose robotPose) {
+        double opposite = 144 - robotPose.getY();
+        double adjacent = 144 - robotPose.getX();
+        double heading = Math.atan(opposite / adjacent);
+        return heading;
+
+    }
+    public double redGetDistanceFromGoal(Pose robotPose) {
+        double opposite = 144 - robotPose.getY();
+        double adjacent = 144 - robotPose.getX();
+        double hypot = Math.sqrt((opposite * opposite) + (adjacent * adjacent));
+        return hypot;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   // public int calculateLaunchVelocity(double distance) {
+
+   //  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     // BLUE SIDE UPDATED RED SIDE NOT UPDATED
@@ -154,6 +309,7 @@ public class Config {
         PIDFCoefficients pidf = new PIDFCoefficients(55, 0, 0, 15.5);
         launcher.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidf);
         launcher2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidf);
+
 
 
     }

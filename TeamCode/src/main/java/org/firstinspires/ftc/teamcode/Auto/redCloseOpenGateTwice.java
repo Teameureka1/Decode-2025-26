@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Config.Config;
-import org.firstinspires.ftc.teamcode.PedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous(name = "redCloseOpenGateTwice")
 public class redCloseOpenGateTwice extends OpMode {
@@ -286,6 +286,7 @@ public class redCloseOpenGateTwice extends OpMode {
                 if (!follower.isBusy() && timer.seconds() > 2.5) {
                     requestOpModeStop();
                 }
+                break;
 
         }
 

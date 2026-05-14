@@ -28,6 +28,8 @@ public class ArtifactPickupTuner extends OpMode {
     @Override
     public void loop() {
 
+
+
         if (gamepad1.bWasPressed()) {
             stepIndex = (stepIndex + 1) % stepSizes.length;
         }
