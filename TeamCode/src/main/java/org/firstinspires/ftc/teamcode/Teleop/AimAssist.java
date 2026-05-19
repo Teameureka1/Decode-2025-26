@@ -1,26 +1,24 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
+
 
 import com.pedropathing.follower.Follower;
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Config.Config;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-import java.util.List;
-
 @TeleOp(name = "Aim Assist")
 public class AimAssist extends OpMode {
 
-    boolean poseAimEnabled = false;
+    boolean aimAssist = false;
     Follower follower;
     private Config robot;
     boolean intakeIsOn = false;
+    ElapsedTime timer = new ElapsedTime();
+    double lastCalcTime = 0;
 
     @Override
     public void init() {
@@ -44,45 +42,32 @@ public class AimAssist extends OpMode {
         // ================= DRIVE =================
         double y = -gamepad1.left_stick_y;
         double x = gamepad1.left_stick_x;
-      //  double rotation = gamepad1.right_stick_x * 0.75;
+        double rotation = gamepad1.right_stick_x;
         double speed = 0.3 + (0.7 * gamepad1.right_trigger);
 
-
         // ================= ROTATION SOURCE =================
-        double rotation = gamepad1.right_stick_x * 0.75;
 
-// toggle pose aim
         if (gamepad1.aWasPressed()) {
-            poseAimEnabled = !poseAimEnabled;
+            aimAssist = true;
         }
 
-// manual cancels aim
-        boolean manualDrive =
-                Math.abs(gamepad1.left_stick_x) > 0.3 ||
-                        Math.abs(gamepad1.left_stick_y) > 0.3 ||
-                        Math.abs(gamepad1.right_stick_x) > 0.3;
-
-        if (manualDrive) {
-            poseAimEnabled = false;
+        if (Math.abs(gamepad1.right_stick_x) >= 0.1) {
+            aimAssist = false;
         }
 
-// ================= POSE AIM =================
-        if (poseAimEnabled) {
+        if (aimAssist) {
 
-            double target = robot.blueGetGoalHeading(follower.getPose());
-            double current = follower.getPose().getHeading();
+            double delay = 20;
+            if (timer.milliseconds() > lastCalcTime + delay) {
+                double headingCalc = robot.blueGetGoalHeading(follower.getPose());
+                double error = follower.getHeading() - headingCalc;
+                telemetry.addData("Error", error);
+              //  rotation = //autocalc
 
-            double error = robot.normalizeAngle(target - current);
 
-            double kP = 1.2;
-
-            if (Math.abs(error) < 0.08) {
-                rotation = 0;
-            } else {
-                rotation = error * kP;
-                rotation = Math.max(-0.5, Math.min(0.5, rotation));
             }
         }
+
         // ================= LAUNCHER =================
 
         if (gamepad2.yWasPressed()) {
