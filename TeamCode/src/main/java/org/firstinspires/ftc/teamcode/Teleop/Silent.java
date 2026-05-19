@@ -64,6 +64,7 @@ public class Silent extends LinearOpMode {
                     robot.kicker.setPower(0);
                 }
             }
+
             // ================= WALL =================
             if (gamepad2.aWasPressed()) {
                 if (robot.intakeIsOpen) {
@@ -74,6 +75,7 @@ public class Silent extends LinearOpMode {
                     robot.wall.setPosition(0.15);
                 }
             }
+
             // ================= LAUNCHER =================
             if (gamepad2.right_trigger > 0.5) {
                 robot.launcher.setVelocity(1300);

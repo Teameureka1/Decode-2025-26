@@ -14,9 +14,10 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.List;
 
-@TeleOp(name = "blueFerdinand")
-public class blueTeleop extends OpMode {
+@TeleOp(name = "Aim Assist")
+public class AimAssist extends OpMode {
 
+    boolean poseAimEnabled = false;
     Follower follower;
     private Config robot;
     boolean intakeIsOn = false;
@@ -43,8 +44,45 @@ public class blueTeleop extends OpMode {
         // ================= DRIVE =================
         double y = -gamepad1.left_stick_y;
         double x = gamepad1.left_stick_x;
-        double rotation = gamepad1.right_stick_x * 0.75;
+      //  double rotation = gamepad1.right_stick_x * 0.75;
         double speed = 0.3 + (0.7 * gamepad1.right_trigger);
+
+
+        // ================= ROTATION SOURCE =================
+        double rotation = gamepad1.right_stick_x * 0.75;
+
+// toggle pose aim
+        if (gamepad1.aWasPressed()) {
+            poseAimEnabled = !poseAimEnabled;
+        }
+
+// manual cancels aim
+        boolean manualDrive =
+                Math.abs(gamepad1.left_stick_x) > 0.3 ||
+                        Math.abs(gamepad1.left_stick_y) > 0.3 ||
+                        Math.abs(gamepad1.right_stick_x) > 0.3;
+
+        if (manualDrive) {
+            poseAimEnabled = false;
+        }
+
+// ================= POSE AIM =================
+        if (poseAimEnabled) {
+
+            double target = robot.blueGetGoalHeading(follower.getPose());
+            double current = follower.getPose().getHeading();
+
+            double error = robot.normalizeAngle(target - current);
+
+            double kP = 1.2;
+
+            if (Math.abs(error) < 0.08) {
+                rotation = 0;
+            } else {
+                rotation = error * kP;
+                rotation = Math.max(-0.5, Math.min(0.5, rotation));
+            }
+        }
         // ================= LAUNCHER =================
 
         if (gamepad2.yWasPressed()) {
@@ -64,36 +102,6 @@ public class blueTeleop extends OpMode {
 
         }
 
-
-
-        // ================= LIMELIGHT =================
-        boolean locked = false;
-
-        if (gamepad1.left_trigger > 0.1) {
-
-            LLResult result = robot.limelight.getLatestResult();
-
-            if (result != null && result.isValid()) {
-
-                List<LLResultTypes.FiducialResult> tags = result.getFiducialResults();
-
-                for (LLResultTypes.FiducialResult fr : tags) {
-                    if (fr.getFiducialId() == 20) {
-
-                        double tx = fr.getTargetXDegrees();
-
-                        if (Math.abs(tx) < 0.8) {
-                            rotation = 0;
-                            locked = true;
-                        } else {
-                            rotation = tx * 0.27;
-                            rotation = Math.max(-0.55, Math.min(rotation, 0.55));
-                        }
-                    }
-                }
-            }
-        }
-
         // ================= COLOR SENSORS =================
         if (robot.intakeSensor.alpha() > robot.COLORIntake_THRESHOLD && robot.transferSensor.alpha() > robot.COLORTransfer_THRESHOLD) {
             robot.intakeFull = true;
@@ -102,11 +110,7 @@ public class blueTeleop extends OpMode {
         }
 
         // ================= LIGHT SYSTEM =================
-        if (locked) {
-
-            robot.vision1.setPosition(robot.GREEN);
-
-        } else if (robot.intakeFull) {
+         if (robot.intakeFull) {
 
             robot.vision.setPosition(robot.ORANGE);
 
@@ -138,12 +142,12 @@ public class blueTeleop extends OpMode {
         robot.backRightMotor.setPower(br);
 
         // ================= TELEMETRY =================
-        telemetry.addData("Locked", locked);
         telemetry.addData("Intake Full", robot.intakeFull);
         telemetry.addData("Intake Sensor", robot.intakeSensor.alpha());
         telemetry.addData("Transfer Sensor", robot.transferSensor.alpha());
         telemetry.addData("Launch Velocity:", robot.launcher.getVelocity());
         telemetry.addData("Launch2 Velocity:", robot.launcher2.getVelocity());
+        telemetry.addData("Aim Mode", gamepad1.a ? "POSE" : gamepad1.left_trigger > 0.1 ? "LIMELIGHT" : "MANUAL");
         telemetry.update();
     }
 }

@@ -49,7 +49,7 @@ public class Config {
         wall.setPosition(0.32);
     }
 
-    public void launchThreeUpdater(Follower follower) {
+    public void blueLaunchThreeUpdater(Follower follower) {
 
         if (!launching) {
 
@@ -87,13 +87,53 @@ public class Config {
         }
 
     }
+    public void redLaunchThreeUpdater(Follower follower) {
+
+        if (!launching) {
+
+            return;
+        }
+
+        double velocity = calculateLaunchVelocity(redGetDistanceFromGoal(follower.getPose()));
+
+
+        switch (launchSequenceStep) {
+
+            case 1:
+                launcher.setVelocity(velocity);
+                launcher2.setVelocity(velocity);
+                launchSequenceStep++;
+                break;
+            case 2:
+                if (launcher.getVelocity() > velocity - 40) {
+                    wallOpen();
+                    intakeIn();
+                    launchTimer.reset();
+                    launchSequenceStep++;
+                }
+                break;
+            case 3:
+                if (launchTimer.seconds() > 1) {
+                    intakeStop();
+                    wallClose();
+                    launcher.setVelocity(idleVelocity);
+                    launcher2.setVelocity(idleVelocity);
+                    launchSequenceStep = 1;
+                    launching = false;
+                }
+                break;
+        }
+
+    }
 
     public boolean getLaunchStatus() {
         return launching;
     }
+
     public void startLaunch() {
         launching = true;
     }
+
     public void stopLaunch() {
         launching = false;
         intakeStop();
@@ -135,10 +175,10 @@ public class Config {
      * @param robotPose
      * @return heading in radians
      */
-    public double getBlueGoalHeading(Pose robotPose) {
+    public double blueGetGoalHeading(Pose robotPose) {
         double opposite = 144 - robotPose.getY();
         double adjacent = robotPose.getX();
-        double heading = Math.PI - Math.atan(opposite / adjacent);
+        double heading = Math.PI - Math.atan2(opposite, adjacent);
         return heading;
 
     }
@@ -158,7 +198,7 @@ public class Config {
     public double redGetGoalHeading(Pose robotPose) {
         double opposite = 144 - robotPose.getY();
         double adjacent = 144 - robotPose.getX();
-        double heading = Math.atan(opposite / adjacent);
+        double heading = Math.atan2(opposite, adjacent);
         return heading;
 
     }
@@ -169,6 +209,7 @@ public class Config {
         return hypot;
     }
 
+
     /**
      *
      * @param distance use goal distance to robot
@@ -176,8 +217,52 @@ public class Config {
      */
     public double calculateLaunchVelocity(double distance) {
         double x = distance;
-        double velocity = (-0.000234073 * x*x*x + 0.101791 * x*x -8.57328 * x + 1374.23775);
+        double velocity = (-0.000234073 * x*x*x + (0.101791 * x*x -8.57328 * x + 1374.23775));
         return velocity;
+    }
+
+    // Angle
+    public double normalizeAngle(double angle) {
+        while (angle > Math.PI) {
+            angle -= 2 * Math.PI;
+        }
+
+        while (angle < -Math.PI) {
+            angle += 2 * Math.PI;
+        }
+
+        return angle;
+    }
+    public double blueAimAssist(Pose robotPose) {
+
+        double targetHeading = blueGetGoalHeading(robotPose);
+
+        double headingError =
+                normalizeAngle(targetHeading - robotPose.getHeading());
+
+        double kP = 1.4;
+
+        double turnPower = headingError * kP;
+
+        // Clamp power
+        turnPower = Math.max(-1, Math.min(1, turnPower));
+
+        return turnPower;
+    }
+    public double redAimAssist(Pose robotPose) {
+
+        double targetHeading = redGetGoalHeading(robotPose);
+
+        double headingError =
+                normalizeAngle(targetHeading - robotPose.getHeading());
+
+        double kP = 1.4;
+
+        double turnPower = headingError * kP;
+
+        turnPower = Math.max(-1, Math.min(1, turnPower));
+
+        return turnPower;
     }
 
 
