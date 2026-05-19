@@ -29,7 +29,8 @@ public class Config {
     }
 
     public ElapsedTime launchTimer = new ElapsedTime();
-
+    public double lastCalcDistance = 0;
+    private double launcherVelocity = 0;
     public double idleVelocity = 1000;
     public void intakeIn() {
         intake.setVelocity(1180);
@@ -49,6 +50,12 @@ public class Config {
         wall.setPosition(0.32);
     }
 
+    public void updateLauncherVel(double velocity) {
+        launcherVelocity = velocity;
+
+
+    }
+
     public void blueLaunchThreeUpdater(Follower follower) {
 
         if (!launching) {
@@ -56,7 +63,9 @@ public class Config {
             return;
         }
 
-        double velocity = calculateLaunchVelocity(blueGetDistanceFromGoal(follower.getPose()));
+       double distance = blueGetDistanceFromGoal(follower.getPose());
+       double velocity = calculateLaunchVelocity(distance);
+        lastCalcDistance = distance;
 
 
         switch (launchSequenceStep) {
@@ -67,7 +76,7 @@ public class Config {
                 launchSequenceStep++;
                 break;
             case 2:
-                if (launcher.getVelocity() > velocity - 40) {
+                if (launcher.getVelocity() > velocity - 20) {
                     wallOpen();
                     intakeIn();
                     launchTimer.reset();
@@ -94,6 +103,7 @@ public class Config {
             return;
         }
 
+
         double velocity = calculateLaunchVelocity(redGetDistanceFromGoal(follower.getPose()));
 
 
@@ -106,14 +116,14 @@ public class Config {
                 break;
             case 2:
                 if (launcher.getVelocity() > velocity - 40) {
-                    wallOpen();
-                    intakeIn();
-                    launchTimer.reset();
-                    launchSequenceStep++;
+                        wallOpen();
+                        intakeIn();
+                        launchTimer.reset();
+                        launchSequenceStep++;
                 }
                 break;
             case 3:
-                if (launchTimer.seconds() > 1) {
+                if (launchTimer.seconds() > 1.75) {
                     intakeStop();
                     wallClose();
                     launcher.setVelocity(idleVelocity);
@@ -171,7 +181,6 @@ public class Config {
 
 // ========================== Aim Assist =================================
     /**
-     *
      * @param robotPose
      * @return heading in radians
      */
@@ -200,7 +209,6 @@ public class Config {
         double adjacent = 144 - robotPose.getX();
         double heading = Math.atan2(opposite, adjacent);
         return heading;
-
     }
     public double redGetDistanceFromGoal(Pose robotPose) {
         double opposite = 144 - robotPose.getY();
@@ -210,59 +218,11 @@ public class Config {
     }
 
 
-    /**
-     *
-     * @param distance use goal distance to robot
-     * @return launch velocity
-     */
+
     public double calculateLaunchVelocity(double distance) {
         double x = distance;
         double velocity = (-0.000234073 * x*x*x + (0.101791 * x*x -8.57328 * x + 1374.23775));
         return velocity;
-    }
-
-    // Angle
-    public double normalizeAngle(double angle) {
-        while (angle > Math.PI) {
-            angle -= 2 * Math.PI;
-        }
-
-        while (angle < -Math.PI) {
-            angle += 2 * Math.PI;
-        }
-
-        return angle;
-    }
-    public double blueAimAssist(Pose robotPose) {
-
-        double targetHeading = blueGetGoalHeading(robotPose);
-
-        double headingError =
-                normalizeAngle(targetHeading - robotPose.getHeading());
-
-        double kP = 1.4;
-
-        double turnPower = headingError * kP;
-
-        // Clamp power
-        turnPower = Math.max(-1, Math.min(1, turnPower));
-
-        return turnPower;
-    }
-    public double redAimAssist(Pose robotPose) {
-
-        double targetHeading = redGetGoalHeading(robotPose);
-
-        double headingError =
-                normalizeAngle(targetHeading - robotPose.getHeading());
-
-        double kP = 1.4;
-
-        double turnPower = headingError * kP;
-
-        turnPower = Math.max(-1, Math.min(1, turnPower));
-
-        return turnPower;
     }
 
 

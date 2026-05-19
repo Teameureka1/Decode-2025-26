@@ -62,7 +62,7 @@ public class AimAssist extends OpMode {
                 double headingCalc = robot.blueGetGoalHeading(follower.getPose());
                 double error = follower.getHeading() - headingCalc;
                 telemetry.addData("Error", error);
-              //  rotation = //autocalc
+               // rotation = autocalc
 
 
             }

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Teleop;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -40,6 +41,8 @@ public class blueTeleop extends OpMode {
     @Override
     public void loop() {
 
+        follower.update();
+
         // ================= DRIVE =================
         double y = -gamepad1.left_stick_y;
         double x = gamepad1.left_stick_x;
@@ -52,10 +55,12 @@ public class blueTeleop extends OpMode {
         }
 
         robot.blueLaunchThreeUpdater(follower);
+        telemetry.addData("Distance", robot.lastCalcDistance);
 
+
+        // ================= INTAKE ====================
         if (gamepad2.bWasPressed()) {
             intakeIsOn = !intakeIsOn;
-            robot.stopLaunch();
             if (intakeIsOn) {
                 robot.intakeIn();
             } else {
