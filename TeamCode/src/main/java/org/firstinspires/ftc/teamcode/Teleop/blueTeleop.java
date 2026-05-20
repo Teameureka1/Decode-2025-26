@@ -21,6 +21,7 @@ public class blueTeleop extends OpMode {
     Follower follower;
     private Config robot;
     boolean intakeIsOn = false;
+    boolean aimAssist = false;
 
     @Override
     public void init() {
@@ -56,7 +57,23 @@ public class blueTeleop extends OpMode {
 
         robot.blueLaunchThreeUpdater(follower);
         telemetry.addData("Distance", robot.lastCalcDistance);
+        // =========================AIM ASSIST==================
+        if (gamepad1.aWasPressed()) {
+           aimAssist = true;
+        }
+        if (Math.abs(gamepad1.right_stick_x) >= .1) {
+            aimAssist = false;
+        }
+        // make robot turn towards the goal wherever the robot is on the field
+        if (aimAssist) {
+            double goalHeading = robot.blueGetGoalHeading(follower.getPose());
+            double error = goalHeading - follower.getHeading();
+         //   double yawControl =
 
+
+
+
+        }
 
         // ================= INTAKE ====================
         if (gamepad2.bWasPressed()) {
@@ -66,10 +83,7 @@ public class blueTeleop extends OpMode {
             } else {
                 robot.intakeStop();
             }
-
         }
-
-
 
         // ================= LIMELIGHT =================
         boolean locked = false;

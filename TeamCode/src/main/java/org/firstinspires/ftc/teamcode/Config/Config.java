@@ -50,12 +50,6 @@ public class Config {
         wall.setPosition(0.32);
     }
 
-    public void updateLauncherVel(double velocity) {
-        launcherVelocity = velocity;
-
-
-    }
-
     public void blueLaunchThreeUpdater(Follower follower) {
 
         if (!launching) {
@@ -84,7 +78,7 @@ public class Config {
                 }
                 break;
             case 3:
-                if (launchTimer.seconds() > 1) {
+                if (launchTimer.seconds() > 1.75) {
                     intakeStop();
                     wallClose();
                     launcher.setVelocity(idleVelocity);
@@ -96,6 +90,7 @@ public class Config {
         }
 
     }
+
     public void redLaunchThreeUpdater(Follower follower) {
 
         if (!launching) {
@@ -115,7 +110,7 @@ public class Config {
                 launchSequenceStep++;
                 break;
             case 2:
-                if (launcher.getVelocity() > velocity - 40) {
+                if (launcher.getVelocity() > velocity - 20) {
                         wallOpen();
                         intakeIn();
                         launchTimer.reset();
@@ -179,14 +174,15 @@ public class Config {
     public boolean wasIntaking = false;
     public final long REVERSE_TIME_MS = 100;
 
-// ========================== Aim Assist =================================
+
     /**
      * @param robotPose
      * @return heading in radians
      */
     public double blueGetGoalHeading(Pose robotPose) {
-        double opposite = 144 - robotPose.getY();
-        double adjacent = robotPose.getX();
+        Pose goal = new Pose(0,131.5);
+        double opposite = goal.getY() - robotPose.getY();
+        double adjacent = robotPose.getX() - goal.getX();
         double heading = Math.PI - Math.atan2(opposite, adjacent);
         return heading;
 
@@ -197,6 +193,11 @@ public class Config {
         double hypot = Math.sqrt((opposite * opposite) + (adjacent * adjacent));
         return hypot;
     }
+    public static double angleWrap(double angle) {
+        while (angle > Math.PI) angle -= 2 * Math.PI;
+        while (angle < -Math.PI) angle += 2 * Math.PI;
+        return angle;
+    }
 
     /**
      *
@@ -204,6 +205,7 @@ public class Config {
      * @return heading in radians
      */
 
+    // todo work on this like thing above this blueGetGoalHeading!!!!
     public double redGetGoalHeading(Pose robotPose) {
         double opposite = 144 - robotPose.getY();
         double adjacent = 144 - robotPose.getX();
@@ -221,7 +223,7 @@ public class Config {
 
     public double calculateLaunchVelocity(double distance) {
         double x = distance;
-        double velocity = (-0.000234073 * x*x*x + (0.101791 * x*x -8.57328 * x + 1374.23775));
+        double velocity = (-0.000234073 * x*x*x + (0.101791 * x*x -8.57328 * x + 1400)); // was 1374
         return velocity;
     }
 

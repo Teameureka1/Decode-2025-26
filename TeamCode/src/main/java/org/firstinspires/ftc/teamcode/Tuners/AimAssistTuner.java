@@ -1,33 +1,28 @@
-package org.firstinspires.ftc.teamcode.Teleop;
-
-
+package org.firstinspires.ftc.teamcode.Tuners;
 
 import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Config.Config;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@TeleOp(name = "Aim Assist")
-public class AimAssist extends OpMode {
+@TeleOp
+public class AimAssistTuner extends OpMode {
 
-    boolean aimAssist = false;
-    Follower follower;
     private Config robot;
-    boolean intakeIsOn = false;
+
+    Follower follower;
     ElapsedTime timer = new ElapsedTime();
     double lastCalcTime = 0;
+    boolean aimAssist = false;
     // AIM ASSIST
 
-    double kP = 1;
+    double kP = 0;
     double kI = 0;
     double kD = 0;
-    double kF = .03;
-
+    double kF = 0;
 
     double intergralSum = 0.0;
     double lastError = 0.0;
@@ -36,16 +31,19 @@ public class AimAssist extends OpMode {
     double maxOutput = 1;
     double minOutput = -1;
 
+    double[] stepSizes = {10.0, 1.0, 0.1, .001, .001};
+
+    int stepIndex = 1;
+
 
     @Override
     public void init() {
-
         robot = new Config(this);
+        robot.init();
         follower = Constants.createFollower(hardwareMap);
         follower.setMaxPower(1);
         follower.setStartingPose(robot.blueStartFar);
-        robot.init();
-        robot.limelight.pipelineSwitch(8);
+        telemetry.addLine("Init Complete");
     }
 
     @Override
@@ -56,14 +54,44 @@ public class AimAssist extends OpMode {
     @Override
     public void loop() {
         follower.update();
+
+
+
+        if (gamepad1.bWasPressed()) {
+            stepIndex = (stepIndex + 1) % stepSizes.length;
+        }
+        if (gamepad1.dpadLeftWasPressed()) {
+            kP += stepSizes[stepIndex];
+        }
+        if (gamepad1.dpadRightWasPressed()) {
+            kP -= stepSizes[stepIndex];
+        }
+        if (gamepad1.dpadUpWasPressed()) {
+            kI += stepSizes[stepIndex];
+        }
+        if (gamepad1.dpadDownWasPressed()) {
+            kI -= stepSizes[stepIndex];
+        }
+        if (gamepad2.dpadLeftWasPressed()) {
+            kD += stepSizes[stepIndex];
+        }
+        if (gamepad2.dpadRightWasPressed()) {
+            kD -= stepSizes[stepIndex];
+        }
+        if (gamepad2.dpadUpWasPressed()) {
+            kF += stepSizes[stepIndex];
+        }
+        if (gamepad2.dpadDownWasPressed()) {
+            kF -= stepSizes[stepIndex];
+        }
+
+
         // Driver Controls
         double speed = 0.3 + (0.7 * gamepad1.right_trigger);
         double y = -gamepad1.left_stick_y * speed;
         double x = -gamepad1.left_stick_x * speed;
         double rotation = -gamepad1.right_stick_x * speed;
 
-
-        // ================= ROTATION SOURCE =================
 
         if (gamepad1.aWasPressed()) {
             aimAssist = true;
@@ -72,13 +100,11 @@ public class AimAssist extends OpMode {
         if (Math.abs(gamepad1.right_stick_x) >= 0.1) {
             aimAssist = false;
         }
-
+        double delay = 20;
         if (aimAssist) {
-
-            double delay = 20;
             if (timer.milliseconds() > lastCalcTime + delay) {
                 double headingCalc = robot.blueGetGoalHeading(follower.getPose());
-                double error = headingCalc - follower.getHeading() ;
+                double error = headingCalc - follower.getHeading();
                 error = robot.angleWrap(error);
                 telemetry.addData("Error", error);
                 long now = System.nanoTime();
@@ -105,58 +131,23 @@ public class AimAssist extends OpMode {
                 if (output < minOutput) output = minOutput;
 
                 rotation = output;
-
+                telemetry.addData("error", error);
 
             }
         }
+        // ================= DRIVE =================
+
 
         follower.setTeleOpDrive(y, x, rotation, true);
 
-        // ================= LAUNCHER =================
 
-        if (gamepad2.yWasPressed()) {
-            robot.startLaunch();
-        }
+        telemetry.addLine("------------------------------------------------");
 
-        robot.blueLaunchThreeUpdater(follower);
+        telemetry.addData("kP dpad sideways", kP);
+        telemetry.addData("kI  dpad up", kI);
+        telemetry.addData("kD  dpad sideway", kD);
+        telemetry.addData("kF  dpad up", kF);
 
-        if (gamepad2.bWasPressed()) {
-            intakeIsOn = !intakeIsOn;
-            robot.stopLaunch();
-            if (intakeIsOn) {
-                robot.intakeIn();
-            } else {
-                robot.intakeStop();
-            }
-
-        }
-
-        // ================= COLOR SENSORS =================
-        if (robot.intakeSensor.alpha() > robot.COLORIntake_THRESHOLD && robot.transferSensor.alpha() > robot.COLORTransfer_THRESHOLD) {
-            robot.intakeFull = true;
-        } else {
-            robot.intakeFull = false;
-        }
-
-        // ================= LIGHT SYSTEM =================
-         if (robot.intakeFull) {
-
-            robot.vision.setPosition(robot.ORANGE);
-
-        } else {
-
-            robot.vision.setPosition(robot.OFF);
-            robot.vision1.setPosition(robot.OFF);
-        }
-
-        // ================= TELEMETRY =================
-        telemetry.addData("Aim Assist", aimAssist);
-        telemetry.addData("Intake Full", robot.intakeFull);
-        telemetry.addData("Intake Sensor", robot.intakeSensor.alpha());
-        telemetry.addData("Transfer Sensor", robot.transferSensor.alpha());
-        telemetry.addData("Launch Velocity:", robot.launcher.getVelocity());
-        telemetry.addData("Launch2 Velocity:", robot.launcher2.getVelocity());
-        telemetry.addData("Aim Mode", gamepad1.a ? "POSE" : gamepad1.left_trigger > 0.1 ? "LIMELIGHT" : "MANUAL");
-        telemetry.update();
+        telemetry.addData("Step Size", "%.4f (B Button)", stepSizes[stepIndex]);
     }
 }

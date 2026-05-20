@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Teleop;
+package org.firstinspires.ftc.teamcode;
 
 
 
@@ -12,8 +12,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Config.Config;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@TeleOp(name = "Aim Assist")
-public class AimAssist extends OpMode {
+@TeleOp(name = "Single Player")
+public class SinglePlayer extends OpMode {
 
     boolean aimAssist = false;
     Follower follower;
@@ -114,13 +114,13 @@ public class AimAssist extends OpMode {
 
         // ================= LAUNCHER =================
 
-        if (gamepad2.yWasPressed()) {
+        if (gamepad1.yWasPressed()) {
             robot.startLaunch();
         }
 
         robot.blueLaunchThreeUpdater(follower);
 
-        if (gamepad2.bWasPressed()) {
+        if (gamepad1.bWasPressed()) {
             intakeIsOn = !intakeIsOn;
             robot.stopLaunch();
             if (intakeIsOn) {
@@ -139,7 +139,7 @@ public class AimAssist extends OpMode {
         }
 
         // ================= LIGHT SYSTEM =================
-         if (robot.intakeFull) {
+        if (robot.intakeFull) {
 
             robot.vision.setPosition(robot.ORANGE);
 
