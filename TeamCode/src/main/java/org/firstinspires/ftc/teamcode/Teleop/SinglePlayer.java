@@ -1,12 +1,8 @@
-package org.firstinspires.ftc.teamcode;
-
-
+package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Config.Config;
@@ -23,9 +19,9 @@ public class SinglePlayer extends OpMode {
     double lastCalcTime = 0;
     // AIM ASSIST
 
-    double kP = 1;
+    double kP = 2;
     double kI = 0;
-    double kD = 0;
+    double kD = 3;
     double kF = .03;
 
 
@@ -128,10 +124,13 @@ public class SinglePlayer extends OpMode {
             } else {
                 robot.intakeStop();
             }
-
+        }
+        if (gamepad1.xWasPressed()) {
+            robot.intakeOut();
         }
 
         // ================= COLOR SENSORS =================
+        /*
         if (robot.intakeSensor.alpha() > robot.COLORIntake_THRESHOLD && robot.transferSensor.alpha() > robot.COLORTransfer_THRESHOLD) {
             robot.intakeFull = true;
         } else {
@@ -142,7 +141,9 @@ public class SinglePlayer extends OpMode {
         if (robot.intakeFull) {
 
             robot.vision.setPosition(robot.ORANGE);
-
+*/
+        if (aimAssist) {
+            robot.vision.setPosition(robot.GREEN);
         } else {
 
             robot.vision.setPosition(robot.OFF);
@@ -151,12 +152,11 @@ public class SinglePlayer extends OpMode {
 
         // ================= TELEMETRY =================
         telemetry.addData("Aim Assist", aimAssist);
-        telemetry.addData("Intake Full", robot.intakeFull);
         telemetry.addData("Intake Sensor", robot.intakeSensor.alpha());
         telemetry.addData("Transfer Sensor", robot.transferSensor.alpha());
         telemetry.addData("Launch Velocity:", robot.launcher.getVelocity());
         telemetry.addData("Launch2 Velocity:", robot.launcher2.getVelocity());
-        telemetry.addData("Aim Mode", gamepad1.a ? "POSE" : gamepad1.left_trigger > 0.1 ? "LIMELIGHT" : "MANUAL");
+        telemetry.addData("Aim Mode", gamepad1.a ? "POSE" : "MANUAL");
         telemetry.update();
     }
 }

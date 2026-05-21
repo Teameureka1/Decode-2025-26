@@ -5,8 +5,6 @@ package org.firstinspires.ftc.teamcode.Teleop;
 import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Config.Config;
@@ -21,8 +19,9 @@ public class AimAssist extends OpMode {
     boolean intakeIsOn = false;
     ElapsedTime timer = new ElapsedTime();
     double lastCalcTime = 0;
-    // AIM ASSIST
 
+    // =============== AIM ASSIST ====================
+    // =============== PIDF VALUES ===================
     double kP = 1;
     double kI = 0;
     double kD = 0;
@@ -45,7 +44,6 @@ public class AimAssist extends OpMode {
         follower.setMaxPower(1);
         follower.setStartingPose(robot.blueStartFar);
         robot.init();
-        robot.limelight.pipelineSwitch(8);
     }
 
     @Override
@@ -63,7 +61,7 @@ public class AimAssist extends OpMode {
         double rotation = -gamepad1.right_stick_x * speed;
 
 
-        // ================= ROTATION SOURCE =================
+        // ================= AIM ASSIST =================
 
         if (gamepad1.aWasPressed()) {
             aimAssist = true;
@@ -86,6 +84,7 @@ public class AimAssist extends OpMode {
                 lastTime = now;
 
                 // PID Terms
+                // Porportional = P how aggressive the robot will turn
                 // intergralSum = I how much error I accumulate in time
                 // derivative = D check pass data and use it to correct future problems
                 intergralSum += error * deltaTime;
@@ -120,6 +119,7 @@ public class AimAssist extends OpMode {
 
         robot.blueLaunchThreeUpdater(follower);
 
+        // ================ INTAKE ====================
         if (gamepad2.bWasPressed()) {
             intakeIsOn = !intakeIsOn;
             robot.stopLaunch();
@@ -128,10 +128,15 @@ public class AimAssist extends OpMode {
             } else {
                 robot.intakeStop();
             }
-
         }
 
+        if (gamepad1.xWasPressed()) {
+            robot.intakeOut();
+        }
+
+
         // ================= COLOR SENSORS =================
+        /*
         if (robot.intakeSensor.alpha() > robot.COLORIntake_THRESHOLD && robot.transferSensor.alpha() > robot.COLORTransfer_THRESHOLD) {
             robot.intakeFull = true;
         } else {
@@ -142,7 +147,9 @@ public class AimAssist extends OpMode {
          if (robot.intakeFull) {
 
             robot.vision.setPosition(robot.ORANGE);
-
+*/
+        if (aimAssist) {
+            robot.vision1.setPosition(robot.GREEN);
         } else {
 
             robot.vision.setPosition(robot.OFF);
@@ -151,12 +158,11 @@ public class AimAssist extends OpMode {
 
         // ================= TELEMETRY =================
         telemetry.addData("Aim Assist", aimAssist);
-        telemetry.addData("Intake Full", robot.intakeFull);
         telemetry.addData("Intake Sensor", robot.intakeSensor.alpha());
         telemetry.addData("Transfer Sensor", robot.transferSensor.alpha());
         telemetry.addData("Launch Velocity:", robot.launcher.getVelocity());
         telemetry.addData("Launch2 Velocity:", robot.launcher2.getVelocity());
-        telemetry.addData("Aim Mode", gamepad1.a ? "POSE" : gamepad1.left_trigger > 0.1 ? "LIMELIGHT" : "MANUAL");
+        telemetry.addData("Aim Mode", gamepad1.a ? "POSE" : "MANUAL");
         telemetry.update();
     }
 }

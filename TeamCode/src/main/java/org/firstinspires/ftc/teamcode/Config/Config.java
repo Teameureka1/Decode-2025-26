@@ -37,6 +37,11 @@ public class Config {
         kicker.setPower(1);
     }
 
+    public void intakeOut() {
+        intake.setVelocity(-1180);
+        kicker.setPower(-1);
+    }
+
     public void intakeStop() {
         intake.setVelocity(0);
         kicker.setPower(0);
@@ -180,7 +185,7 @@ public class Config {
      * @return heading in radians
      */
     public double blueGetGoalHeading(Pose robotPose) {
-        Pose goal = new Pose(0,131.5);
+        Pose goal = new Pose(5,130);
         double opposite = goal.getY() - robotPose.getY();
         double adjacent = robotPose.getX() - goal.getX();
         double heading = Math.PI - Math.atan2(opposite, adjacent);
@@ -228,21 +233,30 @@ public class Config {
     }
 
 
-    // BLUE SIDE UPDATED RED SIDE NOT UPDATED
+    // todo BLUE SIDE UPDATED RED SIDE NOT UPDATED
     public final Pose blueStartFar = new Pose(55, 8.39, Math.toRadians(90));
+    public final Pose blueFarScorePose = new Pose(52, 11, Math.toRadians(120));
+    public final Pose blueFarPark = new Pose(35.6, 12.85, Math.toRadians(90));
+    public final Pose blueFarGrabFromHumanPlayerZoneOffTheWallSetup = new Pose(16.6,23,Math.toRadians(-89));
+    public final Pose blueFarGrabFromHumanPlayerZoneOffTheWall = new Pose(16.6,2.2,Math.toRadians(-89));
+    public final Pose blueFarGrabFromHumanPlayerZoneOffTheWallGetBack = new Pose(16.6,2.5,Math.toRadians(-89));
+    public final Pose blueFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerSetup = new Pose(35.2,4,Math.toRadians(-160));
+    public final Pose blueFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayer = new Pose(14,3,Math.toRadians(-160));
+    public final Pose blueFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMoreSetup = new Pose(37.6,15,Math.toRadians(173));
+    public final Pose blueFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMore = new Pose(10.3,15,Math.toRadians(173));
     public final Pose blueStartClose = new Pose(16, 115.7435, Math.toRadians(139));
     public final Pose blueScorePose = new Pose(44,86,Math.toRadians(132));
     public final Pose blueScorePose2 = new Pose(51.9182,103.703,Math.toRadians(150.25));
-    public final Pose bluePickup1Pose = new Pose(15.2671,75.5, Math.toRadians(180));
+    public final Pose bluePickup1Pose = new Pose(15,75.5, Math.toRadians(180));
     public final Pose blueSetup1Pose = new Pose(40,75.5, Math.toRadians(180));
-    public final Pose bluePickup2Pose = new Pose(9.5,51.5, Math.toRadians(180));
+    public final Pose bluePickup2Pose = new Pose(8,51.5, Math.toRadians(180));
     public final Pose blueSetup2Pose = new Pose(43.576,51.5, Math.toRadians(180));
     public final Pose blueGate = new Pose(19,56,Math.toRadians(-90));
     public final Pose blueGateFacingGoalSetup = new Pose(19,75.5, Math.toRadians(180));
-    public final Pose blueGateFacingGoal = new Pose(14,74.5,Math.toRadians(70));
+    public final Pose blueGateFacingGoal = new Pose(13.5,74.5,Math.toRadians(70));
     public final Pose blueAutoEnd = new Pose(30, 58, Math.toRadians(-90));
     public final Pose blueGateSetupPose = new Pose(17,49.7, Math.toRadians(179.697));
-    public final Pose bluePickup3Pose = new Pose(8.5,27, Math.toRadians(179));
+    public final Pose bluePickup3Pose = new Pose(8,27, Math.toRadians(179));
     public final Pose blueSetup3Pose = new Pose(43,27, Math.toRadians(179));
     public final Pose blueGateHold = new Pose(11.1,54.34, Math.toRadians(155.28));
     public final Pose blueGateHarvest = new Pose(9,54.9, Math.toRadians(137));
