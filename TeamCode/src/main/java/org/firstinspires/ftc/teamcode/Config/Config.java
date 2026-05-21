@@ -235,7 +235,7 @@ public class Config {
 
     // todo BLUE SIDE UPDATED RED SIDE NOT UPDATED
     public final Pose blueStartFar = new Pose(55, 8.39, Math.toRadians(90));
-    public final Pose blueFarScorePose = new Pose(52, 11, Math.toRadians(120));
+    public final Pose blueFarScorePose = new Pose(52, 11, Math.toRadians(115));
     public final Pose blueFarPark = new Pose(35.6, 12.85, Math.toRadians(90));
     public final Pose blueFarGrabFromHumanPlayerZoneOffTheWallSetup = new Pose(16.6,23,Math.toRadians(-89));
     public final Pose blueFarGrabFromHumanPlayerZoneOffTheWall = new Pose(16.6,2.2,Math.toRadians(-89));
