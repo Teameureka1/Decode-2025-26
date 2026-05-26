@@ -281,11 +281,12 @@ public class blueClose12ClassifiedWith9InRamp extends OpMode {
                     follower.followPath(endOfAuto);
                     timer.reset();
                     step++;
+
                 }
                 break;
             case 16:
-                if (!follower.isBusy() && timer.seconds() > 2.5) {
-                    requestOpModeStop();
+                if (!follower.isBusy() && timer.seconds() > 2) {
+                    Config.PoseStorage.currentPose = follower.getPose();
                 }
                 break;
         }

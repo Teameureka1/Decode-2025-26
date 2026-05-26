@@ -13,13 +13,15 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-// In this class basically if you go to another class and say "Config robot" it will take
-// all of this class and put it there, but remember to add robot.init inside your init.
-// You also you need "robot = new Config(this);" before robot.init.
+/* In this class basically if you go to another class and say "Config robot" it will take
+ all of this class and put it there, but remember to add robot.init inside your init.
+ You also you need "robot = new Config(this);" before robot.init.
+ */
 
 public class Config {
     private LinearOpMode linearOpMode;
     private OpMode opmode;
+
     public Config(LinearOpMode linearOpMode) {
         this.linearOpMode = linearOpMode;
     }
@@ -28,10 +30,14 @@ public class Config {
         this.opmode = opmode;
     }
 
+    public class PoseStorage {
+        public static Pose currentPose = null; // null = no auto was run
+    }
+
     public ElapsedTime launchTimer = new ElapsedTime();
     public double lastCalcDistance = 0;
-    private double launcherVelocity = 0;
     public double idleVelocity = 1000;
+
     public void intakeIn() {
         intake.setVelocity(1180);
         kicker.setPower(1);
@@ -62,8 +68,8 @@ public class Config {
             return;
         }
 
-       double distance = blueGetDistanceFromGoal(follower.getPose());
-       double velocity = calculateLaunchVelocity(distance);
+        double distance = blueGetDistanceFromGoal(follower.getPose());
+        double velocity = calculateLaunchVelocity(distance);
         lastCalcDistance = distance;
 
 
@@ -116,10 +122,10 @@ public class Config {
                 break;
             case 2:
                 if (launcher.getVelocity() > velocity - 20) {
-                        wallOpen();
-                        intakeIn();
-                        launchTimer.reset();
-                        launchSequenceStep++;
+                    wallOpen();
+                    intakeIn();
+                    launchTimer.reset();
+                    launchSequenceStep++;
                 }
                 break;
             case 3:
@@ -150,7 +156,7 @@ public class Config {
         wallClose();
         launcher.setVelocity(idleVelocity);
         launcher2.setVelocity(idleVelocity);
-        }
+    }
 
 
     public DcMotorEx frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
@@ -185,19 +191,20 @@ public class Config {
      * @return heading in radians
      */
     public double blueGetGoalHeading(Pose robotPose) {
-        Pose goal = new Pose(5,130);
+        Pose goal = new Pose(5, 130);
         double opposite = goal.getY() - robotPose.getY();
         double adjacent = robotPose.getX() - goal.getX();
         double heading = Math.PI - Math.atan2(opposite, adjacent);
         return heading;
-
     }
+
     public double blueGetDistanceFromGoal(Pose robotPose) {
         double opposite = 144 - robotPose.getY();
         double adjacent = robotPose.getX();
         double hypot = Math.sqrt((opposite * opposite) + (adjacent * adjacent));
         return hypot;
     }
+
     public static double angleWrap(double angle) {
         while (angle > Math.PI) angle -= 2 * Math.PI;
         while (angle < -Math.PI) angle += 2 * Math.PI;
@@ -210,13 +217,15 @@ public class Config {
      * @return heading in radians
      */
 
-    // todo work on this like thing above this blueGetGoalHeading!!!!
+    // todo work on this like thing above this blueGetGoalHeading
     public double redGetGoalHeading(Pose robotPose) {
-        double opposite = 144 - robotPose.getY();
+        Pose goal = new Pose(144, 144);
+        double opposite = goal.getY() - robotPose.getY();
         double adjacent = 144 - robotPose.getX();
         double heading = Math.atan2(opposite, adjacent);
         return heading;
     }
+
     public double redGetDistanceFromGoal(Pose robotPose) {
         double opposite = 144 - robotPose.getY();
         double adjacent = 144 - robotPose.getX();
@@ -225,64 +234,80 @@ public class Config {
     }
 
 
-
     public double calculateLaunchVelocity(double distance) {
         double x = distance;
-        double velocity = (-0.000234073 * x*x*x + (0.101791 * x*x -8.57328 * x + 1400)); // was 1374
+        double velocity = (-0.000234073 * x * x * x + (0.101791 * x * x - 8.57328 * x + 1400)); // was 1374
         return velocity;
     }
 
 
+    /**
+     * Reads a Pose from file.
+     * Returns null if the file does not exist or is invalid.
+     */
+
+
+
+
     // todo BLUE SIDE UPDATED RED SIDE NOT UPDATED
     public final Pose blueStartFar = new Pose(55, 8.39, Math.toRadians(90));
-    public final Pose blueFarScorePose = new Pose(52, 11, Math.toRadians(115));
+    public final Pose blueFarScorePose = new Pose(52, 11, Math.toRadians(116));
     public final Pose blueFarPark = new Pose(35.6, 12.85, Math.toRadians(90));
-    public final Pose blueFarGrabFromHumanPlayerZoneOffTheWallSetup = new Pose(16.6,23,Math.toRadians(-89));
-    public final Pose blueFarGrabFromHumanPlayerZoneOffTheWall = new Pose(16.6,2.2,Math.toRadians(-89));
-    public final Pose blueFarGrabFromHumanPlayerZoneOffTheWallGetBack = new Pose(16.6,2.5,Math.toRadians(-89));
-    public final Pose blueFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerSetup = new Pose(35.2,4,Math.toRadians(-160));
-    public final Pose blueFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayer = new Pose(14,3,Math.toRadians(-160));
-    public final Pose blueFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMoreSetup = new Pose(37.6,15,Math.toRadians(173));
-    public final Pose blueFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMore = new Pose(10.3,15,Math.toRadians(173));
+    public final Pose blueFarGrabFromHumanPlayerZoneOffTheWallSetup = new Pose(16.6, 23, Math.toRadians(-89));
+    public final Pose blueFarGrabFromHumanPlayerZoneOffTheWall = new Pose(16.6, 2.2, Math.toRadians(-89));
+    public final Pose blueFarGrabFromHumanPlayerZoneOffTheWallGetBack = new Pose(16.6, 2.5, Math.toRadians(-89));
+    public final Pose blueFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerSetup = new Pose(35.2, 4, Math.toRadians(-160));
+    public final Pose blueFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayer = new Pose(14, 3, Math.toRadians(-160));
+    public final Pose blueFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMoreSetup = new Pose(37.6, 15, Math.toRadians(173));
+    public final Pose blueFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMore = new Pose(10.3, 15, Math.toRadians(173));
     public final Pose blueStartClose = new Pose(16, 115.7435, Math.toRadians(139));
-    public final Pose blueScorePose = new Pose(44,86,Math.toRadians(132));
-    public final Pose blueScorePose2 = new Pose(51.9182,103.703,Math.toRadians(150.25));
-    public final Pose bluePickup1Pose = new Pose(15,75.5, Math.toRadians(180));
-    public final Pose blueSetup1Pose = new Pose(40,75.5, Math.toRadians(180));
-    public final Pose bluePickup2Pose = new Pose(8,51.5, Math.toRadians(180));
-    public final Pose blueSetup2Pose = new Pose(43.576,51.5, Math.toRadians(180));
-    public final Pose blueGate = new Pose(19,56,Math.toRadians(-90));
-    public final Pose blueGateFacingGoalSetup = new Pose(19,75.5, Math.toRadians(180));
-    public final Pose blueGateFacingGoal = new Pose(13.5,74.5,Math.toRadians(70));
+    public final Pose blueScorePose = new Pose(44, 86, Math.toRadians(132));
+    public final Pose blueScorePose2 = new Pose(51.9182, 103.703, Math.toRadians(150.25));
+    public final Pose bluePickup1Pose = new Pose(15, 75.5, Math.toRadians(180));
+    public final Pose blueSetup1Pose = new Pose(40, 75.5, Math.toRadians(180));
+    public final Pose bluePickup2Pose = new Pose(8, 51.5, Math.toRadians(180));
+    public final Pose blueSetup2Pose = new Pose(43.576, 51.5, Math.toRadians(180));
+    public final Pose blueGate = new Pose(19, 56, Math.toRadians(-90));
+    public final Pose blueGateFacingGoalSetup = new Pose(19, 75.5, Math.toRadians(180));
+    public final Pose blueGateFacingGoal = new Pose(13.5, 74.5, Math.toRadians(70));
     public final Pose blueAutoEnd = new Pose(30, 58, Math.toRadians(-90));
-    public final Pose blueGateSetupPose = new Pose(17,49.7, Math.toRadians(179.697));
-    public final Pose bluePickup3Pose = new Pose(8,27, Math.toRadians(179));
-    public final Pose blueSetup3Pose = new Pose(43,27, Math.toRadians(179));
-    public final Pose blueGateHold = new Pose(11.1,54.34, Math.toRadians(155.28));
-    public final Pose blueGateHarvest = new Pose(9,54.9, Math.toRadians(137));
-    public final Pose blueGateHarvestSetup = new Pose(36.394,54.5, Math.toRadians(155.7));
+    public final Pose blueGateSetupPose = new Pose(17, 49.7, Math.toRadians(179.697));
+    public final Pose bluePickup3Pose = new Pose(8, 27, Math.toRadians(179));
+    public final Pose blueSetup3Pose = new Pose(43, 27, Math.toRadians(179));
+    public final Pose blueGateHold = new Pose(11.1, 54.34, Math.toRadians(155.28));
+    public final Pose blueGateHarvest = new Pose(9, 54.9, Math.toRadians(137));
+    public final Pose blueGateHarvestSetup = new Pose(36.394, 54.5, Math.toRadians(155.7));
 
     public final Pose redStartFar = new Pose(89, 8.39, Math.toRadians(90));
+    public final Pose redFarScorePose = new Pose(87, 13.7, Math.toRadians(65.5));
+    public final Pose redFarPark = new Pose(110, 10, Math.toRadians(90));
+    public final Pose redFarGrabFromHumanPlayerZoneOffTheWallSetup = new Pose(144, 21, Math.toRadians(-90));
+    public final Pose redFarGrabFromHumanPlayerZoneOffTheWall = new Pose(144, 0, Math.toRadians(-90));
+    public final Pose redFarGrabFromHumanPlayerZoneOffTheWallGetBack = new Pose(144, 2.5, Math.toRadians(-90));
+    public final Pose redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerSetup = new Pose(114.7, 10, Math.toRadians(-20));
+    public final Pose redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayer = new Pose(142, 9, Math.toRadians(-20));
+    public final Pose redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMoreSetup = new Pose(110, 16, Math.toRadians(10));
+    public final Pose redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMore = new Pose(142, 18, Math.toRadians(10));
     public final Pose redStartClose = new Pose(129.2095, 122.4811, Math.toRadians(39.3531));
-    public final Pose redScorePose = new Pose(95,96, Math.toRadians(40));
-    public final Pose redScorePose2 = new Pose(92,103,Math.toRadians(34));
+    public final Pose redScorePose = new Pose(95, 96, Math.toRadians(40));
+    public final Pose redScorePose2 = new Pose(92, 103, Math.toRadians(34));
     public final Pose redPickup1Pose = new Pose(134, 82.2643, Math.toRadians(0.6));
-    public final Pose redSetup1Pose = new Pose(107.6,81.6, Math.toRadians(1.33));
-    public final Pose redPickup2Pose = new Pose(141,57.5, Math.toRadians(.08));
-    public final Pose redSetup2Pose = new Pose(107.6,58, Math.toRadians(.08));
-    public final Pose redSetupGate = new Pose(133,58,Math.toRadians(0));
-    public final Pose redGateFacingParkingZone = new Pose(138,62,Math.toRadians(-90));
-    public final Pose redGateFacingGoal = new Pose(134,76,Math.toRadians(90));
-    public final Pose redGateFacingGoalSetup = new Pose(129,82.26, Math.toRadians(0));
-    public final Pose redPickup3Pose = new Pose(141,33, Math.toRadians(.8));
-    public final Pose redSetup3Pose = new Pose(107.6,33, Math.toRadians(.8));
-    public final Pose redAutoEnd = new Pose(129,57.8, Math.toRadians(-90));
-    public final Pose redGateHold = new Pose(137.4,61.134, Math.toRadians(37));
-    public final Pose redGateHarvest = new Pose(135.6,60, Math.toRadians(46.5));
-    public final Pose redGateHarvestSetup = new Pose(117.33,60.8657, Math.toRadians(39.38));
-
+    public final Pose redSetup1Pose = new Pose(107.6, 81.6, Math.toRadians(1.33));
+    public final Pose redPickup2Pose = new Pose(141, 57.5, Math.toRadians(.08));
+    public final Pose redSetup2Pose = new Pose(107.6, 58, Math.toRadians(.08));
+    public final Pose redSetupGate = new Pose(133, 58, Math.toRadians(0));
+    public final Pose redGateFacingParkingZone = new Pose(138, 62, Math.toRadians(-90));
+    public final Pose redGateFacingGoal = new Pose(134, 76, Math.toRadians(90));
+    public final Pose redGateFacingGoalSetup = new Pose(129, 82.26, Math.toRadians(0));
+    public final Pose redPickup3Pose = new Pose(142, 34.5, Math.toRadians(.8));
+    public final Pose redSetup3Pose = new Pose(107.6, 34.5, Math.toRadians(.8));
+    public final Pose redAutoEnd = new Pose(129, 57.8, Math.toRadians(-90));
+    public final Pose redGateHold = new Pose(137.4, 61.134, Math.toRadians(37));
+    public final Pose redGateHarvest = new Pose(135.6, 60, Math.toRadians(46.5));
+    public final Pose redGateHarvestSetup = new Pose(117.33, 60.8657, Math.toRadians(39.38));
 
     HardwareMap hwMap;
+
     public void init() {
         if (linearOpMode != null) {
             hwMap = linearOpMode.hardwareMap;
@@ -291,13 +316,13 @@ public class Config {
         }
 
         // This is where we have to get stuff from the Driver Station
-        frontLeftMotor  = hwMap.get(DcMotorEx.class, "fl");
-        backLeftMotor   = hwMap.get(DcMotorEx.class, "bl");
+        frontLeftMotor = hwMap.get(DcMotorEx.class, "fl");
+        backLeftMotor = hwMap.get(DcMotorEx.class, "bl");
         frontRightMotor = hwMap.get(DcMotorEx.class, "fr");
-        backRightMotor  = hwMap.get(DcMotorEx.class, "br");
+        backRightMotor = hwMap.get(DcMotorEx.class, "br");
 
-        intake   = hwMap.get(DcMotorEx.class, "intake");
-        kicker   = hwMap.get(DcMotorEx.class, "kicker");
+        intake = hwMap.get(DcMotorEx.class, "intake");
+        kicker = hwMap.get(DcMotorEx.class, "kicker");
         launcher = hwMap.get(DcMotorEx.class, "launcher");
         launcher2 = hwMap.get(DcMotorEx.class, "launcher2");
 
@@ -328,7 +353,6 @@ public class Config {
         PIDFCoefficients pidf = new PIDFCoefficients(55, 0, 0, 15.5);
         launcher.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidf);
         launcher2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidf);
-
 
 
     }

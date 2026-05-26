@@ -38,11 +38,19 @@ public class AimAssist extends OpMode {
 
     @Override
     public void init() {
-
         robot = new Config(this);
         follower = Constants.createFollower(hardwareMap);
         follower.setMaxPower(1);
         follower.setStartingPose(robot.blueStartFar);
+
+        // Use auto's ending pose if available, otherwise fall back to default
+        if (Config.PoseStorage.currentPose != null) {
+            follower.setStartingPose(Config.PoseStorage.currentPose);
+            telemetry.addData("Pose Source", "From Auto");
+        } else {
+            follower.setStartingPose(robot.blueStartFar);
+            telemetry.addData("Pose Source", "Default (no auto ran)");
+        }
         robot.init();
     }
 
