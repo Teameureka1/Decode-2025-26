@@ -283,8 +283,9 @@ public class redCloseOpenGateTwice extends OpMode {
                 }
                 break;
             case 16:
-                if (!follower.isBusy() && timer.seconds() > 2.5) {
-                    requestOpModeStop();
+                if (!follower.isBusy() && timer.seconds() > 1.5) {
+                    Config.savedPose = follower.getPose();
+                    Config.lastAutoRun = 3;
                 }
                 break;
 

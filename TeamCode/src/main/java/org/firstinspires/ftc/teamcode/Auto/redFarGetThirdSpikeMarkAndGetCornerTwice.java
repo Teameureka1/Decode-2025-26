@@ -315,6 +315,11 @@ public class redFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
                     step++;
                 }
                 break;
+            case 18:
+                if (timer.seconds() > 2) {
+                    Config.savedPose = follower.getPose();
+                    Config.lastAutoRun = 4;
+                }
 
         }
 

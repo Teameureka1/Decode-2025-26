@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.List;
 
-@TeleOp(name = "!Decode")
-public class DecodeLimelight extends OpMode {
+@TeleOp(name = "!Decode Blue")
+public class DecodeBlue extends OpMode {
 
     boolean aimAssist = false;
     boolean locked = false;
@@ -176,7 +176,7 @@ public class DecodeLimelight extends OpMode {
             }
         }
 
-        if (gamepad1.xWasPressed()) {
+        if (gamepad2.xWasPressed()) {
             robot.intakeOut();
         }
 

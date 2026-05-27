@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.Config.Config;
 
 import java.util.List;
 
-@TeleOp(name = "LimelightID4")
 public class LimelightID4 extends LinearOpMode {
 
     private Config robot;

@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Config.Config;
 
-@TeleOp
+
 public class ArtifactPickupTuner extends OpMode {
 
     private Config robot;

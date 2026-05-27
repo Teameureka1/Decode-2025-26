@@ -231,7 +231,7 @@ public class blueCloseHarvestFromGate extends OpMode {
                 }
                 break;
             case 10:
-                if (!follower.isBusy() && timer.seconds() > 3) {
+                if (timer.seconds() > 2.5) {
                     intakeStop();
                     robot.wallOpen();
                     follower.setMaxPower(1);

@@ -274,8 +274,8 @@ public class Config {
     public final Pose blueGateSetupPose = new Pose(17, 49.7, Math.toRadians(179.697));
     public final Pose bluePickup3Pose = new Pose(6.5, 27, Math.toRadians(179));
     public final Pose blueSetup3Pose = new Pose(43, 27, Math.toRadians(179));
-    public final Pose blueGateHold = new Pose(9.75, 55, Math.toRadians(155.28));
-    public final Pose blueGateHarvest = new Pose(8.25, 55, Math.toRadians(137));
+    public final Pose blueGateHold = new Pose(9.25, 57.75, Math.toRadians(155.28));
+    public final Pose blueGateHarvest = new Pose(8, 55, Math.toRadians(127));
     public final Pose blueGateHarvestSetup = new Pose(36.394, 54.5, Math.toRadians(155.7));
 
     public final Pose redStartFar = new Pose(89, 8.39, Math.toRadians(90));
@@ -289,7 +289,7 @@ public class Config {
     public final Pose redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMoreSetup = new Pose(110, 16, Math.toRadians(10));
     public final Pose redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMore = new Pose(142, 18, Math.toRadians(10));
     public final Pose redStartClose = new Pose(129.2095, 122.4811, Math.toRadians(39.3531));
-    public final Pose redScorePose = new Pose(95, 96, Math.toRadians(40));
+    public final Pose redScorePose = new Pose(95, 96, Math.toRadians(39));
     public final Pose redScorePose2 = new Pose(92, 103, Math.toRadians(34));
     public final Pose redPickup1Pose = new Pose(134, 82.2643, Math.toRadians(0.6));
     public final Pose redSetup1Pose = new Pose(107.6, 81.6, Math.toRadians(1.33));

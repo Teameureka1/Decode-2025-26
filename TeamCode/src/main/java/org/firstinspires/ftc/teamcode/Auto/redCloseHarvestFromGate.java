@@ -301,10 +301,11 @@ public class redCloseHarvestFromGate extends OpMode {
                 }
                 break;
             case 17:
-                if (!follower.isBusy() && timer.seconds() > 3) {
+                if (!follower.isBusy() && timer.seconds() > 1.5) {
                     wallDown();
                     intakeStop();
-                    requestOpModeStop();
+                    Config.savedPose = follower.getPose();
+                    Config.lastAutoRun = 2;
                 }
                 break;
         }
