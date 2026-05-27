@@ -1,17 +1,14 @@
-package org.firstinspires.ftc.teamcode.Teleop;
+package org.firstinspires.ftc.teamcode.disabled;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Config.Config;
 
 import java.util.List;
 
-@TeleOp(name = "AutoLaunch")
-public class AutoLaunch extends LinearOpMode {
+public class redTeleop extends LinearOpMode {
 
     private Config robot;
 
@@ -34,18 +31,37 @@ public class AutoLaunch extends LinearOpMode {
 
             // ================= INTAKE =================
             double intakeInput = -gamepad2.left_stick_y;
+            long now = System.currentTimeMillis();
 
-                if (gamepad2.bWasPressed()) {
-                    if (robot.intaking)
-                        robot.intaking = true;
-                    robot.intake.setVelocity(1000);
-                    robot.kicker.setVelocity(1000); // reverse burst
+            if (intakeInput < -0.1) {
+                // Intake in
+                robot.intake.setVelocity(-1000);
+                robot.kicker.setPower(-1);
+                robot.wasIntaking = true;
+
+            } else if (intakeInput > 0.1) {
+                // Intake out
+                robot.intake.setVelocity(1180);
+                robot.kicker.setPower(1);
+                robot.wasIntaking = true;
+
+            } else {
+                // Stick released
+                if (robot.wasIntaking) {
+                    robot.intakeStopTime = now;
+                    robot.wasIntaking = false;
+                }
+
+                // Run reverse for 100 ms after release, because if we have 4 artifacts
+                // it will spit the 4th one out.
+
+                if (now - robot.intakeStopTime < robot.REVERSE_TIME_MS) {
+                    robot.intake.setVelocity(-1000);   // reverse burst
                 } else {
-                    robot.intaking = false;
                     robot.intake.setVelocity(0);
                     robot.kicker.setPower(0);
                 }
-
+            }
             // ================= WALL =================
             if (gamepad2.aWasPressed()) {
                 if (robot.intakeIsOpen) {
@@ -56,16 +72,11 @@ public class AutoLaunch extends LinearOpMode {
                     robot.wall.setPosition(0.15);
                 }
             }
-
             // ================= LAUNCHER =================
-
             if (gamepad2.right_trigger > 0.5) {
                 robot.launcher.setVelocity(1260);
                 robot.launcher2.setVelocity(1260);
-            }else if (robot.launcher.getVelocity() > 1220) {
-                    robot.wallOpen();
-                    robot.intakeIn();
-                } else if (gamepad2.left_trigger > 0.5) {
+            } else if (gamepad2.left_trigger > 0.5) {
                 robot.launcher.setVelocity(1620);
                 robot.launcher2.setVelocity(1620);
             } else {
@@ -85,7 +96,7 @@ public class AutoLaunch extends LinearOpMode {
                     List<LLResultTypes.FiducialResult> tags = result.getFiducialResults();
 
                     for (LLResultTypes.FiducialResult fr : tags) {
-                        if (fr.getFiducialId() == 20) {
+                        if (fr.getFiducialId() == 24) {
 
                             double tx = fr.getTargetXDegrees();
 

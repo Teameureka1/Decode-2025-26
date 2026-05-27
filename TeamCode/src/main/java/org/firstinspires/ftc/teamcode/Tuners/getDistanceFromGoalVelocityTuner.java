@@ -1,14 +1,12 @@
-package org.firstinspires.ftc.teamcode.Teleop;
+package org.firstinspires.ftc.teamcode.Tuners;
 
 import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Config.Config;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@TeleOp(name = "AutoDistance")
-public class AutoDistance extends OpMode {
+public class getDistanceFromGoalVelocityTuner extends OpMode {
     Follower follower;
     double velocity = 0;
     double[] stepSizes = {1000.00, 100.00, 10.0};

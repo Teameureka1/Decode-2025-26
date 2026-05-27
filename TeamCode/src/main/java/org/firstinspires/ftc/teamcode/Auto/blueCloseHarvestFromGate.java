@@ -38,14 +38,6 @@ public class blueCloseHarvestFromGate extends OpMode {
         robot.kicker.setPower(0);
     }
 
-    // === WALL FUNCTIONS ===
-    private void wallUp() {
-        robot.wall.setPosition(0.15);
-    }
-
-    private void wallDown() {
-        robot.wall.setPosition(0.32);
-    }
 
     public void buildPaths() {
 
@@ -125,7 +117,7 @@ public class blueCloseHarvestFromGate extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setMaxPower(1);
 
-        wallUp();
+        robot.wallOpen();
 
         buildPaths();
         follower.setStartingPose(robot.blueStartClose);
@@ -136,7 +128,7 @@ public class blueCloseHarvestFromGate extends OpMode {
         step = 0;
         robot.launcher.setVelocity(1220);
         robot.launcher2.setVelocity(1220);
-        wallUp();
+        robot.wallOpen();
         follower.followPath(scorePreload);
     }
 
@@ -166,7 +158,7 @@ public class blueCloseHarvestFromGate extends OpMode {
                 break;
             case 2:
                 if (!follower.isBusy()) {
-                    wallDown();
+                    robot.wallClose();
                     intakeIn();
                     follower.setMaxPower(.7);
                     follower.followPath(grabPickup2);
@@ -195,7 +187,7 @@ public class blueCloseHarvestFromGate extends OpMode {
 
             case 5:
                 if (!follower.isBusy() && timer.seconds() > 1.5) {
-                    wallUp();
+                    robot.wallOpen();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup2);
                     timer.reset();
@@ -213,7 +205,7 @@ public class blueCloseHarvestFromGate extends OpMode {
             case 7:
                 if (!follower.isBusy() && timer.seconds() > 1) {
                     intakeStop();
-                    wallDown();
+                    robot.wallClose();
                     follower.setMaxPower(1);
                     follower.followPath(gateGrabSetup);
                     timer.reset();
@@ -241,7 +233,7 @@ public class blueCloseHarvestFromGate extends OpMode {
             case 10:
                 if (!follower.isBusy() && timer.seconds() > 3) {
                     intakeStop();
-                    wallUp();
+                    robot.wallOpen();
                     follower.setMaxPower(1);
                     follower.followPath(scoreGrab);
                     timer.reset();
@@ -259,7 +251,7 @@ public class blueCloseHarvestFromGate extends OpMode {
             case 12:
                 if (!follower.isBusy() && timer.seconds() > 1) {
                     intakeStop();
-                    wallDown();
+                    robot.wallClose();
                     follower.setMaxPower(1);
                     follower.followPath(setUp1);
                     timer.reset();
@@ -296,7 +288,7 @@ public class blueCloseHarvestFromGate extends OpMode {
             case 16:
                 if (!follower.isBusy() && timer.seconds() > 1.5) {
                     intakeStop();
-                    wallDown();
+                    robot.wallClose();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup1);
                     timer.reset();
@@ -306,17 +298,18 @@ public class blueCloseHarvestFromGate extends OpMode {
 
             case 17:
                 if (!follower.isBusy()) {
-                    wallUp();
+                    robot.wallOpen();
                     intakeIn();
                     timer.reset();
                     step++;
                 }
                 break;
             case 18:
-                if (!follower.isBusy() && timer.seconds() > 3) {
-                    wallDown();
+                if (!follower.isBusy() && timer.seconds() > 2) {
+                    Config.savedPose = follower.getPose();
+                    Config.lastAutoRun = 3;
+                    robot.wallClose();
                     intakeStop();
-                    requestOpModeStop();
                 }
                 break;
         }

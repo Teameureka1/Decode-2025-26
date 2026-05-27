@@ -38,14 +38,6 @@ public class blueFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
         robot.kicker.setPower(0);
     }
 
-    // === WALL FUNCTIONS ===
-    private void wallUp() {
-        robot.wall.setPosition(0.15);
-    }
-
-    private void wallDown() {
-        robot.wall.setPosition(0.32);
-    }
 
     public void buildPaths() {
 
@@ -117,7 +109,7 @@ public class blueFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
         robot.init();
         follower = Constants.createFollower(hardwareMap);
         follower.setMaxPower(1);
-        wallUp();
+        robot.wallOpen();
         buildPaths();
         follower.setStartingPose(robot.blueStartFar);
     }
@@ -127,7 +119,7 @@ public class blueFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
         step = 0;
         robot.launcher.setVelocity(targetVelocity);
         robot.launcher2.setVelocity(targetVelocity);
-        wallUp();
+        robot.wallOpen();
         follower.followPath(scorePreload);
     }
 
@@ -146,7 +138,7 @@ public class blueFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
                 break;
 
             case 1:
-                if (timer.seconds() > 1.75) {
+                if (timer.seconds() > 1.5) {
                     timer.reset();
                     follower.setMaxPower(1);
                     intakeStop();
@@ -157,7 +149,7 @@ public class blueFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
 
             case 2:
                 if (!follower.isBusy()) {
-                    wallDown();
+                    robot.wallClose();
                     intakeIn();
                     follower.setMaxPower(.8);
                     follower.followPath(grabPickup3);
@@ -178,7 +170,7 @@ public class blueFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
 
             case 4:
                 if (timer.seconds() > 1.5 && !follower.isBusy() && robot.launcher2.getVelocity() > 1500) {
-                        wallUp();
+                        robot.wallOpen();
                         intakeIn();
                         timer.reset();
                         step++;
@@ -186,8 +178,7 @@ public class blueFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
                 break;
 
             case 5:
-                if (timer.seconds() > 1.75) {
-                    wallDown();
+                if (timer.seconds() > 1.5) {
                     intakeStop();
                     follower.setMaxPower(1);
                     follower.followPath(setUpNearWall);
@@ -198,6 +189,7 @@ public class blueFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
 
             case 6:
                 if (!follower.isBusy()) {
+                    robot.wallClose();
                     intakeIn();
                     follower.setMaxPower(.8);
                     follower.followPath(grabNearWall);
@@ -235,9 +227,9 @@ public class blueFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
                 break;
 
                 case 10:
-                    if (timer.seconds() > 1.5 && !follower.isBusy() && robot.launcher2.getVelocity() > 1500) {
+                    if (timer.seconds() > 2.5 && !follower.isBusy() && robot.launcher2.getVelocity() > 1500) {
                         if (timer.seconds() > .5) {
-                            wallUp();
+                            robot.wallOpen();
                             intakeIn();
                             timer.reset();
                             step++;
@@ -249,7 +241,7 @@ public class blueFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
 
             case 11:
                 if (timer.seconds() > 1.75) {
-                    wallDown();
+                    robot.wallClose();
                     intakeStop();
                     follower.setMaxPower(1);
                     follower.followPath(setUpNearWall2);
@@ -269,7 +261,7 @@ public class blueFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
                 break;
 
             case 13:
-                if (!follower.isBusy() && timer.seconds() > 1.5) {
+                if (!follower.isBusy() && timer.seconds() > 1) {
                     intakeStop();
                     follower.setMaxPower(1);
                     follower.followPath(setUpNearWall3);
@@ -289,7 +281,7 @@ public class blueFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
                 break;
 
             case 15:
-                if (!follower.isBusy() && timer.seconds() > 1.5) {
+                if (!follower.isBusy() && timer.seconds() > .75) {
                     intakeStop();
                     follower.setMaxPower(1);
                     follower.followPath(scoreLast);
@@ -300,7 +292,7 @@ public class blueFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
 
             case 16:
                 if (timer.seconds() > 1.5 && !follower.isBusy() && robot.launcher2.getVelocity() > 1500) {
-                        wallUp();
+                        robot.wallOpen();
                         intakeIn();
                         timer.reset();
                         step++;
@@ -309,7 +301,7 @@ public class blueFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
 
             case 17:
                 if (timer.seconds() > 1.75) {
-                    wallDown();
+                    robot.wallClose();
                     intakeStop();
                     follower.setMaxPower(1);
                     follower.followPath(Park);
@@ -317,6 +309,11 @@ public class blueFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
                     step++;
                 }
                 break;
+            case 18:
+                if (timer.seconds() > 1.5) {
+                    Config.savedPose = follower.getPose();
+                    Config.lastAutoRun = 3;
+                }
 
         }
 

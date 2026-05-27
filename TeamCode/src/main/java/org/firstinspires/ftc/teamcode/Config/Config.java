@@ -30,9 +30,9 @@ public class Config {
         this.opmode = opmode;
     }
 
-    public class PoseStorage {
-        public static Pose currentPose = null; // null = no auto was run
-    }
+
+    public static Pose savedPose = null;
+    public static int lastAutoRun = 0;
 
     public ElapsedTime launchTimer = new ElapsedTime();
     public double lastCalcDistance = 0;
@@ -54,11 +54,11 @@ public class Config {
     }
 
     public void wallOpen() {
-        wall.setPosition(0.15);
+        wall.setPosition(.39);
     }
 
     public void wallClose() {
-        wall.setPosition(0.32);
+        wall.setPosition(.53);
     }
 
     public void blueLaunchThreeUpdater(Follower follower) {
@@ -265,17 +265,17 @@ public class Config {
     public final Pose blueScorePose2 = new Pose(51.9182, 103.703, Math.toRadians(150.25));
     public final Pose bluePickup1Pose = new Pose(15, 75.5, Math.toRadians(180));
     public final Pose blueSetup1Pose = new Pose(40, 75.5, Math.toRadians(180));
-    public final Pose bluePickup2Pose = new Pose(8, 51.5, Math.toRadians(180));
+    public final Pose bluePickup2Pose = new Pose(6.5, 51.5, Math.toRadians(180));
     public final Pose blueSetup2Pose = new Pose(43.576, 51.5, Math.toRadians(180));
     public final Pose blueGate = new Pose(19, 56, Math.toRadians(-90));
     public final Pose blueGateFacingGoalSetup = new Pose(19, 75.5, Math.toRadians(180));
     public final Pose blueGateFacingGoal = new Pose(13.5, 74.5, Math.toRadians(70));
     public final Pose blueAutoEnd = new Pose(30, 58, Math.toRadians(-90));
     public final Pose blueGateSetupPose = new Pose(17, 49.7, Math.toRadians(179.697));
-    public final Pose bluePickup3Pose = new Pose(8, 27, Math.toRadians(179));
+    public final Pose bluePickup3Pose = new Pose(6.5, 27, Math.toRadians(179));
     public final Pose blueSetup3Pose = new Pose(43, 27, Math.toRadians(179));
-    public final Pose blueGateHold = new Pose(11.1, 54.34, Math.toRadians(155.28));
-    public final Pose blueGateHarvest = new Pose(9, 54.9, Math.toRadians(137));
+    public final Pose blueGateHold = new Pose(10.5, 54.6, Math.toRadians(155.28));
+    public final Pose blueGateHarvest = new Pose(8.25, 54.5, Math.toRadians(137));
     public final Pose blueGateHarvestSetup = new Pose(36.394, 54.5, Math.toRadians(155.7));
 
     public final Pose redStartFar = new Pose(89, 8.39, Math.toRadians(90));

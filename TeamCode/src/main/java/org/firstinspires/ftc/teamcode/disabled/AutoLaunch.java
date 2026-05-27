@@ -1,16 +1,14 @@
-package org.firstinspires.ftc.teamcode.Teleop;
+package org.firstinspires.ftc.teamcode.disabled;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Config.Config;
 
 import java.util.List;
 
-@TeleOp(name = "Silent")
-public class Silent extends LinearOpMode {
+public class AutoLaunch extends LinearOpMode {
 
     private Config robot;
 
@@ -33,37 +31,17 @@ public class Silent extends LinearOpMode {
 
             // ================= INTAKE =================
             double intakeInput = -gamepad2.left_stick_y;
-            long now = System.currentTimeMillis();
 
-            if (intakeInput < -0.1) {
-                // Intake in
-                robot.intake.setVelocity(-1000);
-                robot.kicker.setPower(-1);
-                robot.wasIntaking = true;
-
-            } else if (intakeInput > 0.1) {
-                // Intake out
-                robot.intake.setVelocity(1180);
-                robot.kicker.setPower(1);
-                robot.wasIntaking = true;
-
-            } else {
-                // Stick released
-                if (robot.wasIntaking) {
-                    robot.intakeStopTime = now;
-                    robot.wasIntaking = false;
-                }
-
-                // Run reverse for 100 ms after release, because if we have 4 artifacts
-                // it will spit the 4th one out.
-
-                if (now - robot.intakeStopTime < robot.REVERSE_TIME_MS) {
-                    robot.intake.setVelocity(-1000);   // reverse burst
+                if (gamepad2.bWasPressed()) {
+                    if (robot.intaking)
+                        robot.intaking = true;
+                    robot.intake.setVelocity(1000);
+                    robot.kicker.setVelocity(1000); // reverse burst
                 } else {
+                    robot.intaking = false;
                     robot.intake.setVelocity(0);
                     robot.kicker.setPower(0);
                 }
-            }
 
             // ================= WALL =================
             if (gamepad2.aWasPressed()) {
@@ -77,15 +55,19 @@ public class Silent extends LinearOpMode {
             }
 
             // ================= LAUNCHER =================
+
             if (gamepad2.right_trigger > 0.5) {
-                robot.launcher.setVelocity(1300);
-                robot.launcher2.setVelocity(1300);
-            } else if (gamepad2.left_trigger > 0.5) {
+                robot.launcher.setVelocity(1260);
+                robot.launcher2.setVelocity(1260);
+            }else if (robot.launcher.getVelocity() > 1220) {
+                    robot.wallOpen();
+                    robot.intakeIn();
+                } else if (gamepad2.left_trigger > 0.5) {
                 robot.launcher.setVelocity(1620);
                 robot.launcher2.setVelocity(1620);
             } else {
-                robot.launcher.setVelocity(0);
-                robot.launcher2.setVelocity(0);
+                robot.launcher.setVelocity(1000);
+                robot.launcher2.setVelocity(1000);
             }
 
             // ================= LIMELIGHT =================

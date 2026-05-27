@@ -1,21 +1,15 @@
-package org.firstinspires.ftc.teamcode.Teleop;
-
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
+package org.firstinspires.ftc.teamcode.disabled;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Config.Config;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.List;
 
-@TeleOp(name = "blueFerdinand")
 public class blueTeleop extends OpMode {
 
     Follower follower;

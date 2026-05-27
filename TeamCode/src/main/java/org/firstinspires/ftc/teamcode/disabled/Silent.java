@@ -1,16 +1,14 @@
-package org.firstinspires.ftc.teamcode.Teleop;
+package org.firstinspires.ftc.teamcode.disabled;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Config.Config;
 
 import java.util.List;
 
-@TeleOp(name = "redFerdinand")
-public class redTeleop extends LinearOpMode {
+public class Silent extends LinearOpMode {
 
     private Config robot;
 
@@ -64,6 +62,7 @@ public class redTeleop extends LinearOpMode {
                     robot.kicker.setPower(0);
                 }
             }
+
             // ================= WALL =================
             if (gamepad2.aWasPressed()) {
                 if (robot.intakeIsOpen) {
@@ -74,16 +73,17 @@ public class redTeleop extends LinearOpMode {
                     robot.wall.setPosition(0.15);
                 }
             }
+
             // ================= LAUNCHER =================
             if (gamepad2.right_trigger > 0.5) {
-                robot.launcher.setVelocity(1260);
-                robot.launcher2.setVelocity(1260);
+                robot.launcher.setVelocity(1300);
+                robot.launcher2.setVelocity(1300);
             } else if (gamepad2.left_trigger > 0.5) {
                 robot.launcher.setVelocity(1620);
                 robot.launcher2.setVelocity(1620);
             } else {
-                robot.launcher.setVelocity(1000);
-                robot.launcher2.setVelocity(1000);
+                robot.launcher.setVelocity(0);
+                robot.launcher2.setVelocity(0);
             }
 
             // ================= LIMELIGHT =================
@@ -98,7 +98,7 @@ public class redTeleop extends LinearOpMode {
                     List<LLResultTypes.FiducialResult> tags = result.getFiducialResults();
 
                     for (LLResultTypes.FiducialResult fr : tags) {
-                        if (fr.getFiducialId() == 24) {
+                        if (fr.getFiducialId() == 20) {
 
                             double tx = fr.getTargetXDegrees();
 
