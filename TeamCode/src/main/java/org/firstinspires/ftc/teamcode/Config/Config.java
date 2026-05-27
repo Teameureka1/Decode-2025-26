@@ -274,8 +274,8 @@ public class Config {
     public final Pose blueGateSetupPose = new Pose(17, 49.7, Math.toRadians(179.697));
     public final Pose bluePickup3Pose = new Pose(6.5, 27, Math.toRadians(179));
     public final Pose blueSetup3Pose = new Pose(43, 27, Math.toRadians(179));
-    public final Pose blueGateHold = new Pose(10.5, 54.6, Math.toRadians(155.28));
-    public final Pose blueGateHarvest = new Pose(8.25, 54.5, Math.toRadians(137));
+    public final Pose blueGateHold = new Pose(9.75, 55, Math.toRadians(155.28));
+    public final Pose blueGateHarvest = new Pose(8.25, 55, Math.toRadians(137));
     public final Pose blueGateHarvestSetup = new Pose(36.394, 54.5, Math.toRadians(155.7));
 
     public final Pose redStartFar = new Pose(89, 8.39, Math.toRadians(90));

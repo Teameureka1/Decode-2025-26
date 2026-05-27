@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.List;
 
-@TeleOp(name = "!DecodeLimelight")
+@TeleOp(name = "!Decode")
 public class DecodeLimelight extends OpMode {
 
     boolean aimAssist = false;
@@ -96,15 +96,19 @@ public class DecodeLimelight extends OpMode {
 
                 for (LLResultTypes.FiducialResult fr : tags) {
                     if (fr.getFiducialId() == 20) {
-                        double tx = fr.getTargetXDegrees();
+                        double tx = -fr.getTargetXDegrees();
 
-                        if (Math.abs(tx) < 0.8) {
+                        if (Math.abs(tx) < 3.0) {          // wider deadband
                             rotation = 0;
                             locked = true;
                         } else {
-                            rotation = tx * 0.27;
+                            rotation = tx * 0.02;           // lower gain
                             rotation = Math.max(-0.55, Math.min(rotation, 0.55));
+                            if (Math.abs(rotation) < 0.05) rotation = 0; // min threshold
                         }
+
+                        telemetry.addData("TX", fr.getTargetXDegrees());
+                        telemetry.addData("Rotation Output", rotation);
                     }
                 }
             }
@@ -178,7 +182,7 @@ public class DecodeLimelight extends OpMode {
 
         // ================= LIGHT SYSTEM =================
         if (locked) {
-            robot.vision1.setPosition(robot.ORANGE); // Locked onto tag 20
+            robot.vision1.setPosition(robot.GREEN); // Locked onto tag 20
         } else if (aimAssist) {
             robot.vision1.setPosition(robot.GREEN);  // PIDF aim assist active
         } else {

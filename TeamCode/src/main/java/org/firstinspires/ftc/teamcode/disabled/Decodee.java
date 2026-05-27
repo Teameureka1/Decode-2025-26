@@ -1,19 +1,14 @@
-package org.firstinspires.ftc.teamcode.Teleop;
+package org.firstinspires.ftc.teamcode.disabled;
 
 import com.pedropathing.follower.Follower;
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Config.Config;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-import java.util.List;
 
-@TeleOp(name = "!Decode")
-public class Decode extends OpMode {
+public class Decodee extends OpMode {
 
     boolean aimAssist = false;
     Follower follower;
