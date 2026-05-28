@@ -211,15 +211,9 @@ public class Config {
         return angle;
     }
 
-    /**
-     *
-     * @param robotPose
-     * @return heading in radians
-     */
-
     // todo work on this like thing above this blueGetGoalHeading
     public double redGetGoalHeading(Pose robotPose) {
-        Pose goal = new Pose(144, 139);
+        Pose goal = new Pose(144, 138.5);
         double opposite = goal.getY() - robotPose.getY();
         double adjacent = 144 - robotPose.getX();
         double heading = Math.atan2(opposite, adjacent);
@@ -291,14 +285,14 @@ public class Config {
     public final Pose redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMore = new Pose(142, 18, Math.toRadians(10));
     public final Pose redStartClose = new Pose(129.2095, 122.4811, Math.toRadians(39.3531));
     public final Pose redScorePose = new Pose(92, 92, Math.toRadians(39));
-    public final Pose redScorePose2 = new Pose(92, 103, Math.toRadians(34));
+    public final Pose redScorePose2 = new Pose(92, 105, Math.toRadians(34));
     public final Pose redPickup1Pose = new Pose(134, 82.2643, Math.toRadians(0.6));
     public final Pose redSetup1Pose = new Pose(107.6, 81.6, Math.toRadians(1.33));
     public final Pose redPickup2Pose = new Pose(141, 57.5, Math.toRadians(.08));
     public final Pose redSetup2Pose = new Pose(107.6, 58, Math.toRadians(.08));
     public final Pose redSetupGate = new Pose(133, 58, Math.toRadians(0));
     public final Pose redGateFacingParkingZone = new Pose(138, 62.5, Math.toRadians(-90));
-    public final Pose redGateFacingParkingZone2 = new Pose(138, 58, Math.toRadians(-90));
+    public final Pose redGateFacingParkingZone2 = new Pose(139, 61, Math.toRadians(-90));
     public final Pose redGateFacingGoal = new Pose(134, 76, Math.toRadians(90));
     public final Pose redGateFacingGoalSetup = new Pose(129, 82.26, Math.toRadians(0));
     public final Pose redPickup3Pose = new Pose(142, 34.5, Math.toRadians(.8));
