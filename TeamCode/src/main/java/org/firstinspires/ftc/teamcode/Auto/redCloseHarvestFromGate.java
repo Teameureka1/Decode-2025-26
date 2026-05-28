@@ -38,15 +38,6 @@ public class redCloseHarvestFromGate extends OpMode {
         robot.kicker.setPower(0);
     }
 
-    // === WALL FUNCTIONS ===
-    private void wallUp() {
-        robot.wall.setPosition(0.15);
-    }
-
-    private void wallDown() {
-        robot.wall.setPosition(0.32);
-    }
-
     public void buildPaths() {
 
         scorePreload = new Path(new BezierLine(robot.redStartClose, robot.redScorePose));
@@ -68,13 +59,13 @@ public class redCloseHarvestFromGate extends OpMode {
                 .build();
 
         toGate2 = follower.pathBuilder()
-                .addPath(new BezierLine(robot.redPickup2Pose, robot.redGateFacingParkingZone))
-                .setLinearHeadingInterpolation(robot.redPickup2Pose.getHeading(), robot.redGateFacingParkingZone.getHeading())
+                .addPath(new BezierLine(robot.redPickup2Pose, robot.redGateFacingParkingZone2))
+                .setLinearHeadingInterpolation(robot.redPickup2Pose.getHeading(), robot.redGateFacingParkingZone2.getHeading())
                 .build();
 
         scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierCurve(robot.redGateFacingParkingZone, new Pose(110,40,0), robot.redScorePose))
-                .setLinearHeadingInterpolation(robot.redGateFacingParkingZone.getHeading(), robot.redScorePose.getHeading())
+                .addPath(new BezierCurve(robot.redGateFacingParkingZone2, new Pose(110,40,0), robot.redScorePose))
+                .setLinearHeadingInterpolation(robot.redGateFacingParkingZone2.getHeading(), robot.redScorePose.getHeading())
                 .build();
         gateGrabSetup = follower.pathBuilder()
                 .addPath(new BezierLine(robot.redScorePose, robot.redGateHarvestSetup))
@@ -120,8 +111,7 @@ public class redCloseHarvestFromGate extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setMaxPower(1);
 
-        wallUp();
-
+        robot.wallOpen();
         buildPaths();
         follower.setStartingPose(robot.redStartClose);
     }
@@ -131,7 +121,7 @@ public class redCloseHarvestFromGate extends OpMode {
         step = 0;
         robot.launcher.setVelocity(1220);
         robot.launcher2.setVelocity(1220);
-        wallUp();
+        robot.wallOpen();
         follower.followPath(scorePreload);
     }
 
@@ -161,7 +151,7 @@ public class redCloseHarvestFromGate extends OpMode {
                 break;
             case 2:
                 if (!follower.isBusy()) {
-                    wallDown();
+                    robot.wallClose();
                     intakeIn();
                     follower.setMaxPower(.7);
                     follower.followPath(grabPickup2);
@@ -190,7 +180,7 @@ public class redCloseHarvestFromGate extends OpMode {
 
             case 5:
                 if (!follower.isBusy() && timer.seconds() > 1.5) {
-                    wallUp();
+                    robot.wallOpen();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup2);
                     timer.reset();
@@ -208,7 +198,7 @@ public class redCloseHarvestFromGate extends OpMode {
             case 7:
                 if (!follower.isBusy() && timer.seconds() > 1) {
                     intakeStop();
-                    wallDown();
+                    robot.wallClose();
                     follower.setMaxPower(1);
                     follower.followPath(gateGrabSetup);
                     timer.reset();
@@ -236,7 +226,7 @@ public class redCloseHarvestFromGate extends OpMode {
             case 10:
                 if (!follower.isBusy() && timer.seconds() > 2) {
                     intakeStop();
-                    wallUp();
+                    robot.wallOpen();
                     follower.setMaxPower(1);
                     follower.followPath(scoreGrab);
                     timer.reset();
@@ -254,7 +244,7 @@ public class redCloseHarvestFromGate extends OpMode {
             case 12:
                 if (!follower.isBusy() && timer.seconds() > 1) {
                     intakeStop();
-                    wallDown();
+                    robot.wallClose();
                     follower.setMaxPower(1);
                     follower.followPath(setUp1);
                     timer.reset();
@@ -284,7 +274,7 @@ public class redCloseHarvestFromGate extends OpMode {
             case 15:
                 if (!follower.isBusy() && timer.seconds() > 1.5) {
                     intakeStop();
-                    wallDown();
+                    robot.wallClose();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup1);
                     timer.reset();
@@ -294,7 +284,7 @@ public class redCloseHarvestFromGate extends OpMode {
 
             case 16:
                 if (!follower.isBusy()) {
-                    wallUp();
+                    robot.wallOpen();
                     intakeIn();
                     timer.reset();
                     step++;
@@ -302,7 +292,7 @@ public class redCloseHarvestFromGate extends OpMode {
                 break;
             case 17:
                 if (!follower.isBusy() && timer.seconds() > 1.5) {
-                    wallDown();
+                    robot.wallClose();
                     intakeStop();
                     Config.savedPose = follower.getPose();
                     Config.lastAutoRun = 2;

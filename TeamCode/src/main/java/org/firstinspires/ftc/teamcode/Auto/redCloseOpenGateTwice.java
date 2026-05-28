@@ -38,14 +38,6 @@ public class redCloseOpenGateTwice extends OpMode {
         robot.kicker.setPower(0);
     }
 
-    // === WALL FUNCTIONS ===
-    private void wallUp() {
-        robot.wall.setPosition(0.15);
-    }
-
-    private void wallDown() {
-        robot.wall.setPosition(0.32);
-    }
 
     public void buildPaths() {
 
@@ -114,7 +106,7 @@ public class redCloseOpenGateTwice extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setMaxPower(1);
 
-        wallUp();
+        robot.wallOpen();
 
         buildPaths();
         follower.setStartingPose(robot.redStartClose);
@@ -125,7 +117,7 @@ public class redCloseOpenGateTwice extends OpMode {
         step = 0;
         robot.launcher.setVelocity(1240);
         robot.launcher2.setVelocity(1240);
-        wallUp();
+        robot.wallOpen();
         follower.followPath(scorePreload);
     }
 
@@ -155,7 +147,7 @@ public class redCloseOpenGateTwice extends OpMode {
                 break;
             case 2:
                 if (!follower.isBusy() && timer.seconds() > .25) {
-                    wallDown();
+                    robot.wallClose();
                     intakeIn();
                     follower.setMaxPower(.65);
                     follower.followPath(grabPickup2);
@@ -184,7 +176,7 @@ public class redCloseOpenGateTwice extends OpMode {
 
             case 5:
                 if (!follower.isBusy() && timer.seconds() > 2.75) {
-                    wallUp();
+                    robot.wallOpen();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup2);
                     timer.reset();
@@ -202,7 +194,7 @@ public class redCloseOpenGateTwice extends OpMode {
             case 7:
                 if (!follower.isBusy() && timer.seconds() > 1) {
                     intakeStop();
-                    wallDown();
+                    robot.wallClose();
                     follower.setMaxPower(1);
                     follower.followPath(setUp1);
                     timer.reset();
@@ -230,7 +222,7 @@ public class redCloseOpenGateTwice extends OpMode {
             case 10:
                 if (!follower.isBusy() && timer.seconds() > 1) {
                     intakeStop();
-                    wallDown();
+                    robot.wallClose();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup1);
                     timer.reset();
@@ -239,7 +231,7 @@ public class redCloseOpenGateTwice extends OpMode {
                 break;
             case 11:
                 if (!follower.isBusy() && timer.seconds() > .5) {
-                    wallUp();
+                    robot.wallOpen();
                     intakeIn();
                     timer.reset();
                     step++;
@@ -248,7 +240,7 @@ public class redCloseOpenGateTwice extends OpMode {
             case 12:
                 if (!follower.isBusy() && timer.seconds() > 1.75) {
                     intakeStop();
-                    wallDown();
+                    robot.wallClose();
                     follower.setMaxPower(1);
                     follower.followPath(setUp3);
                     timer.reset();
@@ -267,7 +259,6 @@ public class redCloseOpenGateTwice extends OpMode {
             case 14:
                 if (!follower.isBusy() && timer.seconds() > .5) {
                     intakeStop();
-                    wallDown();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup3);
                     timer.reset();
@@ -276,7 +267,7 @@ public class redCloseOpenGateTwice extends OpMode {
                 break;
             case 15:
                 if (!follower.isBusy() && timer.seconds() > 1) {
-                    wallUp();
+                    robot.wallOpen();
                     intakeIn();
                     timer.reset();
                     step++;

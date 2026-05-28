@@ -132,7 +132,7 @@ public class DecodeRed extends OpMode {
                     lastCalcTime = timer.milliseconds();
                     double headingCalc = robot.redGetGoalHeading(follower.getPose());
                     double error = headingCalc - follower.getHeading();
-                    error = robot.angleWrap(error);
+                    error = Config.angleWrap(error);
                     telemetry.addData("Error", error);
                     long now = System.nanoTime();
                     double deltaTime = (now - lastTime) / 1e9;
@@ -180,9 +180,6 @@ public class DecodeRed extends OpMode {
             robot.intakeOut();
         }
 
-        if (gamepad2.aWasPressed()) {
-            robot.stopLaunch();
-        }
 
         // ================= LIGHT SYSTEM =================
         if (locked) {
