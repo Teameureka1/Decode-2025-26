@@ -239,7 +239,7 @@ public class Config {
 
     public boolean intakeFull = false;
     public final double COLORIntake_THRESHOLD = 70;
-    public final double COLORTransfer_THRESHOLD = 200;
+    public final double COLORTransfer_THRESHOLD = 155;
 
 
 

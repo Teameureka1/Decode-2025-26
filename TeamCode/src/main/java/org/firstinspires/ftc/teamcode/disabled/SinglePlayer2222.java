@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.teamcode.Teleop;
+package org.firstinspires.ftc.teamcode.disabled;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Config.Config;
@@ -13,23 +12,22 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.List;
 
-@TeleOp(name = "!Decode Blue")
-public class DecodeBlue extends OpMode {
+public class SinglePlayer2222 extends OpMode {
 
     // Pose for parking
     Pose park;
 
-
+    // These are variables for my Teleop
     boolean aimAssist = false;
     boolean locked = false;
     boolean intakeIsOn = false;
     double lastCalcTime = 0;
 
 
+    // More important variables
     Follower follower;
     private Config robot;
     ElapsedTime timer = new ElapsedTime();
-
 
     // =============== AIM ASSIST ====================
     // =============== PIDF VALUES ===================
@@ -37,7 +35,6 @@ public class DecodeBlue extends OpMode {
     double kI = 0;
     double kD = 0;
     double kF = .03;
-
 
     double holdKP = .1;
     double holdKP2 = .65;
@@ -48,11 +45,9 @@ public class DecodeBlue extends OpMode {
     double correctionY = 0;
     double correctionHeading = 0;
 
-
     double intergralSum = 0.0;
     double lastError = 0.0;
     long lastTime = 0;
-
 
     double maxOutput = 1;
     double minOutput = -1;
@@ -66,7 +61,6 @@ public class DecodeBlue extends OpMode {
         robot.init();
     }
 
-
     @Override
     public void start() {
         if (Config.savedPose != null) {
@@ -74,25 +68,24 @@ public class DecodeBlue extends OpMode {
         } else {
             switch (Config.lastAutoRun) {
                 case 1:
-                    follower.setStartingPose(robot.blueAutoEnd);
+                    follower.setStartingPose(robot.redAutoEnd);
                     break;
                 case 2:
-                    follower.setStartingPose(robot.blueScorePose2);
+                    follower.setStartingPose(robot.redScorePose2);
                     break;
                 case 3:
-                    follower.setStartingPose(robot.blueScorePose2);
+                    follower.setStartingPose(robot.redScorePose2);
                     break;
                 case 4:
-                    follower.setStartingPose(robot.blueFarPark);
+                    follower.setStartingPose(robot.redFarPark);
                     break;
                 default:
-                    follower.setStartingPose(robot.blueStartFar);
+                    follower.setStartingPose(robot.redStartFar);
                     break;
             }
         }
         follower.startTeleOpDrive();
     }
-
 
     @Override
     public void loop() {
@@ -117,16 +110,16 @@ public class DecodeBlue extends OpMode {
                 List<LLResultTypes.FiducialResult> tags = result.getFiducialResults();
 
                 for (LLResultTypes.FiducialResult fr : tags) {
-                    if (fr.getFiducialId() == 20) {
+                    if (fr.getFiducialId() == 24) {
                         double tx = -fr.getTargetXDegrees();
 
-                        if (Math.abs(tx) < 3.0) {          // wider deadband
+                        if (Math.abs(tx) < 3.0) {
                             rotation = 0;
                             locked = true;
                         } else {
-                            rotation = tx * 0.02;           // lower gain
+                            rotation = tx * 0.02;
                             rotation = Math.max(-0.55, Math.min(rotation, 0.55));
-                            if (Math.abs(rotation) < 0.05) rotation = 0; // min threshold
+                            if (Math.abs(rotation) < 0.05) rotation = 0;
                         }
 
                         telemetry.addData("TX", fr.getTargetXDegrees());
@@ -135,7 +128,6 @@ public class DecodeBlue extends OpMode {
                 }
             }
         }
-
 
         // ================= AIM ASSIST =================
         // Only runs if Limelight is not active
@@ -149,15 +141,13 @@ public class DecodeBlue extends OpMode {
                 aimAssist = false;
             }
 
-
-
             if (aimAssist) {
                 double delay = 20;
                 if (timer.milliseconds() > lastCalcTime + delay) {
                     lastCalcTime = timer.milliseconds();
-                    double headingCalc = robot.blueGetGoalHeading(follower.getPose());
+                    double headingCalc = robot.redGetGoalHeading(follower.getPose());
                     double error = headingCalc - follower.getHeading();
-                    error = robot.angleWrap(error);
+                    error = Config.angleWrap(error);
                     telemetry.addData("Error", error);
                     long now = System.nanoTime();
                     double deltaTime = (now - lastTime) / 1e9;
@@ -183,7 +173,6 @@ public class DecodeBlue extends OpMode {
         }
 
         follower.setTeleOpDrive(y, x, rotation, true);
-
 
         // ============== HOLD POSITION ===============
 
@@ -224,14 +213,17 @@ public class DecodeBlue extends OpMode {
 
 
         // ================= LAUNCHER =================
-        if (gamepad2.yWasPressed()) {
+        if (gamepad1.yWasPressed()) {
             robot.startLaunch();
         }
 
-        robot.blueLaunchThreeUpdater(follower);
+        robot.redLaunchThreeUpdater(follower);
 
         // ================ INTAKE ====================
-        if (gamepad2.bWasPressed()) {
+        // If I want the intake on I press B, but if I want the intake to stop then I press B again.
+        // This is called a toggle, where if you press something again it will toggle on and off,
+        // kinda like the ignition to a car that does not use a key to start.
+        if (gamepad1.bWasPressed()) {
             intakeIsOn = !intakeIsOn;
             if (intakeIsOn) {
                 robot.intakeIn();
@@ -240,15 +232,23 @@ public class DecodeBlue extends OpMode {
             }
         }
 
-        if (gamepad2.xWasPressed()) {
-            robot.intakeOut();
+
+        // ================= COLOR SENSORS =================
+        if (robot.intakeSensor.alpha() > robot.COLORIntake_THRESHOLD && robot.transferSensor.alpha() > robot.COLORTransfer_THRESHOLD) {
+            robot.intakeFull = true;
+        } else {
+            robot.intakeFull = false;
         }
+
 
         // ================= LIGHT SYSTEM =================
         if (locked) {
             robot.vision1.setPosition(robot.GREEN); // Locked onto tag 20
         } else if (aimAssist) {
             robot.vision1.setPosition(robot.GREEN);  // PIDF aim assist active
+        } else if (robot.intakeFull) {
+            robot.vision.setPosition(robot.ORANGE);
+
         } else {
             robot.vision.setPosition(robot.OFF);
             robot.vision1.setPosition(robot.OFF);
@@ -265,6 +265,11 @@ public class DecodeBlue extends OpMode {
         telemetry.addData("Aim Mode", gamepad1.a ? "POSE" : "MANUAL");
         telemetry.addData("Auto Ran", Config.lastAutoRun == 0 ? "None" : "Auto " + Config.lastAutoRun);
         telemetry.addData("Starting Pose", Config.savedPose != null ? Config.savedPose : "Default");
+        telemetry.addData("Starting Pose Coordinates", follower.getPose());
+        telemetry.addData("X", follower.getPose().getX());
+        telemetry.addData("Y", follower.getPose().getY());
+        telemetry.addData("Heading", follower.getPose().getHeading());
+        telemetry.addData("Parking", park);
         telemetry.update();
     }
 }

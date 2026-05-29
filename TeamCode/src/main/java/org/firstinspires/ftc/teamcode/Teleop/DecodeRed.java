@@ -38,10 +38,14 @@ public class DecodeRed extends OpMode {
     double kD = 0;
     double kF = .03;
 
-    // Add these near your other PIDF variables
-    double holdKP = 0.08;
+    double holdKP = .12;
+    double holdKP2 = .65;
     double holdX = 0;
     double holdY = 0;
+
+    double correctionX = 0;
+    double correctionY = 0;
+    double correctionHeading = 0;
 
     double intergralSum = 0.0;
     double lastError = 0.0;
@@ -175,7 +179,7 @@ public class DecodeRed extends OpMode {
         // ============== HOLD POSITION ===============
 
 
-        // Cancel hold when sticks are moved intentionally
+        // Cancel hold when sticks are moved
         if (park != null && (Math.abs(gamepad1.left_stick_x) > 0.15
                 || Math.abs(gamepad1.left_stick_y) > 0.15
                 || Math.abs(gamepad1.right_stick_x) > 0.15)) {
@@ -190,25 +194,24 @@ public class DecodeRed extends OpMode {
             park = current;
         }
 
-        // Drive or hold
         if (park != null) {
             Pose current = follower.getPose();
             double errorX = holdX - current.getX();
             double errorY = holdY - current.getY();
+            double heading = follower.getHeading();
 
-            double heading = follower.getHeading() + Math.PI / 2;
+            correctionX = (errorX * Math.cos(heading) + errorY * Math.sin(heading)) * holdKP;
+            correctionY = (-errorX * Math.sin(heading) + errorY * Math.cos(heading)) * holdKP;
 
-            // Rotate field-relative error into robot-relative space
-            double correctionX = (errorX * Math.cos(heading) + errorY * Math.sin(heading)) * holdKP;
-            double correctionY = (-errorX * Math.sin(heading) + errorY * Math.cos(heading)) * holdKP;
+            double headingError = Config.angleWrap(park.getHeading() - follower.getHeading());
+            correctionHeading = Math.max(-1, Math.min(headingError * holdKP2, 1));
 
-            correctionX = Math.max(-0.4, Math.min(correctionX, 0.4));
-            correctionY = Math.max(-0.4, Math.min(correctionY, 0.4));
+            correctionX = Math.max(-1, Math.min(correctionX, 1));
+            correctionY = Math.max(-1, Math.min(correctionY, 1));
 
-            follower.setTeleOpDrive(correctionY, correctionX, rotation, true);
-        } else {
-            follower.setTeleOpDrive(y, x, rotation, true);
+            follower.setTeleOpDrive(correctionX, correctionY, correctionHeading, true);
         }
+
 
 
         // ================= LAUNCHER =================
@@ -219,7 +222,18 @@ public class DecodeRed extends OpMode {
         robot.redLaunchThreeUpdater(follower);
 
         // ================ INTAKE ====================
+        // If I want the intake on I press B, but if I want the intake to stop then I press B again.
+        // This is called a toggle, where if you press something again it will toggle on and off,
+        // kinda like the ignition to a car that does not use a key to start.
         if (gamepad2.bWasPressed()) {
+            intakeIsOn = !intakeIsOn;
+            if (intakeIsOn) {
+                robot.intakeIn();
+            } else {
+                robot.intakeStop();
+            }
+        }
+        if (gamepad1.yWasPressed()) {
             intakeIsOn = !intakeIsOn;
             if (intakeIsOn) {
                 robot.intakeIn();
