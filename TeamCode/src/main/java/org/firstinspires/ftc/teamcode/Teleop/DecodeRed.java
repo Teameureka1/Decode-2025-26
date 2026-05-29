@@ -102,9 +102,12 @@ public class DecodeRed extends OpMode {
         locked = false;
 
         // ================= LIMELIGHT =================
-        // Left trigger activates Limelight tag tracking — overrides aim assist rotation
+        /* Left trigger activates Limelight tag tracking — overrides aim assist rotation.
+           We
+         */
+
         if (gamepad1.left_trigger > 0.1) {
-            aimAssist = false; // Limelight takes priority; disable PIDF aim assist
+            aimAssist = false;
 
             LLResult result = robot.limelight.getLatestResult();
 
@@ -178,6 +181,11 @@ public class DecodeRed extends OpMode {
 
         // ============== HOLD POSITION ===============
 
+        /* This is used for holding a certain position on the field whether it is at the correct
+           spot or not. We are using this to hold our position while parking, because this allows
+           us to correct back to where we were and still get a full park and be fairly accurate. */
+
+
 
         // Cancel hold when sticks are moved
         if (park != null && (Math.abs(gamepad1.left_stick_x) > 0.15
@@ -194,6 +202,7 @@ public class DecodeRed extends OpMode {
             park = current;
         }
 
+        // If B is press then it will activate the holding point
         if (park != null) {
             Pose current = follower.getPose();
             double errorX = holdX - current.getX();
@@ -209,12 +218,17 @@ public class DecodeRed extends OpMode {
             correctionX = Math.max(-1, Math.min(correctionX, 1));
             correctionY = Math.max(-1, Math.min(correctionY, 1));
 
-            follower.setTeleOpDrive(correctionX, correctionY, correctionHeading, true);
+            follower.setTeleOpDrive(correctionX, correctionY,
+                    correctionHeading, true);
         }
 
 
 
         // ================= LAUNCHER =================
+        // This is all that we need for launching, because all the logic and movement is inside
+        // the configuration file.
+
+
         if (gamepad2.yWasPressed()) {
             robot.startLaunch();
         }
@@ -222,18 +236,12 @@ public class DecodeRed extends OpMode {
         robot.redLaunchThreeUpdater(follower);
 
         // ================ INTAKE ====================
-        // If I want the intake on I press B, but if I want the intake to stop then I press B again.
-        // This is called a toggle, where if you press something again it will toggle on and off,
-        // kinda like the ignition to a car that does not use a key to start.
+        /* If I want the intake on press B, but if you want the intake to stop then press B again.
+           This is called a toggle, where if you press something again it will toggle on and off,
+           kinda like a light switch.  */
+
+
         if (gamepad2.bWasPressed()) {
-            intakeIsOn = !intakeIsOn;
-            if (intakeIsOn) {
-                robot.intakeIn();
-            } else {
-                robot.intakeStop();
-            }
-        }
-        if (gamepad1.yWasPressed()) {
             intakeIsOn = !intakeIsOn;
             if (intakeIsOn) {
                 robot.intakeIn();
@@ -247,14 +255,22 @@ public class DecodeRed extends OpMode {
         }
 
         // ================ WALL =============================
-        // Just in case the wall doesn't close in auto
+        // Just in case the wall doesn't close in auto or if the wall gets stuck and jams the
+        // artifacts inside the intake while launching.
 
-        if (gamepad2.aWasPressed()) {
+        if (gamepad2.dpadUpWasPressed()) {
+            robot.wallOpen();
+        }
+
+        if (gamepad2.dpadDownWasPressed()) {
             robot.wallClose();
         }
 
         // ================= COLOR SENSORS =================
-        if (robot.intakeSensor.alpha() > robot.COLORIntake_THRESHOLD && robot.transferSensor.alpha() > robot.COLORTransfer_THRESHOLD) {
+        // This is where I say hey, is there three artifacts or not?
+
+        if (robot.intakeSensor.alpha() > robot.COLORIntake_THRESHOLD &&
+                robot.transferSensor.alpha() > robot.COLORTransfer_THRESHOLD) {
             robot.intakeFull = true;
         } else {
             robot.intakeFull = false;
@@ -262,12 +278,13 @@ public class DecodeRed extends OpMode {
 
 
         // ================= LIGHT SYSTEM =================
+        // This is where I set it to a certain color based on a color chart on the GoBilda website
         if (locked) {
             robot.vision1.setPosition(robot.GREEN); // Locked onto tag 20
         } else if (aimAssist) {
             robot.vision1.setPosition(robot.GREEN);  // PIDF aim assist active
         } else if (robot.intakeFull) {
-            robot.vision.setPosition(robot.ORANGE);
+            robot.vision.setPosition(robot.ORANGE);  // Intake has three artifacts
 
         } else {
             robot.vision.setPosition(robot.OFF);
@@ -276,16 +293,16 @@ public class DecodeRed extends OpMode {
 
         // ================= TELEMETRY =================
         telemetry.addData("Aim Assist", aimAssist);
-        telemetry.addData("Limelight Active", gamepad1.left_trigger > 0.1);
-        telemetry.addData("Locked onto Tag 20", locked);
         telemetry.addData("Intake Sensor", robot.intakeSensor.alpha());
         telemetry.addData("Transfer Sensor", robot.transferSensor.alpha());
         telemetry.addData("Launch Velocity:", robot.launcher.getVelocity());
         telemetry.addData("Launch2 Velocity:", robot.launcher2.getVelocity());
         telemetry.addData("Aim Mode", gamepad1.a ? "POSE" : "MANUAL");
-        telemetry.addData("Auto Ran", Config.lastAutoRun == 0 ? "None" : "Auto " + Config.lastAutoRun);
-        telemetry.addData("Starting Pose", Config.savedPose != null ? Config.savedPose : "Default");
-        telemetry.addData("Starting Pose Coordinates", follower.getPose());
+        telemetry.addData("Auto Ran", Config.lastAutoRun ==
+                0 ? "None" : "Auto " + Config.lastAutoRun);
+        telemetry.addData("Starting Pose", Config.savedPose !=
+                null ? Config.savedPose : "Default");
+        telemetry.addLine("Current Pose Coordinates");
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());
         telemetry.addData("Heading", follower.getPose().getHeading());
