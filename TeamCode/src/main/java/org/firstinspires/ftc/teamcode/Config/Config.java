@@ -19,24 +19,48 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 public class Config {
+
+
+    // These are variables for opmode types
     private LinearOpMode linearOpMode;
     private OpMode opmode;
 
+
+
+    // This allows a linear Opmode to use this
     public Config(LinearOpMode linearOpMode) {
         this.linearOpMode = linearOpMode;
     }
 
+
+
+    // This allows a regular Opmode to use this
     public Config(OpMode opmode) {
         this.opmode = opmode;
     }
 
 
+
+
+
+    // ================================== PUBLIC VARIABLES =======================================
+    // These variables are for saving a pose at the end of auto and send it to the start of Teleop
+
+
     public static Pose savedPose = null;
     public static int lastAutoRun = 0;
 
+
+
     public ElapsedTime launchTimer = new ElapsedTime();
+    HardwareMap hwMap;
     public double lastCalcDistance = 0;
     public double idleVelocity = 1000;
+
+
+
+    // ================================== INTAKE FUNCTIONS =======================================
+
 
     public void intakeIn() {
         intake.setVelocity(1180);
@@ -53,6 +77,12 @@ public class Config {
         kicker.setPower(0);
     }
 
+
+
+
+    // ================================= SERVO FUNCTIONS ==========================================
+
+
     public void wallOpen() {
         wall.setPosition(.39);
     }
@@ -61,12 +91,19 @@ public class Config {
         wall.setPosition(.53);
     }
 
+
+
+
+    // =============================== LAUNCH FUNCTIONS ===========================================
+
+
     public void blueLaunchThreeUpdater(Follower follower) {
 
         if (!launching) {
 
             return;
         }
+
 
         double distance = blueGetDistanceFromGoal(follower.getPose());
         double velocity = calculateLaunchVelocity(distance);
@@ -143,88 +180,22 @@ public class Config {
     }
 
     public boolean getLaunchStatus() {
+
         return launching;
     }
 
     public void startLaunch() {
+
         launching = true;
     }
 
     public void stopLaunch() {
+
         launching = false;
         intakeStop();
         wallClose();
         launcher.setVelocity(idleVelocity);
         launcher2.setVelocity(idleVelocity);
-    }
-
-
-    public DcMotorEx frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
-    public DcMotorEx intake, kicker, launcher, launcher2;
-    public Servo vision, vision1, wall;
-    public Limelight3A limelight;
-    public ColorSensor intakeSensor;
-    public ColorSensor transferSensor;
-
-    public boolean intakeIsOpen;
-    public boolean intaking;
-    private boolean launching = false;
-    private int launchSequenceStep = 1;
-
-    // ================= LIGHT VALUES =================
-    public final double OFF = 0.0;
-    public final double GREEN = 0.475;
-    public final double ORANGE = 0.333;
-
-    public boolean intakeFull = false;
-    public final double COLORIntake_THRESHOLD = 45;
-    public final double COLORTransfer_THRESHOLD = 85;
-
-    // ==================Intake Initialization ==========================`
-    public long intakeStopTime = 0;
-    public boolean wasIntaking = false;
-    public final long REVERSE_TIME_MS = 100;
-
-
-    /**
-     * @param robotPose
-     * @return heading in radians
-     */
-    public double blueGetGoalHeading(Pose robotPose) {
-        Pose goal = new Pose(5, 130);
-        double opposite = goal.getY() - robotPose.getY();
-        double adjacent = robotPose.getX() - goal.getX();
-        double heading = Math.PI - Math.atan2(opposite, adjacent);
-        return heading;
-    }
-
-    public double blueGetDistanceFromGoal(Pose robotPose) {
-        double opposite = 144 - robotPose.getY();
-        double adjacent = robotPose.getX();
-        double hypot = Math.sqrt((opposite * opposite) + (adjacent * adjacent));
-        return hypot;
-    }
-
-    public static double angleWrap(double angle) {
-        while (angle > Math.PI) angle -= 2 * Math.PI;
-        while (angle < -Math.PI) angle += 2 * Math.PI;
-        return angle;
-    }
-
-    // todo work on this like thing above this blueGetGoalHeading
-    public double redGetGoalHeading(Pose robotPose) {
-        Pose goal = new Pose(144, 138.5);
-        double opposite = goal.getY() - robotPose.getY();
-        double adjacent = 144 - robotPose.getX();
-        double heading = Math.atan2(opposite, adjacent);
-        return heading;
-    }
-
-    public double redGetDistanceFromGoal(Pose robotPose) {
-        double opposite = 144 - robotPose.getY();
-        double adjacent = 144 - robotPose.getX();
-        double hypot = Math.sqrt((opposite * opposite) + (adjacent * adjacent));
-        return hypot;
     }
 
 
@@ -235,15 +206,109 @@ public class Config {
     }
 
 
-    /**
-     * Reads a Pose from file.
-     * Returns null if the file does not exist or is invalid.
-     */
+
+
+    // ============================== HARDWARE ===================================================
+    public DcMotorEx frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
+    public DcMotorEx intake, kicker, launcher, launcher2;
+    public Servo vision, vision1, wall;
+    public Limelight3A limelight;
+    public ColorSensor intakeSensor;
+    public ColorSensor transferSensor;
 
 
 
 
-    // todo BLUE SIDE UPDATED RED SIDE NOT UPDATED
+    // =============================== INTAKE & LAUNCH VALUES ====================================
+    public boolean intakeIsOpen;
+    public boolean intaking;
+    private boolean launching = false;
+    private int launchSequenceStep = 1;
+
+
+
+
+    // ================= LIGHT VALUES ============================================================
+    // when I set these to a number, they turn a certain color. You can take a look at the GoBilda
+    // website and go to the indicators and check what numbers are what colors. Remember that
+    // these values must be between 0 and 1.
+    public final double OFF = 0.0;
+    public final double GREEN = 0.475;
+    public final double ORANGE = 0.333;
+
+
+    public boolean intakeFull = false;
+    public final double COLORIntake_THRESHOLD = 70;
+    public final double COLORTransfer_THRESHOLD = 200;
+
+
+
+
+    // ================== Intake Initialization ==================================================
+    public long intakeStopTime = 0;
+    public boolean wasIntaking = false;
+    public final long REVERSE_TIME_MS = 100;
+
+
+
+
+    // ================== GOAL HEADING & DISTANCES ===============================================
+
+
+    public double blueGetGoalHeading(Pose robotPose) {
+        Pose goal = new Pose(5, 130);
+        double opposite = goal.getY() - robotPose.getY();
+        double adjacent = robotPose.getX() - goal.getX();
+        double heading = Math.PI - Math.atan2(opposite, adjacent);
+        return heading;
+    }
+
+
+    public double blueGetDistanceFromGoal(Pose robotPose) {
+        double opposite = 144 - robotPose.getY();
+        double adjacent = robotPose.getX();
+        double hypot = Math.sqrt((opposite * opposite) + (adjacent * adjacent));
+        return hypot;
+    }
+
+
+    public double redGetGoalHeading(Pose robotPose) {
+        Pose goal = new Pose(144, 138.5);
+        double opposite = goal.getY() - robotPose.getY();
+        double adjacent = 144 - robotPose.getX();
+        double heading = Math.atan2(opposite, adjacent);
+        return heading;
+    }
+
+
+    public double redGetDistanceFromGoal(Pose robotPose) {
+        double opposite = 144 - robotPose.getY();
+        double adjacent = 144 - robotPose.getX();
+        double hypot = Math.sqrt((opposite * opposite) + (adjacent * adjacent));
+        return hypot;
+    }
+
+
+
+    // ================================ ANGLE WRAP ===============================================
+    // Angle wrap is so that say if I spin the robot ten times to the left, and I want it to go to
+    // the angle 270, then it would have to spin the way it did ten times before getting to the
+    // desired position. What angle wrap does is that it turns whatever angle it is at, and makes
+    // it between 360 degrees and 0 degrees. This allows the robot to only turn once without any
+    // extra circles or anything like that.
+    public static double angleWrap(double angle) {
+        while (angle > Math.PI) angle -= 2 * Math.PI;
+        while (angle < -Math.PI) angle += 2 * Math.PI;
+        return angle;
+    }
+
+
+
+    // ================================== AUTONOMOUS POSITIONS =====================================
+
+
+
+
     public final Pose blueStartFar = new Pose(55, 8.39, Math.toRadians(90));
     public final Pose blueFarScorePose = new Pose(52, 11, Math.toRadians(116));
     public final Pose blueFarPark = new Pose(35.6, 12.85, Math.toRadians(90));
@@ -284,7 +349,7 @@ public class Config {
     public final Pose redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMoreSetup = new Pose(110, 16, Math.toRadians(10));
     public final Pose redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMore = new Pose(142, 18, Math.toRadians(10));
     public final Pose redStartClose = new Pose(129.2095, 122.4811, Math.toRadians(39.3531));
-    public final Pose redScorePose = new Pose(92, 92, Math.toRadians(39));
+    public final Pose redScorePose = new Pose(92, 92, Math.toRadians(40.5));
     public final Pose redScorePose2 = new Pose(92, 105, Math.toRadians(34));
     public final Pose redPickup1Pose = new Pose(134, 82.2643, Math.toRadians(0.6));
     public final Pose redSetup1Pose = new Pose(107.6, 81.6, Math.toRadians(1.33));
@@ -294,7 +359,6 @@ public class Config {
     public final Pose redGateFacingParkingZone = new Pose(138, 62.5, Math.toRadians(-90));
     public final Pose redGateFacingParkingZone2 = new Pose(139, 61, Math.toRadians(-90));
     public final Pose redGateFacingGoal = new Pose(134, 76, Math.toRadians(90));
-    public final Pose redGateFacingGoalSetup = new Pose(129, 82.26, Math.toRadians(0));
     public final Pose redPickup3Pose = new Pose(142, 34.5, Math.toRadians(.8));
     public final Pose redSetup3Pose = new Pose(107.6, 34.5, Math.toRadians(.8));
     public final Pose redAutoEnd = new Pose(129, 57.8, Math.toRadians(-90));
@@ -302,14 +366,25 @@ public class Config {
     public final Pose redGateHarvest = new Pose(135.6, 60, Math.toRadians(46.5));
     public final Pose redGateHarvestSetup = new Pose(117.33, 60.8657, Math.toRadians(39.38));
 
-    HardwareMap hwMap;
+
+
+
+
+
+
+// ===================================== INITIALIZATION ==========================================
+
 
     public void init() {
+
+
         if (linearOpMode != null) {
             hwMap = linearOpMode.hardwareMap;
         } else {
             hwMap = opmode.hardwareMap;
         }
+
+
 
         // This is where we have to get stuff from the Driver Station
         frontLeftMotor = hwMap.get(DcMotorEx.class, "fl");
@@ -317,10 +392,12 @@ public class Config {
         frontRightMotor = hwMap.get(DcMotorEx.class, "fr");
         backRightMotor = hwMap.get(DcMotorEx.class, "br");
 
+
         intake = hwMap.get(DcMotorEx.class, "intake");
         kicker = hwMap.get(DcMotorEx.class, "kicker");
         launcher = hwMap.get(DcMotorEx.class, "launcher");
         launcher2 = hwMap.get(DcMotorEx.class, "launcher2");
+
 
         vision = hwMap.get(Servo.class, "vision");
         vision1 = hwMap.get(Servo.class, "vision1");
@@ -329,8 +406,12 @@ public class Config {
         transferSensor = hwMap.get(ColorSensor.class, "sensor");
         limelight = hwMap.get(Limelight3A.class, "limelight");
 
+
+
+
         // Limelight Initialization
         limelight.start();
+
 
         // Motor Directions
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -339,11 +420,13 @@ public class Config {
         kicker.setDirection(DcMotorSimple.Direction.REVERSE);
         launcher.setDirection(DcMotorSimple.Direction.REVERSE);
 
+
         // Wheel Brakes
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         // Launcher Initialization
         PIDFCoefficients pidf = new PIDFCoefficients(55, 0, 0, 15.5);

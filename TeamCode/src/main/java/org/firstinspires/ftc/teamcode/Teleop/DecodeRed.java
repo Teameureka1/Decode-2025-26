@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -15,13 +16,20 @@ import java.util.List;
 @TeleOp(name = "!Decode Red")
 public class DecodeRed extends OpMode {
 
+    // Pose for parking
+    Pose park;
+
+    // These are variables for my Teleop
     boolean aimAssist = false;
     boolean locked = false;
+    boolean intakeIsOn = false;
+    double lastCalcTime = 0;
+
+
+    // More important variables
     Follower follower;
     private Config robot;
-    boolean intakeIsOn = false;
     ElapsedTime timer = new ElapsedTime();
-    double lastCalcTime = 0;
 
     // =============== AIM ASSIST ====================
     // =============== PIDF VALUES ===================
@@ -29,6 +37,11 @@ public class DecodeRed extends OpMode {
     double kI = 0;
     double kD = 0;
     double kF = .03;
+
+    // Add these near your other PIDF variables
+    double holdKP = 0.08;
+    double holdX = 0;
+    double holdY = 0;
 
     double intergralSum = 0.0;
     double lastError = 0.0;
@@ -159,6 +172,45 @@ public class DecodeRed extends OpMode {
 
         follower.setTeleOpDrive(y, x, rotation, true);
 
+        // ============== HOLD POSITION ===============
+
+
+        // Cancel hold when sticks are moved intentionally
+        if (park != null && (Math.abs(gamepad1.left_stick_x) > 0.15
+                || Math.abs(gamepad1.left_stick_y) > 0.15
+                || Math.abs(gamepad1.right_stick_x) > 0.15)) {
+            park = null;
+        }
+
+        // Save position on B press
+        if (gamepad1.bWasPressed()) {
+            Pose current = follower.getPose();
+            holdX = current.getX();
+            holdY = current.getY();
+            park = current;
+        }
+
+        // Drive or hold
+        if (park != null) {
+            Pose current = follower.getPose();
+            double errorX = holdX - current.getX();
+            double errorY = holdY - current.getY();
+
+            double heading = follower.getHeading() + Math.PI / 2;
+
+            // Rotate field-relative error into robot-relative space
+            double correctionX = (errorX * Math.cos(heading) + errorY * Math.sin(heading)) * holdKP;
+            double correctionY = (-errorX * Math.sin(heading) + errorY * Math.cos(heading)) * holdKP;
+
+            correctionX = Math.max(-0.4, Math.min(correctionX, 0.4));
+            correctionY = Math.max(-0.4, Math.min(correctionY, 0.4));
+
+            follower.setTeleOpDrive(correctionY, correctionX, rotation, true);
+        } else {
+            follower.setTeleOpDrive(y, x, rotation, true);
+        }
+
+
         // ================= LAUNCHER =================
         if (gamepad2.yWasPressed()) {
             robot.startLaunch();
@@ -180,12 +232,29 @@ public class DecodeRed extends OpMode {
             robot.intakeOut();
         }
 
+        // ================ WALL =============================
+        // Just in case the wall doesn't close in auto
+
+        if (gamepad2.aWasPressed()) {
+            robot.wallClose();
+        }
+
+        // ================= COLOR SENSORS =================
+        if (robot.intakeSensor.alpha() > robot.COLORIntake_THRESHOLD && robot.transferSensor.alpha() > robot.COLORTransfer_THRESHOLD) {
+            robot.intakeFull = true;
+        } else {
+            robot.intakeFull = false;
+        }
+
 
         // ================= LIGHT SYSTEM =================
         if (locked) {
             robot.vision1.setPosition(robot.GREEN); // Locked onto tag 20
         } else if (aimAssist) {
             robot.vision1.setPosition(robot.GREEN);  // PIDF aim assist active
+        } else if (robot.intakeFull) {
+            robot.vision.setPosition(robot.ORANGE);
+
         } else {
             robot.vision.setPosition(robot.OFF);
             robot.vision1.setPosition(robot.OFF);
@@ -202,6 +271,11 @@ public class DecodeRed extends OpMode {
         telemetry.addData("Aim Mode", gamepad1.a ? "POSE" : "MANUAL");
         telemetry.addData("Auto Ran", Config.lastAutoRun == 0 ? "None" : "Auto " + Config.lastAutoRun);
         telemetry.addData("Starting Pose", Config.savedPose != null ? Config.savedPose : "Default");
+        telemetry.addData("Starting Pose Coordinates", follower.getPose());
+        telemetry.addData("X", follower.getPose().getX());
+        telemetry.addData("Y", follower.getPose().getY());
+        telemetry.addData("Heading", follower.getPose().getHeading());
+        telemetry.addData("Parking", park);
         telemetry.update();
     }
 }
