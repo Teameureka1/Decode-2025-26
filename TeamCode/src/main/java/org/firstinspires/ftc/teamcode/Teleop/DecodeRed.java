@@ -25,11 +25,18 @@ public class DecodeRed extends OpMode {
     boolean intakeIsOn = false;
     double lastCalcTime = 0;
 
+    boolean rumble1Triggered = false;
+    boolean rumble2Triggered = false;
+
+    boolean wallClosed = false;
+
 
     // More important variables
     Follower follower;
     private Config robot;
     ElapsedTime timer = new ElapsedTime();
+
+
 
     // =============== AIM ASSIST ====================
     // =============== PIDF VALUES ===================
@@ -37,6 +44,7 @@ public class DecodeRed extends OpMode {
     double kI = 0;
     double kD = 0;
     double kF = .03;
+
 
     double holdKP = .12;
     double holdKP2 = .65;
@@ -47,9 +55,11 @@ public class DecodeRed extends OpMode {
     double correctionY = 0;
     double correctionHeading = 0;
 
-    double intergralSum = 0.0;
+
+    double integralSum = 0.0;
     double lastError = 0.0;
     long lastTime = 0;
+
 
     double maxOutput = 1;
     double minOutput = -1;
@@ -62,6 +72,11 @@ public class DecodeRed extends OpMode {
         follower.setMaxPower(1);
         robot.init();
     }
+
+    /* Inside the start loop, I have a switch case that acts like an elevator panel, mattering
+       what button you press. Instead of buttons, it is autonomous opmodes for us. This allows us to
+       save where we end in our autonomous and send it to the start of our teleop. */
+
 
     @Override
     public void start() {
@@ -89,9 +104,27 @@ public class DecodeRed extends OpMode {
         follower.startTeleOpDrive();
     }
 
+
     @Override
     public void loop() {
         follower.update();
+
+        if (timer.seconds() > 1) {
+            robot.wallClose();
+            wallClosed = true;
+        }
+
+
+        if (timer.seconds() > 97) {
+            gamepad1.rumble(500);
+            gamepad2.rumble(500);
+            rumble1Triggered = true;
+        }
+        if (timer.seconds() > 113) {
+            gamepad1.rumble(500);
+            gamepad2.rumble(500);
+            rumble2Triggered = true;
+        }
 
         // Driver Controls
         double speed = 0.3 + (0.7 * gamepad1.right_trigger);
@@ -102,9 +135,13 @@ public class DecodeRed extends OpMode {
         locked = false;
 
         // ================= LIMELIGHT =================
+
+
         /* Left trigger activates Limelight tag tracking — overrides aim assist rotation.
-           We
+           We are using the Limelight as a backup to the aim assist because the aim assist gets off
+           over time, due to the inaccuracy of time and battery drain.
          */
+
 
         if (gamepad1.left_trigger > 0.1) {
             aimAssist = false;
@@ -134,8 +171,11 @@ public class DecodeRed extends OpMode {
             }
         }
 
+
         // ================= AIM ASSIST =================
         // Only runs if Limelight is not active
+        // We use the aim assist to turn to the goal much faster the Limelight and to make it
+        // easier as well on the drive team.
         if (!locked && gamepad1.left_trigger <= 0.1) {
 
             if (gamepad1.aWasPressed()) {
@@ -145,6 +185,8 @@ public class DecodeRed extends OpMode {
             if (Math.abs(gamepad1.right_stick_x) >= 0.1) {
                 aimAssist = false;
             }
+
+
 
             if (aimAssist) {
                 double delay = 20;
@@ -158,12 +200,12 @@ public class DecodeRed extends OpMode {
                     double deltaTime = (now - lastTime) / 1e9;
                     lastTime = now;
 
-                    intergralSum += error * deltaTime;
+                    integralSum += error * deltaTime;
                     double derivative = deltaTime > 0 ? (error - lastError) : 0.0;
                     lastError = error;
 
                     double pTerm = kP * error;
-                    double iTerm = kI * intergralSum;
+                    double iTerm = kI * integralSum;
                     double dTerm = kD * derivative;
                     double fTerm = kF * Math.signum(error);
 
@@ -179,12 +221,12 @@ public class DecodeRed extends OpMode {
 
         follower.setTeleOpDrive(y, x, rotation, true);
 
+
         // ============== HOLD POSITION ===============
 
         /* This is used for holding a certain position on the field whether it is at the correct
            spot or not. We are using this to hold our position while parking, because this allows
            us to correct back to where we were and still get a full park and be fairly accurate. */
-
 
 
         // Cancel hold when sticks are moved
@@ -223,7 +265,6 @@ public class DecodeRed extends OpMode {
         }
 
 
-
         // ================= LAUNCHER =================
         // This is all that we need for launching, because all the logic and movement is inside
         // the configuration file.
@@ -244,6 +285,7 @@ public class DecodeRed extends OpMode {
         if (gamepad2.bWasPressed()) {
             intakeIsOn = !intakeIsOn;
             if (intakeIsOn) {
+                robot.wallClose();
                 robot.intakeIn();
             } else {
                 robot.intakeStop();
@@ -279,6 +321,7 @@ public class DecodeRed extends OpMode {
 
         // ================= LIGHT SYSTEM =================
         // This is where I set it to a certain color based on a color chart on the GoBilda website
+
         if (locked) {
             robot.vision1.setPosition(robot.GREEN); // Locked onto tag 20
         } else if (aimAssist) {

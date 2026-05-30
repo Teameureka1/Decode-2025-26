@@ -199,9 +199,14 @@ public class Config {
     }
 
 
+    /* We used Deismos graphing calculator to graph our launching velocity, and this is where we
+    put in the equation. Then, we just past in the distance away from the goal we are, and there
+    you go, you have an automatic launching velocity calculations, that makes it super simple to
+    make it into an automatic launch sequence in a press of a button.  */
+
     public double calculateLaunchVelocity(double distance) {
         double x = distance;
-        double velocity = (-0.000234073 * x * x * x + (0.101791 * x * x - 8.57328 * x + 1400)); // was 1374
+        double velocity = (-0.000234073 * x * x * x + (0.101791 * x * x - 8.57328 * x + 1400));
         return velocity;
     }
 
@@ -219,7 +224,7 @@ public class Config {
 
 
 
-    // =============================== INTAKE & LAUNCH VALUES ====================================
+    // =============================== INTAKE & LAUNCH VARIBLES ===================================
     public boolean intakeIsOpen;
     public boolean intaking;
     private boolean launching = false;
@@ -254,6 +259,10 @@ public class Config {
 
     // ================== GOAL HEADING & DISTANCES ===============================================
 
+    /* This is where we get the distance away from the goal and calculate it. First, we use find
+    our sides of our triangle, then we use inverse tangent to calculate the angle that we need the
+    robot to turn, and there you go. We will use aim assist to rotate using these headings.
+     */
 
     public double blueGetGoalHeading(Pose robotPose) {
         Pose goal = new Pose(5, 130);
@@ -263,6 +272,12 @@ public class Config {
         return heading;
     }
 
+
+    /* For the distance, it is not that much different. We use the same method, and find the two
+    sides, opposite and adjacent. Then, once we figure that out, we just need to find the
+    hypotenuse, or distance away from the triangle by using the Pythagorean Theorem. This gets us
+    our distance away from the goal and is very simple to use for automatic launching, for telling
+    how far away we are.  */
 
     public double blueGetDistanceFromGoal(Pose robotPose) {
         double opposite = 144 - robotPose.getY();
