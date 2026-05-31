@@ -16,21 +16,9 @@ import java.util.List;
 @TeleOp(name = "!Decode Blue")
 public class DecodeBlue extends OpMode {
 
-    // Pose for parking
+    // Poses position for parking and resetting our aim assist Pose.
     Pose park;
-
-    // These are variables for my Teleop
-    boolean aimAssist = false;
-    boolean locked = false;
-    boolean intakeIsOn = false;
-    double lastCalcTime = 0;
-
-
-    boolean rumble1Triggered = false;
-    boolean rumble2Triggered = false;
-
-    boolean wallClosed = false;
-
+    Pose resetPose = new Pose(44, 86, Math.toRadians(132));
 
 
     // More important variables
@@ -39,16 +27,38 @@ public class DecodeBlue extends OpMode {
     ElapsedTime timer = new ElapsedTime();
 
 
+    // These are variables for my Teleop
+    boolean aimAssist = false;
+    boolean locked = false;
+    boolean intakeIsOn = false;
+    double lastCalcTime = 0;
+
+
+
+    // boolean variables for rumble with time.
+    boolean rumble1Triggered = false;
+    boolean rumble2Triggered = false;
+
+
+    boolean wallClosed = false;
+
+
+
     // =============== AIM ASSIST ====================
     // =============== PIDF VALUES ===================
+    // I am only using kP and kF because it works pretty well with it and having not a lot of time
+    // to properly tune whole system.
     double kP = 1;
     double kI = 0;
     double kD = 0;
     double kF = .03;
 
-
+    // These are the P values for my holding position, and they top one is for the lateral and
+    // translational movement, while the bottom one is for the heading.
     double holdKP = .12;
     double holdKP2 = .65;
+
+
     double holdX = 0;
     double holdY = 0;
 
@@ -57,7 +67,7 @@ public class DecodeBlue extends OpMode {
     double correctionHeading = 0;
 
 
-    double intergralSum = 0.0;
+    double integralSum = 0.0;
     double lastError = 0.0;
     long lastTime = 0;
 
@@ -74,9 +84,12 @@ public class DecodeBlue extends OpMode {
         robot.init();
     }
 
-    /* Inside the start loop, I have a switch case that acts like a elevator panel, mattering
-       what button you press. Instead of buttons, it is autonomous opmodes for us. This allows us to
-       save where we end in our autonomous and send it to the start of our teleop. */
+    /* Inside the start loop, I have a switch case that acts like an elevator panel, mattering
+       what button you press. Instead of buttons, it is autonomous opmodes for us. So, at the end
+       of each autonomous, there is a case number, like for example, 2. If it was 2, then when I
+       start the Teleop it will know that if you look below, it knows we started in the
+       blueScorePose2 position. This allows us to save where we end in our autonomous and send it to
+       the start of our teleop. */
 
 
     @Override
@@ -116,11 +129,22 @@ public class DecodeBlue extends OpMode {
         }
 
 
+        // We are waiting 97 seconds for 2 reasons. One is it is 3 seconds before endgame, and
+        // reason number two is that while in endgame if you tag someone in your parking zone, then
+        // will receive a full double park, and then we are able to continue launching.
+
+
         if (timer.seconds() > 97) {
             gamepad1.rumble(500);
             gamepad2.rumble(500);
             rumble1Triggered = true;
         }
+
+        // We wait exactly 113 seconds because that means hey if you didn't tag anyone in the
+        // parking zone before, then you need to go park. Otherwise, we would just keep on launching
+        // artifacts.
+
+
         if (timer.seconds() > 113) {
             gamepad1.rumble(500);
             gamepad2.rumble(500);
@@ -177,6 +201,8 @@ public class DecodeBlue extends OpMode {
         // Only runs if Limelight is not active
         // We use the aim assist to turn to the goal much faster the Limelight and to make it
         // easier as well on the drive team.
+
+
         if (!locked && gamepad1.left_trigger <= 0.1) {
 
             if (gamepad1.aWasPressed()) {
@@ -187,6 +213,14 @@ public class DecodeBlue extends OpMode {
                 aimAssist = false;
             }
 
+
+            if (gamepad1.xWasPressed()) {
+                follower.setPose(resetPose);
+                integralSum = 0.0;
+                lastError = 0.0;
+                lastTime = 0;
+                aimAssist = true;
+            }
 
 
             if (aimAssist) {
@@ -201,12 +235,12 @@ public class DecodeBlue extends OpMode {
                     double deltaTime = (now - lastTime) / 1e9;
                     lastTime = now;
 
-                    intergralSum += error * deltaTime;
+                    integralSum += error * deltaTime;
                     double derivative = deltaTime > 0 ? (error - lastError) : 0.0;
                     lastError = error;
 
                     double pTerm = kP * error;
-                    double iTerm = kI * intergralSum;
+                    double iTerm = kI * integralSum;
                     double dTerm = kD * derivative;
                     double fTerm = kF * Math.signum(error);
 
@@ -337,6 +371,7 @@ public class DecodeBlue extends OpMode {
 
         // ================= TELEMETRY =================
         telemetry.addData("Aim Assist", aimAssist);
+        telemetry.addData("Pose Reset (X)", gamepad1.x ? "HOLDING" : "Ready");
         telemetry.addData("Intake Sensor", robot.intakeSensor.alpha());
         telemetry.addData("Transfer Sensor", robot.transferSensor.alpha());
         telemetry.addData("Launch Velocity:", robot.launcher.getVelocity());

@@ -29,6 +29,7 @@ public class Config {
 
     // This allows a linear Opmode to use this
     public Config(LinearOpMode linearOpMode) {
+
         this.linearOpMode = linearOpMode;
     }
 
@@ -36,6 +37,7 @@ public class Config {
 
     // This allows a regular Opmode to use this
     public Config(OpMode opmode) {
+
         this.opmode = opmode;
     }
 
@@ -46,12 +48,14 @@ public class Config {
     // ================================== PUBLIC VARIABLES =======================================
     // These variables are for saving a pose at the end of auto and send it to the start of Teleop
 
-
     public static Pose savedPose = null;
     public static int lastAutoRun = 0;
 
 
+    // LaunchTimer is for my launching sequence, so when we launch it waits a certain amount
+    // of time.
 
+    
     public ElapsedTime launchTimer = new ElapsedTime();
     HardwareMap hwMap;
     public double lastCalcDistance = 0;
