@@ -27,16 +27,6 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
 
     private int step = 0;
 
-    // === INTAKE FUNCTIONS ===
-    private void intakeIn() {
-        robot.intake.setVelocity(1200);
-        robot.kicker.setPower(1);
-    }
-
-    private void intakeStop() {
-        robot.intake.setVelocity(0);
-        robot.kicker.setPower(0);
-    }
 
 
     public void buildPaths() {
@@ -135,7 +125,7 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
             case 0:
                 if (!follower.isBusy() && robot.launcher2.getVelocity() > 1200) {
                     timer.reset();
-                    intakeIn();
+                    robot.intakeIn();
                     step++;
                 }
                 break;
@@ -144,7 +134,7 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
                 if (timer.seconds() > 1) {
                     timer.reset();
                     follower.setMaxPower(1);
-                    intakeStop();
+                    robot.intakeStop();
                     follower.followPath(setUp2);
                     step++;
                 }
@@ -152,7 +142,7 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
             case 2:
                 if (!follower.isBusy()) {
                     robot.wallOpen();
-                    intakeIn();
+                    robot.intakeIn();
                     follower.setMaxPower(.65);
                     follower.followPath(grabPickup2);
                     timer.reset();
@@ -161,7 +151,7 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
                 break;
             case 3:
                 if (!follower.isBusy()) {
-                    intakeStop();
+                    robot.intakeStop();
                     follower.setMaxPower(1);
                     follower.followPath(gateSetup);
                     timer.reset();
@@ -190,14 +180,14 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
 
             case 6:
                 if (!follower.isBusy()) {
-                    intakeIn();
+                    robot.intakeIn();
                     timer.reset();
                     step++;
                 }
                 break;
             case 7:
                 if (!follower.isBusy() && timer.seconds() > 1) {
-                    intakeStop();
+                    robot.intakeStop();
                     robot.wallClose();
                     follower.setMaxPower(1);
                     follower.followPath(setUp1);
@@ -207,7 +197,7 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
                 break;
             case 8:
                 if (!follower.isBusy()) {
-                    intakeIn();
+                    robot.intakeIn();
                     follower.setMaxPower(.65);
                     follower.followPath(grabPickup1);
                     timer.reset();
@@ -216,7 +206,7 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
                 break;
             case 9:
                 if (!follower.isBusy()) {
-                    intakeStop();
+                    robot.intakeStop();
                     follower.setMaxPower(1);
                     follower.followPath(gateSetup2);
                     timer.reset();
@@ -225,7 +215,7 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
                 break;
             case 10:
                 if (!follower.isBusy()) {
-                    intakeStop();
+                    robot.intakeStop();
                     follower.setMaxPower(1);
                     follower.followPath(toGate1);
                     timer.reset();
@@ -234,7 +224,7 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
                 break;
             case 11:
                 if (!follower.isBusy() && timer.seconds() > 1.5) {
-                    intakeStop();
+                    robot.intakeStop();
                     robot.wallClose();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup1);
@@ -245,14 +235,14 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
             case 12:
                 if (!follower.isBusy()) {
                     robot.wallOpen();
-                    intakeIn();
+                    robot.intakeIn();
                     timer.reset();
                     step++;
                 }
                 break;
             case 13:
                 if (!follower.isBusy() && timer.seconds() > 1) {
-                    intakeStop();
+                    robot.intakeStop();
                     robot.wallClose();
                     follower.setMaxPower(1);
                     follower.followPath(setUp3);
@@ -262,7 +252,7 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
                 break;
             case 14:
                 if (!follower.isBusy()) {
-                    intakeIn();
+                    robot.intakeIn();
                     follower.setMaxPower(.65);
                     follower.followPath(grabPickup3);
                     timer.reset();
@@ -271,7 +261,7 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
                 break;
             case 15:
                 if (!follower.isBusy()) {
-                    intakeStop();
+                    robot.intakeStop();
                     robot.wallClose();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup3);
@@ -282,7 +272,7 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
             case 16:
                 if (!follower.isBusy()) {
                     robot.wallOpen();
-                    intakeIn();
+                    robot.intakeIn();
                     timer.reset();
                     step++;
                 }

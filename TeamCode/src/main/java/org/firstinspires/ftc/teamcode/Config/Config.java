@@ -26,7 +26,6 @@ public class Config {
     private OpMode opmode;
 
 
-
     // This allows a linear Opmode to use this
     public Config(LinearOpMode linearOpMode) {
 
@@ -34,15 +33,11 @@ public class Config {
     }
 
 
-
     // This allows a regular Opmode to use this
     public Config(OpMode opmode) {
 
         this.opmode = opmode;
     }
-
-
-
 
 
     // ================================== PUBLIC VARIABLES =======================================
@@ -55,16 +50,18 @@ public class Config {
     // LaunchTimer is for my launching sequence, so when we launch it waits a certain amount
     // of time.
 
-    
+
     public ElapsedTime launchTimer = new ElapsedTime();
     HardwareMap hwMap;
     public double lastCalcDistance = 0;
     public double idleVelocity = 1000;
 
 
-
     // ================================== INTAKE FUNCTIONS =======================================
-
+    /* For the intake, we made functions, so then when we are trying to run the intake, all we have
+    do is call robot.intakeIn(0); This is a super simple way and can easily change the power or
+    speed the motor is running. This is a huge help, so than I only have to change it here and not
+    in every single opmode.  */
 
     public void intakeIn() {
         intake.setVelocity(1180);
@@ -82,9 +79,9 @@ public class Config {
     }
 
 
-
-
     // ================================= SERVO FUNCTIONS ==========================================
+    // These functions are the same as the motors, but these are servos. The only difference is that
+    // there values are between 0 and 1.
 
 
     public void wallOpen() {
@@ -94,8 +91,6 @@ public class Config {
     public void wallClose() {
         wall.setPosition(.53);
     }
-
-
 
 
     // =============================== LAUNCH FUNCTIONS ===========================================
@@ -215,8 +210,6 @@ public class Config {
     }
 
 
-
-
     // ============================== HARDWARE ===================================================
     public DcMotorEx frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
     public DcMotorEx intake, kicker, launcher, launcher2;
@@ -226,15 +219,11 @@ public class Config {
     public ColorSensor transferSensor;
 
 
-
-
     // =============================== INTAKE & LAUNCH VARIBLES ===================================
     public boolean intakeIsOpen;
     public boolean intaking;
     private boolean launching = false;
     private int launchSequenceStep = 1;
-
-
 
 
     // ================= LIGHT VALUES ============================================================
@@ -251,14 +240,10 @@ public class Config {
     public final double COLORTransfer_THRESHOLD = 155;
 
 
-
-
     // ================== Intake Initialization ==================================================
     public long intakeStopTime = 0;
     public boolean wasIntaking = false;
     public final long REVERSE_TIME_MS = 100;
-
-
 
 
     // ================== GOAL HEADING & DISTANCES ===============================================
@@ -308,7 +293,6 @@ public class Config {
     }
 
 
-
     // ================================ ANGLE WRAP ===============================================
     // Angle wrap is so that say if I spin the robot ten times to the left, and I want it to go to
     // the angle 270, then it would have to spin the way it did ten times before getting to the
@@ -322,10 +306,7 @@ public class Config {
     }
 
 
-
     // ================================== AUTONOMOUS POSITIONS =====================================
-
-
 
 
     public final Pose blueStartFar = new Pose(55, 8.39, Math.toRadians(90));
@@ -386,11 +367,6 @@ public class Config {
     public final Pose redGateHarvestSetup = new Pose(117.33, 60.8657, Math.toRadians(39.38));
 
 
-
-
-
-
-
 // ===================================== INITIALIZATION ==========================================
 
 
@@ -402,7 +378,6 @@ public class Config {
         } else {
             hwMap = opmode.hardwareMap;
         }
-
 
 
         // This is where we have to get stuff from the Driver Station
@@ -424,8 +399,6 @@ public class Config {
         intakeSensor = hwMap.get(ColorSensor.class, "color");
         transferSensor = hwMap.get(ColorSensor.class, "sensor");
         limelight = hwMap.get(Limelight3A.class, "limelight");
-
-
 
 
         // Limelight Initialization

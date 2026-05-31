@@ -26,16 +26,7 @@ public class redClose12ClassifiedWith9InRamp extends OpMode {
 
     private int step = 0;
 
-    // === INTAKE FUNCTIONS ===
-    private void intakeIn() {
-        robot.intake.setVelocity(1200);
-        robot.kicker.setPower(1);
-    }
 
-    private void intakeStop() {
-        robot.intake.setVelocity(0);
-        robot.kicker.setPower(0);
-    }
 
 
     public void buildPaths() {
@@ -130,7 +121,7 @@ public class redClose12ClassifiedWith9InRamp extends OpMode {
             case 0:
                 if (!follower.isBusy() && robot.launcher2.getVelocity() > 1200) {
                     timer.reset();
-                    intakeIn();
+                    robot.intakeIn();
                     step++;
                 }
                 break;
@@ -140,14 +131,14 @@ public class redClose12ClassifiedWith9InRamp extends OpMode {
                     timer.reset();
                     follower.setMaxPower(1);
                     robot.wallClose();
-                    intakeStop();
+                    robot.intakeStop();
                     follower.followPath(setUp2);
                     step++;
                 }
                 break;
             case 2:
                 if (!follower.isBusy()) {
-                    intakeIn();
+                    robot.intakeIn();
                     follower.setMaxPower(.7);
                     follower.followPath(grabPickup2);
                     timer.reset();
@@ -156,7 +147,7 @@ public class redClose12ClassifiedWith9InRamp extends OpMode {
                 break;
             case 3:
                 if (!follower.isBusy()) {
-                    intakeStop();
+                    robot.intakeStop();
                     follower.setMaxPower(1);
                     follower.followPath(gateSetup);
                     timer.reset();
@@ -185,14 +176,14 @@ public class redClose12ClassifiedWith9InRamp extends OpMode {
 
             case 6:
                 if (!follower.isBusy()) {
-                    intakeIn();
+                    robot.intakeIn();
                     timer.reset();
                     step++;
                 }
                 break;
             case 7:
                 if (!follower.isBusy() && timer.seconds() > 1) {
-                    intakeStop();
+                    robot.intakeStop();
                     robot.wallClose();
                     follower.setMaxPower(1);
                     follower.followPath(setUp1);
@@ -202,7 +193,7 @@ public class redClose12ClassifiedWith9InRamp extends OpMode {
                 break;
             case 8:
                 if (!follower.isBusy()) {
-                    intakeIn();
+                    robot.intakeIn();
                     follower.setMaxPower(.7);
                     follower.followPath(grabPickup1);
                     timer.reset();
@@ -211,7 +202,7 @@ public class redClose12ClassifiedWith9InRamp extends OpMode {
                 break;
             case 9:
                 if (!follower.isBusy()) {
-                    intakeStop();
+                    robot.intakeStop();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup1);
                     timer.reset();
@@ -221,14 +212,14 @@ public class redClose12ClassifiedWith9InRamp extends OpMode {
             case 10:
                 if (!follower.isBusy()) {
                     robot.wallOpen();
-                    intakeIn();
+                    robot.intakeIn();
                     timer.reset();
                     step++;
                 }
                 break;
             case 11:
                 if (!follower.isBusy() && timer.seconds() > 1) {
-                    intakeStop();
+                    robot.intakeStop();
                     robot.wallClose();
                     follower.setMaxPower(1);
                     follower.followPath(setUp3);
@@ -238,7 +229,7 @@ public class redClose12ClassifiedWith9InRamp extends OpMode {
                 break;
             case 12:
                 if (!follower.isBusy()) {
-                    intakeIn();
+                    robot.intakeIn();
                     follower.setMaxPower(.7);
                     follower.followPath(grabPickup3);
                     timer.reset();
@@ -247,7 +238,7 @@ public class redClose12ClassifiedWith9InRamp extends OpMode {
                 break;
             case 13:
                 if (!follower.isBusy()) {
-                    intakeStop();
+                    robot.intakeStop();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup3);
                     timer.reset();
@@ -257,7 +248,7 @@ public class redClose12ClassifiedWith9InRamp extends OpMode {
             case 14:
                 if (!follower.isBusy()) {
                     robot.wallOpen();
-                    intakeIn();
+                    robot.intakeIn();
                     timer.reset();
                     step++;
                 }
@@ -265,7 +256,7 @@ public class redClose12ClassifiedWith9InRamp extends OpMode {
 
             case 15:
                 if (!follower.isBusy() && timer.seconds() > 2) {
-                    intakeStop();
+                    robot.intakeStop();
                     robot.wallClose();
                     follower.setMaxPower(1);
                     follower.followPath(endOfAuto);

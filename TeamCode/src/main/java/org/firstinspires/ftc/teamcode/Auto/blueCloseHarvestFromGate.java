@@ -27,17 +27,6 @@ public class blueCloseHarvestFromGate extends OpMode {
 
     private int step = 0;
 
-    // === INTAKE FUNCTIONS ===
-    private void intakeIn() {
-        robot.intake.setVelocity(1300);
-        robot.kicker.setPower(1);
-    }
-
-    private void intakeStop() {
-        robot.intake.setVelocity(0);
-        robot.kicker.setPower(0);
-    }
-
 
     public void buildPaths() {
 
@@ -142,7 +131,7 @@ public class blueCloseHarvestFromGate extends OpMode {
             case 0:
                 if (!follower.isBusy() && robot.launcher2.getVelocity() > 1180 ) {
                     timer.reset();
-                    intakeIn();
+                    robot.intakeIn();
                     step++;
                 }
                 break;
@@ -151,7 +140,7 @@ public class blueCloseHarvestFromGate extends OpMode {
                 if (timer.seconds() > 1) {
                     timer.reset();
                     follower.setMaxPower(1);
-                    intakeStop();
+                    robot.intakeStop();
                     follower.followPath(setUp2);
                     step++;
                 }
@@ -159,7 +148,7 @@ public class blueCloseHarvestFromGate extends OpMode {
             case 2:
                 if (!follower.isBusy()) {
                     robot.wallClose();
-                    intakeIn();
+                    robot.intakeIn();
                     follower.setMaxPower(.7);
                     follower.followPath(grabPickup2);
                     timer.reset();
@@ -168,7 +157,7 @@ public class blueCloseHarvestFromGate extends OpMode {
                 break;
             case 3:
                 if (!follower.isBusy()) {
-                    intakeStop();
+                    robot.intakeStop();
                     follower.setMaxPower(1);
                     follower.followPath(gateSetup);
                     timer.reset();
@@ -197,14 +186,14 @@ public class blueCloseHarvestFromGate extends OpMode {
 
             case 6:
                 if (!follower.isBusy()) {
-                    intakeIn();
+                    robot.intakeIn();
                     timer.reset();
                     step++;
                 }
                 break;
             case 7:
                 if (!follower.isBusy() && timer.seconds() > 1) {
-                    intakeStop();
+                    robot.intakeStop();
                     robot.wallClose();
                     follower.setMaxPower(1);
                     follower.followPath(gateGrabSetup);
@@ -214,7 +203,7 @@ public class blueCloseHarvestFromGate extends OpMode {
                 break;
             case 8:
                 if (!follower.isBusy()) {
-                    intakeIn();
+                    robot.intakeIn();
                     follower.setMaxPower(1);
                     follower.followPath(gateGrab);
                     timer.reset();
@@ -232,7 +221,7 @@ public class blueCloseHarvestFromGate extends OpMode {
                 break;
             case 10:
                 if (timer.seconds() > 2.5) {
-                    intakeStop();
+                    robot.intakeStop();
                     robot.wallOpen();
                     follower.setMaxPower(1);
                     follower.followPath(scoreGrab);
@@ -242,7 +231,7 @@ public class blueCloseHarvestFromGate extends OpMode {
                 break;
             case 11:
                 if (!follower.isBusy()) {
-                    intakeIn();
+                    robot.intakeIn();
                     timer.reset();
                     step++;
                 }
@@ -250,7 +239,7 @@ public class blueCloseHarvestFromGate extends OpMode {
 
             case 12:
                 if (!follower.isBusy() && timer.seconds() > 1) {
-                    intakeStop();
+                    robot.intakeStop();
                     robot.wallClose();
                     follower.setMaxPower(1);
                     follower.followPath(setUp1);
@@ -261,7 +250,7 @@ public class blueCloseHarvestFromGate extends OpMode {
 
             case 13:
                 if (!follower.isBusy()) {
-                    intakeIn();
+                    robot.intakeIn();
                     follower.setMaxPower(.7);
                     follower.followPath(grabPickup1);
                     timer.reset();
@@ -270,7 +259,7 @@ public class blueCloseHarvestFromGate extends OpMode {
                 break;
             case 14:
                 if (!follower.isBusy()) {
-                    intakeStop();
+                    robot.intakeStop();
 
                     follower.setMaxPower(1);
                     follower.followPath(gateSet);
@@ -287,7 +276,7 @@ public class blueCloseHarvestFromGate extends OpMode {
 
             case 16:
                 if (!follower.isBusy() && timer.seconds() > 1.5) {
-                    intakeStop();
+                    robot.intakeStop();
                     robot.wallClose();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup1);
@@ -299,7 +288,7 @@ public class blueCloseHarvestFromGate extends OpMode {
             case 17:
                 if (!follower.isBusy()) {
                     robot.wallOpen();
-                    intakeIn();
+                    robot.intakeIn();
                     timer.reset();
                     step++;
                 }
@@ -309,7 +298,7 @@ public class blueCloseHarvestFromGate extends OpMode {
                     Config.savedPose = follower.getPose();
                     Config.lastAutoRun = 3;
                     robot.wallClose();
-                    intakeStop();
+                    robot.intakeStop();
                 }
                 break;
         }
