@@ -118,6 +118,8 @@ public class Config {
                 break;
             case 2:
                 if (launcher.getVelocity() > velocity - 20) {
+                    launcher.setVelocity(velocity);
+                    launcher2.setVelocity(velocity);
                     wallOpen();
                     intakeIn();
                     launchTimer.reset();

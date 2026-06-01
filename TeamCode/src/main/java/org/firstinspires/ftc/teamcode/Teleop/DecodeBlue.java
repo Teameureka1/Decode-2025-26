@@ -18,7 +18,7 @@ public class DecodeBlue extends OpMode {
 
     // Poses position for parking and resetting our aim assist Pose.
     Pose park;
-    Pose resetPose = new Pose(44, 86, Math.toRadians(132));
+    Pose resetPose = new Pose(16, 115, Math.toRadians(139));
 
 
     // More important variables
@@ -123,7 +123,7 @@ public class DecodeBlue extends OpMode {
     public void loop() {
         follower.update();
 
-        if (timer.seconds() > 1) {
+        if (timer.seconds() > 1 && !wallClosed) {
             robot.wallClose();
             wallClosed = true;
         }
@@ -134,9 +134,9 @@ public class DecodeBlue extends OpMode {
         // will receive a full double park, and then we are able to continue launching.
 
 
-        if (timer.seconds() > 97) {
-            gamepad1.rumble(500);
-            gamepad2.rumble(500);
+        if (timer.seconds() > 97 && !rumble1Triggered) {
+            gamepad1.rumble(1000);
+            gamepad2.rumble(1000);
             rumble1Triggered = true;
         }
 
@@ -145,9 +145,9 @@ public class DecodeBlue extends OpMode {
         // artifacts.
 
 
-        if (timer.seconds() > 113) {
-            gamepad1.rumble(500);
-            gamepad2.rumble(500);
+        if (timer.seconds() > 113 && !rumble2Triggered) {
+            gamepad1.rumble(1000);
+            gamepad2.rumble(1000);
             rumble2Triggered = true;
         }
 

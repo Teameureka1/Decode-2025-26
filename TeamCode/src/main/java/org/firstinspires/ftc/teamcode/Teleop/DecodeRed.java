@@ -126,7 +126,7 @@ public class DecodeRed extends OpMode {
         // open and this is just a safety precaution
 
 
-        if (timer.seconds() > 1) {
+        if (timer.seconds() > 1  && !wallClosed) {
             robot.wallClose();
             wallClosed = true;
         }
@@ -138,9 +138,9 @@ public class DecodeRed extends OpMode {
         // will receive a full double park, and then we are able to continue launching.
 
 
-        if (timer.seconds() > 97) {
-            gamepad1.rumble(500);
-            gamepad2.rumble(500);
+        if (timer.seconds() > 97 && !rumble2Triggered) {
+            gamepad1.rumble(1000);
+            gamepad2.rumble(1000);
             rumble1Triggered = true;
         }
 
@@ -149,9 +149,9 @@ public class DecodeRed extends OpMode {
         // artifacts.
 
 
-        if (timer.seconds() > 113) {
-            gamepad1.rumble(500);
-            gamepad2.rumble(500);
+        if (timer.seconds() > 113 && !rumble2Triggered) {
+            gamepad1.rumble(1000);
+            gamepad2.rumble(1000);
             rumble2Triggered = true;
         }
 
