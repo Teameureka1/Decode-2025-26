@@ -105,8 +105,8 @@ public class redCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
     @Override
     public void start() {
         step = 0;
-        robot.launcher.setVelocity(1100);
-        robot.launcher2.setVelocity(1100);
+        robot.launcher.setVelocity(1080);
+        robot.launcher2.setVelocity(1080);
         robot.wallOpen();
         follower.followPath(scorePreload);
     }
@@ -269,6 +269,7 @@ public class redCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
                 if (!follower.isBusy() && timer.seconds() > 2) {
                     Config.savedPose = follower.getPose();
                     Config.lastAutoRun = 2;
+                    requestOpModeStop();
                 }
                 break;
 

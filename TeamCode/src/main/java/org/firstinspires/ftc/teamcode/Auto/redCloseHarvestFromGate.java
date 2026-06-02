@@ -50,13 +50,13 @@ public class redCloseHarvestFromGate extends OpMode {
                 .build();
 
         toGate2 = follower.pathBuilder()
-                .addPath(new BezierLine(robot.redPickup2Pose, robot.redGateFacingParkingZone2))
-                .setLinearHeadingInterpolation(robot.redPickup2Pose.getHeading(), robot.redGateFacingParkingZone2.getHeading())
+                .addPath(new BezierLine(robot.redPickup2Pose, robot.redGateFacingParkingZone))
+                .setLinearHeadingInterpolation(robot.redPickup2Pose.getHeading(), robot.redGateFacingParkingZone.getHeading())
                 .build();
 
         scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierCurve(robot.redGateFacingParkingZone2, new Pose(110,40,0), robot.redScorePose))
-                .setLinearHeadingInterpolation(robot.redGateFacingParkingZone2.getHeading(), robot.redScorePose.getHeading())
+                .addPath(new BezierCurve(robot.redGateFacingParkingZone, new Pose(110,40,0), robot.redScorePose))
+                .setLinearHeadingInterpolation(robot.redGateFacingParkingZone.getHeading(), robot.redScorePose.getHeading())
                 .build();
         gateGrabSetup = follower.pathBuilder()
                 .addPath(new BezierLine(robot.redScorePose, robot.redGateHarvestSetup))

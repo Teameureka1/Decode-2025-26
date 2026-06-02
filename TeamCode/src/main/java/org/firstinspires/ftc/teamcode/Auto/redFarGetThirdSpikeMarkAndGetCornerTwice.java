@@ -19,10 +19,10 @@ public class redFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
 
     private Follower follower;
     private ElapsedTime timer = new ElapsedTime();
-    private double targetVelocity = 1580;
+    private double targetVelocity = 1460;
 
     private Path scorePreload;
-    private PathChain setUp3, grabPickup3, scorePickup3, setUpNearWall, grabNearWall, getBack, grabAgain, scoreNearWall, setUpNearWall2, grabNearWall2, setUpNearWall3, grabAwayFromWallTowardsGoal, scoreLast, Park;
+    private PathChain setUp3, grabPickup3, scorePickup3, setUpNearWall, grabNearWall, getBack, grabAgain, scoreNearWall, setUpNearWall2, grabNearWall2, scoreLast, Park;
     private int step = 0;
 
 
@@ -61,8 +61,8 @@ public class redFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
                 .setLinearHeadingInterpolation(robot.redFarGrabFromHumanPlayerZoneOffTheWallGetBack.getHeading(), robot.redFarGrabFromHumanPlayerZoneOffTheWall.getHeading())
                 .build();
         scoreNearWall = follower.pathBuilder()
-                .addPath(new BezierLine(robot.redFarGrabFromHumanPlayerZoneOffTheWall, robot.redFarScorePose))
-                .setLinearHeadingInterpolation(robot.redFarGrabFromHumanPlayerZoneOffTheWall.getHeading(), robot.redFarScorePose.getHeading())
+                .addPath(new BezierLine(robot.redFarGrabFromHumanPlayerZoneOffTheWall, robot.redFarScorePose2))
+                .setLinearHeadingInterpolation(robot.redFarGrabFromHumanPlayerZoneOffTheWall.getHeading(), robot.redFarScorePose2.getHeading())
                 .build();
         setUpNearWall2 = follower.pathBuilder()
                 .addPath(new BezierLine(robot.redFarScorePose, robot.redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerSetup))
@@ -72,17 +72,10 @@ public class redFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
                 .addPath(new BezierLine(robot.redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerSetup, robot.redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayer))
                 .setLinearHeadingInterpolation(robot.redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerSetup.getHeading(), robot.redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayer.getHeading())
                 .build();
-        setUpNearWall3 = follower.pathBuilder()
-                .addPath(new BezierLine(robot.redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayer, robot.redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMoreSetup))
-                .setLinearHeadingInterpolation(robot.redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayer.getHeading(), robot.redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMoreSetup.getHeading())
-                .build();
-        grabAwayFromWallTowardsGoal = follower.pathBuilder()
-                .addPath(new BezierLine(robot.redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMoreSetup, robot.redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMore))
-                .setLinearHeadingInterpolation(robot.redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMoreSetup.getHeading(), robot.redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMore.getHeading())
-                .build();
+
         scoreLast = follower.pathBuilder()
-                .addPath(new BezierLine(robot.redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMore, robot.redFarScorePose))
-                .setLinearHeadingInterpolation(robot.redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMore.getHeading(), robot.redFarScorePose.getHeading())
+                .addPath(new BezierLine(robot.redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMore, robot.redFarScorePose2))
+                .setLinearHeadingInterpolation(robot.redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMore.getHeading(), robot.redFarScorePose2.getHeading())
                 .build();
         Park = follower.pathBuilder()
                 .addPath(new BezierLine(robot.redFarScorePose, robot.redFarPark))
@@ -118,7 +111,7 @@ public class redFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
         switch (step) {
 
             case 0:
-                if (timer.seconds() > 1.5 && !follower.isBusy() && robot.launcher2.getVelocity() > 1520) {
+                if (timer.seconds() > 1.5 && !follower.isBusy() && robot.launcher2.getVelocity() > 1400) {
                     timer.reset();
                     robot.intakeIn();
                     step++;
@@ -157,7 +150,7 @@ public class redFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
                 break;
 
             case 4:
-                if (timer.seconds() > 1.75 && !follower.isBusy() && robot.launcher2.getVelocity() > 1520) {
+                if (timer.seconds() > 2.5 && !follower.isBusy() && robot.launcher2.getVelocity() > 1400) {
                     robot.wallOpen();
                     robot.intakeIn();
                     timer.reset();
@@ -215,7 +208,7 @@ public class redFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
                 break;
 
             case 10:
-                if (timer.seconds() > 1.5 && !follower.isBusy() && robot.launcher2.getVelocity() > 1520) {
+                if (timer.seconds() > 2.5 && !follower.isBusy() && robot.launcher2.getVelocity() > 1400) {
                     if (timer.seconds() > .5) {
                         robot.wallOpen();
                         robot.intakeIn();
@@ -248,27 +241,8 @@ public class redFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
                 }
                 break;
 
+
             case 13:
-                if (!follower.isBusy() && timer.seconds() > 1.5) {
-                    robot.intakeStop();
-                    follower.setMaxPower(1);
-                    follower.followPath(setUpNearWall3);
-                    timer.reset();
-                    step++;
-                }
-                break;
-
-            case 14:
-                if (!follower.isBusy()) {
-                    robot.intakeIn();
-                    follower.setMaxPower(1);
-                    follower.followPath(grabAwayFromWallTowardsGoal);
-                    timer.reset();
-                    step++;
-                }
-                break;
-
-            case 15:
                 if (!follower.isBusy() && timer.seconds() > 1.5) {
                     robot.intakeStop();
                     follower.setMaxPower(1);
@@ -278,8 +252,8 @@ public class redFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
                 }
                 break;
 
-            case 16:
-                if (timer.seconds() > 1.5 && !follower.isBusy() && robot.launcher2.getVelocity() > 1520) {
+            case 14:
+                if (timer.seconds() > 2.5 && !follower.isBusy() && robot.launcher2.getVelocity() > 1400) {
                     robot.wallOpen();
                     robot.intakeIn();
                     timer.reset();
@@ -287,7 +261,7 @@ public class redFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
                 }
                 break;
 
-            case 17:
+            case 15:
                 if (timer.seconds() > 1.75) {
                     robot.wallClose();
                     robot.intakeStop();
@@ -297,7 +271,7 @@ public class redFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
                     step++;
                 }
                 break;
-            case 18:
+            case 16:
                 if (timer.seconds() > 2) {
                     Config.savedPose = follower.getPose();
                     Config.lastAutoRun = 4;

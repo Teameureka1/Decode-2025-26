@@ -55,6 +55,7 @@ public class Config {
     HardwareMap hwMap;
     public double lastCalcDistance = 0;
     public double idleVelocity = 1000;
+    private boolean manualLaunching = false;
 
 
     // ================================== INTAKE FUNCTIONS =======================================
@@ -139,6 +140,48 @@ public class Config {
         }
 
     }
+    public void manualLaunchThreeUpdater() {
+
+        if (!manualLaunching) {
+
+            return;
+        }
+
+
+        double velocity = 1140;
+
+
+
+        switch (launchSequenceStep) {
+
+            case 1:
+                launcher.setVelocity(velocity);
+                launcher2.setVelocity(velocity);
+                launchSequenceStep++;
+                break;
+            case 2:
+                if (launcher.getVelocity() > velocity - 20) {
+                    launcher.setVelocity(velocity);
+                    launcher2.setVelocity(velocity);
+                    wallOpen();
+                    intakeIn();
+                    launchTimer.reset();
+                    launchSequenceStep++;
+                }
+                break;
+            case 3:
+                if (launchTimer.seconds() > 1.75) {
+                    intakeStop();
+                    wallClose();
+                    launcher.setVelocity(idleVelocity);
+                    launcher2.setVelocity(idleVelocity);
+                    launchSequenceStep = 1;
+                    manualLaunching = false;
+                }
+                break;
+        }
+
+    }
 
     public void redLaunchThreeUpdater(Follower follower) {
 
@@ -190,6 +233,20 @@ public class Config {
         launching = true;
     }
 
+    public void startManualLaunch() {
+
+        manualLaunching = true;
+    }
+
+    public void stopManualLaunch() {
+
+        manualLaunching = false;
+        intakeStop();
+        wallClose();
+        launcher.setVelocity(idleVelocity);
+        launcher2.setVelocity(idleVelocity);
+    }
+
     public void stopLaunch() {
 
         launching = false;
@@ -207,7 +264,7 @@ public class Config {
 
     public double calculateLaunchVelocity(double distance) {
         double x = distance;
-        double velocity = (-0.000234073 * x * x * x + (0.101791 * x * x - 8.57328 * x + 1330));
+        double velocity = (-0.000234073 * x * x * x + (0.101791 * x * x - 8.57328 * x + 1315));
         return velocity;
     }
 
@@ -341,13 +398,14 @@ public class Config {
 
 
     public final Pose redStartFar = new Pose(89, 8.39, Math.toRadians(90));
-    public final Pose redFarScorePose = new Pose(87, 13.7, Math.toRadians(65.5));
+    public final Pose redFarScorePose = new Pose(87, 13.7, Math.toRadians(65.25));
+    public final Pose redFarScorePose2 = new Pose(87, 13.7, Math.toRadians(65.25));
     public final Pose redFarPark = new Pose(110, 10, Math.toRadians(90));
-    public final Pose redFarGrabFromHumanPlayerZoneOffTheWallSetup = new Pose(144, 21, Math.toRadians(-90));
-    public final Pose redFarGrabFromHumanPlayerZoneOffTheWall = new Pose(144, 0, Math.toRadians(-90));
+    public final Pose redFarGrabFromHumanPlayerZoneOffTheWallSetup = new Pose(144, 21, Math.toRadians(-70));
+    public final Pose redFarGrabFromHumanPlayerZoneOffTheWall = new Pose(144, 1.5, Math.toRadians(-70));
     public final Pose redFarGrabFromHumanPlayerZoneOffTheWallGetBack = new Pose(144, 2.5, Math.toRadians(-90));
     public final Pose redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerSetup = new Pose(114.7, 10, Math.toRadians(-20));
-    public final Pose redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayer = new Pose(142, 9, Math.toRadians(-20));
+    public final Pose redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayer = new Pose(144, 9, Math.toRadians(-20));
     public final Pose redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMoreSetup = new Pose(110, 16, Math.toRadians(10));
     public final Pose redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMore = new Pose(142, 18, Math.toRadians(10));
     public final Pose redStartClose = new Pose(129.2095, 122.4811, Math.toRadians(39.3531));
@@ -358,8 +416,8 @@ public class Config {
     public final Pose redPickup2Pose = new Pose(141, 57.5, Math.toRadians(.08));
     public final Pose redSetup2Pose = new Pose(107.6, 58, Math.toRadians(.08));
     public final Pose redSetupGate = new Pose(133, 58, Math.toRadians(0));
-    public final Pose redGateFacingParkingZone = new Pose(139.5, 60.8, Math.toRadians(-90));
-    public final Pose redGateFacingParkingZone2 = new Pose(137, 56.5, Math.toRadians(-90));
+    public final Pose redGateFacingParkingZone = new Pose(139, 60.8, Math.toRadians(-90));
+    public final Pose redGateFacingParkingZone2 = new Pose(137, 59, Math.toRadians(-90));
     public final Pose redGateFacingGoal = new Pose(134, 76, Math.toRadians(90));
     public final Pose redPickup3Pose = new Pose(142, 34.5, Math.toRadians(.8));
     public final Pose redSetup3Pose = new Pose(107.6, 34.5, Math.toRadians(.8));

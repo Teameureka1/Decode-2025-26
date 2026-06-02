@@ -315,6 +315,14 @@ public class DecodeRed extends OpMode {
 
         robot.redLaunchThreeUpdater(follower);
 
+
+        if (gamepad2.aWasPressed()) {
+            robot.startManualLaunch();
+        }
+
+        robot.manualLaunchThreeUpdater();
+
+
         // ================ INTAKE ====================
         /* If I want the intake on press B, but if you want the intake to stop then press B again.
            This is called a toggle, where if you press something again it will toggle on and off,
