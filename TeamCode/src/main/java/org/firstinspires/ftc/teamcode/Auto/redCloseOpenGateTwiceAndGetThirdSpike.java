@@ -13,8 +13,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Config.Config;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "redCloseOpenGateTwice")
-public class redCloseOpenGateTwice extends OpMode {
+@Autonomous(name = "redCloseOpenGateTwiceAndGetThirdSpike")
+public class redCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
 
     Config robot;
 
@@ -26,7 +26,6 @@ public class redCloseOpenGateTwice extends OpMode {
     private PathChain setUp2, grabPickup2, gateSetup, toGate2, scorePickup2, setUp1, grabPickup1, toGate1, scorePickup1, setUp3, grabPickup3, scorePickup3;
 
     private int step = 0;
-
 
 
 
@@ -51,13 +50,13 @@ public class redCloseOpenGateTwice extends OpMode {
                 .build();
 
         toGate2 = follower.pathBuilder()
-                .addPath(new BezierLine(robot.redPickup2Pose, robot.redGateFacingParkingZone))
-                .setLinearHeadingInterpolation(robot.redPickup2Pose.getHeading(), robot.redGateFacingParkingZone.getHeading())
+                .addPath(new BezierLine(robot.redSetupGate, robot.redGateFacingParkingZone2))
+                .setLinearHeadingInterpolation(robot.redSetupGate.getHeading(), robot.redGateFacingParkingZone2.getHeading())
                 .build();
 
         scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierCurve(robot.redGateFacingParkingZone, new Pose(110,40,0), robot.redScorePose))
-                .setLinearHeadingInterpolation(robot.redGateFacingParkingZone.getHeading(), robot.redScorePose.getHeading())
+                .addPath(new BezierCurve(robot.redGateFacingParkingZone2, new Pose(110,40,0), robot.redScorePose))
+                .setLinearHeadingInterpolation(robot.redGateFacingParkingZone2.getHeading(), robot.redScorePose.getHeading())
                 .build();
         setUp1 = follower.pathBuilder()
                 .addPath(new BezierLine(robot.redScorePose, robot.redSetup1Pose))
@@ -106,8 +105,8 @@ public class redCloseOpenGateTwice extends OpMode {
     @Override
     public void start() {
         step = 0;
-        robot.launcher.setVelocity(1240);
-        robot.launcher2.setVelocity(1240);
+        robot.launcher.setVelocity(1100);
+        robot.launcher2.setVelocity(1100);
         robot.wallOpen();
         follower.followPath(scorePreload);
     }
@@ -120,7 +119,7 @@ public class redCloseOpenGateTwice extends OpMode {
         switch (step) {
 
             case 0:
-                if (!follower.isBusy() && robot.launcher2.getVelocity() < 1240 && timer.seconds() > 3.1) {
+                if (!follower.isBusy() && robot.launcher2.getVelocity() > 1060) {
                     timer.reset();
                     robot.intakeIn();
                     step++;
@@ -137,7 +136,7 @@ public class redCloseOpenGateTwice extends OpMode {
                 }
                 break;
             case 2:
-                if (!follower.isBusy() && timer.seconds() > .25) {
+                if (!follower.isBusy()) {
                     robot.wallClose();
                     robot.intakeIn();
                     follower.setMaxPower(.65);
@@ -147,7 +146,7 @@ public class redCloseOpenGateTwice extends OpMode {
                 }
                 break;
             case 3:
-                if (!follower.isBusy() && timer.seconds() > .25) {
+                if (!follower.isBusy()) {
                     robot.intakeStop();
                     follower.setMaxPower(1);
                     follower.followPath(gateSetup);
@@ -156,7 +155,7 @@ public class redCloseOpenGateTwice extends OpMode {
                 }
                 break;
             case 4:
-                if (!follower.isBusy() && timer.seconds() > .8) {
+                if (!follower.isBusy()) {
                     follower.setMaxPower(1);
                     follower.followPath(toGate2);
                     timer.reset();
@@ -166,7 +165,7 @@ public class redCloseOpenGateTwice extends OpMode {
 
 
             case 5:
-                if (!follower.isBusy() && timer.seconds() > 2.75) {
+                if (!follower.isBusy() && timer.seconds() > 1.5) {
                     robot.wallOpen();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup2);
@@ -176,7 +175,7 @@ public class redCloseOpenGateTwice extends OpMode {
                 break;
 
             case 6:
-                if (!follower.isBusy() && timer.seconds() > 2.5) {
+                if (!follower.isBusy()) {
                     robot.intakeIn();
                     timer.reset();
                     step++;
@@ -193,7 +192,7 @@ public class redCloseOpenGateTwice extends OpMode {
                 }
                 break;
             case 8:
-                if (!follower.isBusy() && timer.seconds() > .2) {
+                if (!follower.isBusy()) {
                     robot.intakeIn();
                     follower.setMaxPower(.65);
                     follower.followPath(grabPickup1);
@@ -201,8 +200,9 @@ public class redCloseOpenGateTwice extends OpMode {
                     step++;
                 }
                 break;
+
             case 9:
-                if (!follower.isBusy() && timer.seconds() > .2) {
+                if (!follower.isBusy()) {
                     robot.intakeStop();
                     follower.setMaxPower(1);
                     follower.followPath(toGate1);
@@ -211,7 +211,7 @@ public class redCloseOpenGateTwice extends OpMode {
                 }
                 break;
             case 10:
-                if (!follower.isBusy() && timer.seconds() > 1) {
+                if (!follower.isBusy() && timer.seconds() > 1.5) {
                     robot.intakeStop();
                     robot.wallClose();
                     follower.setMaxPower(1);
@@ -221,7 +221,7 @@ public class redCloseOpenGateTwice extends OpMode {
                 }
                 break;
             case 11:
-                if (!follower.isBusy() && timer.seconds() > .5) {
+                if (!follower.isBusy()) {
                     robot.wallOpen();
                     robot.intakeIn();
                     timer.reset();
@@ -229,7 +229,7 @@ public class redCloseOpenGateTwice extends OpMode {
                 }
                 break;
             case 12:
-                if (!follower.isBusy() && timer.seconds() > 1.75) {
+                if (!follower.isBusy() && timer.seconds() > 1) {
                     robot.intakeStop();
                     robot.wallClose();
                     follower.setMaxPower(1);
@@ -239,7 +239,7 @@ public class redCloseOpenGateTwice extends OpMode {
                 }
                 break;
             case 13:
-                if (!follower.isBusy() && timer.seconds() > 1.25) {
+                if (!follower.isBusy()) {
                     robot.intakeIn();
                     follower.setMaxPower(.65);
                     follower.followPath(grabPickup3);
@@ -248,8 +248,9 @@ public class redCloseOpenGateTwice extends OpMode {
                 }
                 break;
             case 14:
-                if (!follower.isBusy() && timer.seconds() > .5) {
+                if (!follower.isBusy()) {
                     robot.intakeStop();
+                    robot.wallClose();
                     follower.setMaxPower(1);
                     follower.followPath(scorePickup3);
                     timer.reset();
@@ -257,7 +258,7 @@ public class redCloseOpenGateTwice extends OpMode {
                 }
                 break;
             case 15:
-                if (!follower.isBusy() && timer.seconds() > 1) {
+                if (!follower.isBusy()) {
                     robot.wallOpen();
                     robot.intakeIn();
                     timer.reset();
@@ -265,9 +266,9 @@ public class redCloseOpenGateTwice extends OpMode {
                 }
                 break;
             case 16:
-                if (!follower.isBusy() && timer.seconds() > 1.5) {
+                if (!follower.isBusy() && timer.seconds() > 2) {
                     Config.savedPose = follower.getPose();
-                    Config.lastAutoRun = 3;
+                    Config.lastAutoRun = 2;
                 }
                 break;
 

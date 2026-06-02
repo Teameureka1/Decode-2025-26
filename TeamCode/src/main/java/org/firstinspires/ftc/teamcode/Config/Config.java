@@ -352,14 +352,14 @@ public class Config {
     public final Pose redFarGrabFromHumanPlayerZoneOffTheWallFacingHumanPlayerTowardsGoalMore = new Pose(142, 18, Math.toRadians(10));
     public final Pose redStartClose = new Pose(129.2095, 122.4811, Math.toRadians(39.3531));
     public final Pose redScorePose = new Pose(92, 92, Math.toRadians(40.5));
-    public final Pose redScorePose2 = new Pose(92, 105, Math.toRadians(34));
+    public final Pose redScorePose2 = new Pose(91, 104, Math.toRadians(34));
     public final Pose redPickup1Pose = new Pose(134, 82.2643, Math.toRadians(0.6));
     public final Pose redSetup1Pose = new Pose(107.6, 81.6, Math.toRadians(1.33));
     public final Pose redPickup2Pose = new Pose(141, 57.5, Math.toRadians(.08));
     public final Pose redSetup2Pose = new Pose(107.6, 58, Math.toRadians(.08));
     public final Pose redSetupGate = new Pose(133, 58, Math.toRadians(0));
-    public final Pose redGateFacingParkingZone = new Pose(138, 62.5, Math.toRadians(-90));
-    public final Pose redGateFacingParkingZone2 = new Pose(139, 61, Math.toRadians(-90));
+    public final Pose redGateFacingParkingZone = new Pose(139.5, 60.8, Math.toRadians(-90));
+    public final Pose redGateFacingParkingZone2 = new Pose(137, 56.5, Math.toRadians(-90));
     public final Pose redGateFacingGoal = new Pose(134, 76, Math.toRadians(90));
     public final Pose redPickup3Pose = new Pose(142, 34.5, Math.toRadians(.8));
     public final Pose redSetup3Pose = new Pose(107.6, 34.5, Math.toRadians(.8));
