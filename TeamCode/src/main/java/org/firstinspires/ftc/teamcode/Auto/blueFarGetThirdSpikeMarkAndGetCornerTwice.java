@@ -21,7 +21,7 @@ public class blueFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
 
     private Follower follower;
     private ElapsedTime timer = new ElapsedTime();
-    private double targetVelocity = 1560;
+    private double targetVelocity = 1500;
 
     private Path scorePreload;
     private PathChain setUp3, grabPickup3, scorePickup3, setUpNearWall, grabNearWall, getBack, grabAgain, scoreNearWall, setUpNearWall2, grabNearWall2, setUpNearWall3, grabAwayFromWallTowardsGoal, scoreLast, Park;
@@ -119,7 +119,7 @@ public class blueFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
         switch (step) {
 
             case 0:
-                if (timer.seconds() > 1.5 && !follower.isBusy() && robot.launcher2.getVelocity() > 1500) {
+                if (timer.seconds() > 1.5 && !follower.isBusy() && robot.launcher2.getVelocity() > 1440) {
                     timer.reset();
                     robot.intakeIn();
                     step++;
@@ -158,7 +158,7 @@ public class blueFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
                 break;
 
             case 4:
-                if (timer.seconds() > 1.5 && !follower.isBusy() && robot.launcher2.getVelocity() > 1500) {
+                if (timer.seconds() > 1.5 && !follower.isBusy() && robot.launcher2.getVelocity() > 1440) {
                         robot.wallOpen();
                         robot.intakeIn();
                         timer.reset();
@@ -216,7 +216,7 @@ public class blueFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
                 break;
 
                 case 10:
-                    if (timer.seconds() > 2.5 && !follower.isBusy() && robot.launcher2.getVelocity() > 1500) {
+                    if (timer.seconds() > 2.5 && !follower.isBusy() && robot.launcher2.getVelocity() > 1440) {
                         if (timer.seconds() > .5) {
                             robot.wallOpen();
                             robot.intakeIn();
@@ -280,7 +280,7 @@ public class blueFarGetThirdSpikeMarkAndGetCornerTwice extends OpMode {
                 break;
 
             case 16:
-                if (timer.seconds() > 1.5 && !follower.isBusy() && robot.launcher2.getVelocity() > 1500) {
+                if (timer.seconds() > 1.5 && !follower.isBusy() && robot.launcher2.getVelocity() > 1440) {
                         robot.wallOpen();
                         robot.intakeIn();
                         timer.reset();

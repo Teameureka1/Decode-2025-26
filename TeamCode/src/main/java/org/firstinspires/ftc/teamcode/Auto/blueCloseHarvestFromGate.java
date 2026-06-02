@@ -115,8 +115,8 @@ public class blueCloseHarvestFromGate extends OpMode {
     @Override
     public void start() {
         step = 0;
-        robot.launcher.setVelocity(1220);
-        robot.launcher2.setVelocity(1220);
+        robot.launcher.setVelocity(1100);
+        robot.launcher2.setVelocity(1100);
         robot.wallOpen();
         follower.followPath(scorePreload);
     }
@@ -129,7 +129,7 @@ public class blueCloseHarvestFromGate extends OpMode {
         switch (step) {
 
             case 0:
-                if (!follower.isBusy() && robot.launcher2.getVelocity() > 1180 ) {
+                if (!follower.isBusy() && robot.launcher2.getVelocity() > 1060 ) {
                     timer.reset();
                     robot.intakeIn();
                     step++;

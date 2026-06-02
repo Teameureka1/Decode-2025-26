@@ -55,7 +55,7 @@ public class BioBuzz extends OpMode {
 
         double y = -gamepad1.left_stick_y;
         double x = gamepad1.left_stick_x;
-        double rotation = gamepad1.right_stick_x * 0.75;
+        double rotation = gamepad1.right_stick_x;
 
         // Speed Control
         double speed = 0.3 + (0.7 * gamepad1.right_trigger);
@@ -96,14 +96,14 @@ public class BioBuzz extends OpMode {
         // =========================
 
         // Toggle intake with B
-        if (gamepad2.b && !previousB) {
+        if (gamepad1.b && !previousB) {
             intakeOn = !intakeOn;
         }
 
-        previousB = gamepad2.b;
+        previousB = gamepad1.b;
 
         // Reverse intake with X
-        if (gamepad2.x) {
+        if (gamepad1.x) {
             intake.setPower(-1.0);
         }
         else if (intakeOn) {
@@ -124,6 +124,9 @@ public class BioBuzz extends OpMode {
         telemetry.addData("FR", fr);
         telemetry.addData("BL", bl);
         telemetry.addData("BR", br);
+
+        telemetry.addData("Raw Y", gamepad1.left_stick_y);
+        telemetry.addData("Raw X", gamepad1.left_stick_x);
 
         telemetry.update();
     }

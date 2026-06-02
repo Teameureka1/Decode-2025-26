@@ -109,8 +109,8 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
     @Override
     public void start() {
         step = 0;
-        robot.launcher.setVelocity(1220);
-        robot.launcher2.setVelocity(1220);
+        robot.launcher.setVelocity(1100);
+        robot.launcher2.setVelocity(1100);
         robot.wallOpen();
         follower.followPath(scorePreload);
     }
@@ -123,7 +123,7 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
         switch (step) {
 
             case 0:
-                if (!follower.isBusy() && robot.launcher2.getVelocity() > 1200) {
+                if (!follower.isBusy() && robot.launcher2.getVelocity() > 1060) {
                     timer.reset();
                     robot.intakeIn();
                     step++;
@@ -141,7 +141,7 @@ public class blueCloseOpenGateTwiceAndGetThirdSpike extends OpMode {
                 break;
             case 2:
                 if (!follower.isBusy()) {
-                    robot.wallOpen();
+                    robot.wallClose();
                     robot.intakeIn();
                     follower.setMaxPower(.65);
                     follower.followPath(grabPickup2);

@@ -105,8 +105,8 @@ public class redClose12ClassifiedWith9InRamp extends OpMode {
     @Override
     public void start() {
         step = 0;
-        robot.launcher.setVelocity(1240);
-        robot.launcher2.setVelocity(1240);
+        robot.launcher.setVelocity(1120);
+        robot.launcher2.setVelocity(1120);
         robot.wallOpen();
         follower.followPath(scorePreload);
     }
@@ -119,7 +119,7 @@ public class redClose12ClassifiedWith9InRamp extends OpMode {
         switch (step) {
 
             case 0:
-                if (!follower.isBusy() && robot.launcher2.getVelocity() > 1200) {
+                if (!follower.isBusy() && robot.launcher2.getVelocity() > 1080) {
                     timer.reset();
                     robot.intakeIn();
                     step++;
